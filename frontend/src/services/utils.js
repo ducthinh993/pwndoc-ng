@@ -1,5 +1,5 @@
 var _ = require("lodash");
-import { $t } from "boot/i18n";
+import { $t } from "@/boot/i18n";
 
 export default {
   htmlEncode(html) {

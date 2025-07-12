@@ -10,7 +10,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { ThemeProvider } from '@/components/ui/theme-provider';
+import ThemeProvider from '@/components/ui/theme-provider.vue';
 import Loading from '@/components/ui/loading.vue';
 import Toast from '@/components/ui/toast.vue';
 

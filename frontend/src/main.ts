@@ -1,8 +1,6 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { createI18n } from 'vue-i18n'
-import axios from 'axios'
-import { io } from 'socket.io-client'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 
@@ -12,8 +10,15 @@ import routes from './router/routes'
 // Import i18n messages
 import messages from './i18n'
 
+// Import boot files
+import axiosPlugin, { api } from './boot/axios'
+import authPlugin from './boot/auth'
+import settingsPlugin from './boot/settings'
+import i18nPlugin from './boot/i18n'
+import socketioPlugin from './boot/socketio'
+
 // Import services
-import AuthService from './services/utils'
+import UserService from './services/user'
 import SettingsService from './services/settings'
 
 // Create router
@@ -32,42 +37,33 @@ const i18n = createI18n({
 // Create Vue app
 const app = createApp(App)
 
-// Configure axios
-axios.defaults.baseURL = '/api'
-axios.defaults.headers.common['Content-Type'] = 'application/json'
-
-// Add axios to global properties
-app.config.globalProperties.$axios = axios
-
-// Configure Socket.IO
-const socket = io('/', {
-  autoConnect: false,
-  secure: true,
-  rejectUnauthorized: false,
-})
-
-// Add socket to global properties
-app.config.globalProperties.$socket = socket
-
-// Add lodash
+// Install plugins
 app.use(VueLodash, { lodash })
-
-// Add router and i18n
 app.use(router)
 app.use(i18n)
 
-// Auth guard
+// Install boot plugins
+axiosPlugin({ app })
+authPlugin({ app })
+settingsPlugin({ app })
+i18nPlugin({ app })
+socketioPlugin({ app })
+
+// Make services available globally
+app.config.globalProperties.$user = UserService
+app.config.globalProperties.$settings = SettingsService
+
+// Global error handler
+app.config.errorHandler = (error, instance, info) => {
+  console.error('Global error:', error, info)
+}
+
+// Auth guard (simplified)
 router.beforeEach(async (to, from, next) => {
   try {
-    const token = localStorage.getItem('token')
-    if (token) {
-      const user = await AuthService.getUser()
-      if (user) {
-        next()
-      } else {
-        localStorage.removeItem('token')
-        next('/login')
-      }
+    // Check if user is authenticated
+    if (UserService.isAuth()) {
+      next()
     } else if (to.path !== '/login') {
       next('/login')
     } else {
@@ -83,25 +79,10 @@ router.beforeEach(async (to, from, next) => {
   }
 })
 
-// Initialize settings
-SettingsService.getSettings()
-  .then(() => {
-    // Mount app after settings are loaded
-    app.mount('#app')
-  })
-  .catch(error => {
-    console.error('Failed to load settings:', error)
-    // Mount app anyway
-    app.mount('#app')
-  })
+// Mount app
+app.mount('#app')
 
-// Global error handler
-app.config.errorHandler = (error, instance, info) => {
-  console.error('Global error:', error, info)
-}
-
-// Make services available globally
-app.config.globalProperties.$auth = AuthService
-app.config.globalProperties.$settings = SettingsService
+// Add loaded class to prevent FOUC
+document.getElementById('app')?.classList.add('loaded')
 
 export default app 

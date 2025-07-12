@@ -1,4 +1,4 @@
-import { api } from 'boot/axios'
+import { api } from '@/boot/axios'
 
 // Simple in-memory cache with TTL
 class ChartCache {
