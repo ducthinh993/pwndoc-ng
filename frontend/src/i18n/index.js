@@ -7,5 +7,5 @@ export default {
   'en-US': enUS,
   'zh-CN': zhCN,
   'de-DE': deDE,
-  'fr-FR': frFR
-} 
+  'fr-FR': frFR,
+}

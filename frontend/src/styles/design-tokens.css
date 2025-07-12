@@ -1,0 +1,413 @@
+/* ===== PwnDoc-ng Design Tokens ===== */
+
+:root {
+  /* ===== Core Brand Colors (Quasar Mapping) ===== */
+  --color-primary: 60 71 89;           /* #3c4759 - Quasar primary */
+  --color-primary-foreground: 255 255 255;
+  
+  --color-secondary: 38 166 154;       /* #26A69A - Quasar secondary */
+  --color-secondary-foreground: 255 255 255;
+  
+  --color-success: 33 186 69;          /* #21BA45 - Quasar positive */
+  --color-success-foreground: 255 255 255;
+  
+  --color-destructive: 219 40 40;      /* #DB2828 - Quasar negative */
+  --color-destructive-foreground: 255 255 255;
+  
+  --color-info: 49 204 236;            /* #31CCEC - Quasar info */
+  --color-info-foreground: 255 255 255;
+  
+  --color-warning: 242 192 55;         /* #F2C037 - Quasar warning */
+  --color-warning-foreground: 0 0 0;
+
+  /* ===== Semantic State Colors ===== */
+  /* Success states */
+  --color-success-subtle: 220 252 231;    /* green-50 */
+  --color-success-muted: 187 247 208;     /* green-100 */
+  --color-success-emphasis: 134 239 172;  /* green-200 */
+  --color-success-solid: 34 197 94;       /* green-500 */
+  --color-success-strong: 21 128 61;      /* green-700 */
+  
+  /* Warning states */
+  --color-warning-subtle: 255 251 235;    /* amber-50 */
+  --color-warning-muted: 254 243 199;     /* amber-100 */
+  --color-warning-emphasis: 252 211 77;   /* amber-200 */
+  --color-warning-solid: 245 158 11;      /* amber-500 */
+  --color-warning-strong: 180 83 9;       /* amber-700 */
+  
+  /* Error states */
+  --color-error-subtle: 254 242 242;      /* red-50 */
+  --color-error-muted: 254 226 226;       /* red-100 */
+  --color-error-emphasis: 252 165 165;    /* red-200 */
+  --color-error-solid: 239 68 68;         /* red-500 */
+  --color-error-strong: 185 28 28;        /* red-700 */
+  
+  /* Info states */
+  --color-info-subtle: 239 246 255;       /* blue-50 */
+  --color-info-muted: 219 234 254;        /* blue-100 */
+  --color-info-emphasis: 191 219 254;     /* blue-200 */
+  --color-info-solid: 59 130 246;         /* blue-500 */
+  --color-info-strong: 29 78 216;         /* blue-700 */
+  
+  /* Diff/Change states */
+  --color-diff-added: 220 252 231;        /* green-50 */
+  --color-diff-added-emphasis: 134 239 172; /* green-200 */
+  --color-diff-removed: 254 242 242;      /* red-50 */
+  --color-diff-removed-emphasis: 252 165 165; /* red-200 */
+  --color-diff-changed: 255 251 235;      /* amber-50 */
+  --color-diff-changed-emphasis: 252 211 77; /* amber-200 */
+
+  /* ===== Extended Palette (Quasar Grey Scale) ===== */
+  --color-grey-1: 250 250 250;         /* #fafafa */
+  --color-grey-2: 245 245 245;         /* #f5f5f5 */
+  --color-grey-3: 224 224 224;         /* #e0e0e0 */
+  --color-grey-4: 189 189 189;         /* #bdbdbd */
+  --color-grey-5: 158 158 158;         /* #9e9e9e */
+  --color-grey-6: 117 117 117;         /* #757575 */
+  --color-grey-7: 97 97 97;            /* #616161 */
+  --color-grey-8: 66 66 66;            /* #424242 */
+  --color-grey-9: 33 33 33;            /* #212121 */
+
+  /* ===== Base UI Colors ===== */
+  --color-background: 255 255 255;     /* #ffffff */
+  --color-foreground: 13 13 13;        /* #0d0d0d */
+  
+  --color-card: 255 255 255;           /* #ffffff */
+  --color-card-foreground: 13 13 13;   /* #0d0d0d */
+  
+  --color-popover: 255 255 255;        /* #ffffff */
+  --color-popover-foreground: 13 13 13; /* #0d0d0d */
+  
+  --color-muted: 245 245 245;          /* #f5f5f5 - grey-2 */
+  --color-muted-foreground: 115 115 115; /* #737373 */
+  
+  --color-accent: 245 245 245;         /* #f5f5f5 */
+  --color-accent-foreground: 13 13 13; /* #0d0d0d */
+  
+  --color-border: 229 229 229;         /* #e5e5e5 */
+  --color-input: 229 229 229;          /* #e5e5e5 */
+  --color-ring: 142 142 142;           /* #8e8e8e */
+  
+  /* ===== Layout Colors ===== */
+  --color-layout-background: 230 236 240; /* #e6ecf0 - Light blue-grey background */
+  --color-layout-surface: 255 255 255;    /* #ffffff - Card/surface color */
+  --color-layout-border: 203 213 225;     /* #cbd5e1 - Border color */
+
+  /* ===== Typography Scale ===== */
+  --font-family-sans: 'Helvetica', 'Arial', sans-serif;
+  --font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-5xl: 3rem;       /* 48px */
+  --font-size-6xl: 3.75rem;    /* 60px */
+
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* ===== Spacing Scale ===== */
+  --spacing-0: 0;
+  --spacing-px: 1px;
+  --spacing-0_5: 0.125rem;    /* 2px */
+  --spacing-1: 0.25rem;       /* 4px */
+  --spacing-1_5: 0.375rem;    /* 6px */
+  --spacing-2: 0.5rem;        /* 8px */
+  --spacing-2_5: 0.625rem;    /* 10px */
+  --spacing-3: 0.75rem;       /* 12px */
+  --spacing-3_5: 0.875rem;    /* 14px */
+  --spacing-4: 1rem;          /* 16px */
+  --spacing-5: 1.25rem;       /* 20px */
+  --spacing-6: 1.5rem;        /* 24px */
+  --spacing-7: 1.75rem;       /* 28px */
+  --spacing-8: 2rem;          /* 32px */
+  --spacing-9: 2.25rem;       /* 36px */
+  --spacing-10: 2.5rem;       /* 40px */
+  --spacing-11: 2.75rem;      /* 44px */
+  --spacing-12: 3rem;         /* 48px */
+  --spacing-14: 3.5rem;       /* 56px */
+  --spacing-16: 4rem;         /* 64px */
+  --spacing-20: 5rem;         /* 80px */
+  --spacing-24: 6rem;         /* 96px */
+  --spacing-28: 7rem;         /* 112px */
+  --spacing-32: 8rem;         /* 128px */
+
+  /* ===== Border Radius Scale ===== */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;       /* 4px */
+  --radius-md: 0.375rem;      /* 6px */
+  --radius-lg: 0.5rem;        /* 8px */
+  --radius-xl: 0.75rem;       /* 12px */
+  --radius-2xl: 1rem;         /* 16px */
+  --radius-3xl: 1.5rem;       /* 24px */
+  --radius-full: 9999px;
+
+  /* ===== Shadows ===== */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* ===== Z-Index Scale ===== */
+  --z-auto: auto;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-max: 2147483647;
+
+  /* ===== Animation & Transitions ===== */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== Component-Specific Tokens ===== */
+  
+  /* Button Sizes */
+  --button-height-sm: 2.25rem;         /* 36px */
+  --button-height-md: 2.5rem;          /* 40px */
+  --button-height-lg: 2.75rem;         /* 44px */
+  --button-height-xl: 3rem;            /* 48px */
+
+  /* Input Sizes */
+  --input-height-sm: 2rem;             /* 32px */
+  --input-height-md: 2.5rem;           /* 40px */
+  --input-height-lg: 3rem;             /* 48px */
+
+  /* Table */
+  --table-header-bg: var(--color-grey-1);
+  --table-border: var(--color-border);
+  --table-row-hover: var(--color-grey-1);
+
+  /* Focus Ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-ring);
+}
+
+/* ===== Dark Mode Overrides ===== */
+.dark {
+  --color-background: 13 13 13;        /* #0d0d0d */
+  --color-foreground: 250 250 250;     /* #fafafa */
+  
+  --color-card: 29 29 29;              /* #1d1d1d */
+  --color-card-foreground: 250 250 250; /* #fafafa */
+  
+  --color-popover: 29 29 29;           /* #1d1d1d */
+  --color-popover-foreground: 250 250 250; /* #fafafa */
+  
+  --color-muted: 38 38 38;             /* #262626 */
+  --color-muted-foreground: 163 163 163; /* #a3a3a3 */
+  
+  --color-accent: 38 38 38;            /* #262626 */
+  --color-accent-foreground: 250 250 250; /* #fafafa */
+  
+  --color-border: 38 38 38;            /* #262626 */
+  --color-input: 38 38 38;             /* #262626 */
+  --color-ring: 142 142 142;           /* #8e8e8e */
+
+  /* Dark mode table adjustments */
+  --table-header-bg: var(--color-muted);
+  --table-row-hover: var(--color-muted);
+
+  /* ===== Dark Mode Semantic Colors ===== */
+  /* Success states for dark mode */
+  --color-success-subtle: 20 83 45;       /* green-900 */
+  --color-success-muted: 22 101 52;       /* green-800 */
+  --color-success-emphasis: 34 197 94;    /* green-500 */
+  --color-success-solid: 74 222 128;      /* green-400 */
+  --color-success-strong: 134 239 172;    /* green-200 */
+  
+  /* Warning states for dark mode */
+  --color-warning-subtle: 120 53 15;      /* amber-900 */
+  --color-warning-muted: 146 64 14;       /* amber-800 */
+  --color-warning-emphasis: 245 158 11;   /* amber-500 */
+  --color-warning-solid: 251 191 36;      /* amber-400 */
+  --color-warning-strong: 252 211 77;     /* amber-200 */
+  
+  /* Error states for dark mode */
+  --color-error-subtle: 127 29 29;        /* red-900 */
+  --color-error-muted: 153 27 27;         /* red-800 */
+  --color-error-emphasis: 239 68 68;      /* red-500 */
+  --color-error-solid: 248 113 113;       /* red-400 */
+  --color-error-strong: 252 165 165;      /* red-200 */
+  
+  /* Info states for dark mode */
+  --color-info-subtle: 30 58 138;         /* blue-900 */
+  --color-info-muted: 30 64 175;          /* blue-800 */
+  --color-info-emphasis: 59 130 246;      /* blue-500 */
+  --color-info-solid: 96 165 250;         /* blue-400 */
+  --color-info-strong: 191 219 254;       /* blue-200 */
+  
+  /* Layout colors for dark mode */
+  --color-layout-background: 13 13 13;    /* #0d0d0d - Dark background */
+  --color-layout-surface: 29 29 29;       /* #1d1d1d - Dark surface */
+  --color-layout-border: 38 38 38;        /* #262626 - Dark border */
+}
+
+/* ===== Semantic Utility Classes ===== */
+/* State backgrounds */
+.bg-success { background-color: hsl(var(--color-success)); }
+.bg-success-subtle { background-color: hsl(var(--color-success-subtle)); }
+.bg-success-muted { background-color: hsl(var(--color-success-muted)); }
+
+.bg-warning { background-color: hsl(var(--color-warning)); }
+.bg-warning-subtle { background-color: hsl(var(--color-warning-subtle)); }
+.bg-warning-muted { background-color: hsl(var(--color-warning-muted)); }
+
+.bg-error { background-color: hsl(var(--color-error-solid)); }
+.bg-error-subtle { background-color: hsl(var(--color-error-subtle)); }
+.bg-error-muted { background-color: hsl(var(--color-error-muted)); }
+
+.bg-info { background-color: hsl(var(--color-info)); }
+.bg-info-subtle { background-color: hsl(var(--color-info-subtle)); }
+.bg-info-muted { background-color: hsl(var(--color-info-muted)); }
+
+/* State text colors */
+.text-success { color: hsl(var(--color-success-solid)); }
+.text-success-strong { color: hsl(var(--color-success-strong)); }
+
+.text-warning { color: hsl(var(--color-warning-solid)); }
+.text-warning-strong { color: hsl(var(--color-warning-strong)); }
+
+.text-error { color: hsl(var(--color-error-solid)); }
+.text-error-strong { color: hsl(var(--color-error-strong)); }
+
+.text-info { color: hsl(var(--color-info-solid)); }
+.text-info-strong { color: hsl(var(--color-info-strong)); }
+
+/* State borders */
+.border-success { border-color: hsl(var(--color-success-emphasis)); }
+.border-warning { border-color: hsl(var(--color-warning-emphasis)); }
+.border-error { border-color: hsl(var(--color-error-emphasis)); }
+.border-info { border-color: hsl(var(--color-info-emphasis)); }
+
+/* Diff/Change states */
+.bg-diff-added { background-color: hsl(var(--color-diff-added)); }
+.bg-diff-removed { background-color: hsl(var(--color-diff-removed)); }
+.bg-diff-changed { background-color: hsl(var(--color-diff-changed)); }
+
+.border-diff-added { border-color: hsl(var(--color-diff-added-emphasis)); }
+.border-diff-removed { border-color: hsl(var(--color-diff-removed-emphasis)); }
+.border-diff-changed { border-color: hsl(var(--color-diff-changed-emphasis)); }
+
+/* Layout utilities */
+.bg-layout { background-color: hsl(var(--color-layout-background)); }
+.bg-surface { background-color: hsl(var(--color-layout-surface)); }
+.border-layout { border-color: hsl(var(--color-layout-border)); }
+
+/* Legacy Quasar Color Utilities */
+.text-primary { color: hsl(var(--color-primary)); }
+.text-secondary { color: hsl(var(--color-secondary)); }
+.text-success { color: hsl(var(--color-success)); }
+.text-destructive { color: hsl(var(--color-destructive)); }
+.text-warning { color: hsl(var(--color-warning)); }
+.text-info { color: hsl(var(--color-info)); }
+.text-muted { color: hsl(var(--color-muted-foreground)); }
+
+.bg-primary { background-color: hsl(var(--color-primary)); }
+.bg-secondary { background-color: hsl(var(--color-secondary)); }
+.bg-destructive { background-color: hsl(var(--color-destructive)); }
+
+/* Hover states */
+.hover-success:hover { background-color: hsl(var(--color-success-emphasis)); }
+.hover-warning:hover { background-color: hsl(var(--color-warning-emphasis)); }
+.hover-error:hover { background-color: hsl(var(--color-error-emphasis)); }
+.hover-info:hover { background-color: hsl(var(--color-info-emphasis)); }
+
+/* CVSS Score Utility Classes */
+.cvss-none { 
+  background-color: hsl(var(--color-cvss-none)); 
+  color: white; 
+}
+.cvss-low { 
+  background-color: hsl(var(--color-cvss-low)); 
+  color: white; 
+}
+.cvss-medium { 
+  background-color: hsl(var(--color-cvss-medium)); 
+  color: white; 
+}
+.cvss-high { 
+  background-color: hsl(var(--color-cvss-high)); 
+  color: white; 
+}
+.cvss-critical { 
+  background-color: hsl(var(--color-cvss-critical)); 
+  color: white; 
+}
+
+/* ===== Quasar Compatibility Classes ===== */
+/* These provide backward compatibility for existing Quasar classes */
+.q-pa-xs { padding: var(--spacing-1); }
+.q-pa-sm { padding: var(--spacing-2); }
+.q-pa-md { padding: var(--spacing-4); }
+.q-pa-lg { padding: var(--spacing-6); }
+.q-pa-xl { padding: var(--spacing-8); }
+
+.q-ma-xs { margin: var(--spacing-1); }
+.q-ma-sm { margin: var(--spacing-2); }
+.q-ma-md { margin: var(--spacing-4); }
+.q-ma-lg { margin: var(--spacing-6); }
+.q-ma-xl { margin: var(--spacing-8); }
+
+.text-h1 { font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); }
+.text-h2 { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); }
+.text-h3 { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); }
+.text-h4 { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); }
+.text-h5 { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); }
+.text-h6 { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); }
+
+.text-weight-thin { font-weight: var(--font-weight-thin); }
+.text-weight-light { font-weight: var(--font-weight-light); }
+.text-weight-regular { font-weight: var(--font-weight-normal); }
+.text-weight-medium { font-weight: var(--font-weight-medium); }
+.text-weight-bold { font-weight: var(--font-weight-bold); }
+.text-weight-bolder { font-weight: var(--font-weight-extrabold); }
+
+.text-italic { font-style: italic; }
+.text-uppercase { text-transform: uppercase; }
+.text-lowercase { text-transform: lowercase; }
+.text-capitalize { text-transform: capitalize; }
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; } 

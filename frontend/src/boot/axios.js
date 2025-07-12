@@ -1,10 +1,9 @@
-import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import User from '@/services/user'
 import Router from '../router'
 
 const api = axios.create({
-  baseURL: `${window.location.origin}/api`
+  baseURL: `${window.location.origin}/api`,
 })
 
 let refreshPending = false
@@ -12,7 +11,7 @@ let requestsQueue = []
 
 // Redirect to login if response is 401 (Unauthenticated)
 api.interceptors.response.use(
-  response => response, 
+  response => response,
   error => {
     // Ensure error.response exists before accessing its properties
     if (!error.response) {
@@ -73,12 +72,12 @@ api.interceptors.response.use(
       })
     }
     return Promise.reject(error)
-  }
+  },
 )
 
-export default boot(({ app }) => {
+export default ({ app }) => {
   // Inject axios globally
   app.config.globalProperties.$axios = api
-})
+}
 
 export { api }

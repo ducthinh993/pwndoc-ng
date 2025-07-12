@@ -1,32 +1,42 @@
 <template>
-  <div class="fixed-center text-center">
-    <p>
-      <img
-        src="~assets/sad.svg"
-        style="width:30vw;max-width:150px;"
+  <div class="fixed inset-0 flex items-center justify-center text-center">
+    <div class="space-y-4">
+      <p>
+        <img
+          src="~assets/sad.svg"
+          class="mx-auto w-[30vw] max-w-[150px]"
+        >
+      </p>
+      <p class="text-muted-foreground">
+        {{ message }} <strong>(404)</strong>
+      </p>
+      <Button
+        variant="secondary"
+        class="w-[200px]"
+        @click="$router.push('/')"
       >
-    </p>
-    <p class="text-faded">{{message}} <strong>(404)</strong></p>
-    <q-btn
-      color="secondary"
-      style="width:200px;"
-      @click="$router.push('/')"
-    >{{$t('goBack')}}</q-btn>
+        {{ $t('goBack') }}
+      </Button>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
+import { Button } from '@/components/ui/button'
 
 export default defineComponent({
-  data () {
+  name: 'Error404',
+  components: {
+    Button,
+  },
+  data() {
     return {
-      message: ''
+      message: '',
     }
   },
-
-  created: function() {
-      this.message = this.$route.params.error;
+  created() {
+    this.message = this.$route.params.error
   },
-});
+})
 </script>

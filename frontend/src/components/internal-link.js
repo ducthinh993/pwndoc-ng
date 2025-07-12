@@ -1,17 +1,17 @@
 
-import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { Extension } from '@tiptap/core'
+import { Plugin, PluginKey } from 'prosemirror-state'
 
 export const TriggerMenuExtension = Extension.create({
   name: 'triggerMenu',
 
   addProseMirrorPlugins() {
-    let menuElement = null;
-    let selectedIndex = -1;
-    let isMenuVisible = false;
-    let auditAPI = -1;
+    let menuElement = null
+    let selectedIndex = -1
+    let isMenuVisible = false
+    let auditAPI = -1
 
-    const style = document.createElement('style');
+    const style = document.createElement('style')
     style.textContent = `
       .tiptap-trigger-menu {
         position: absolute;
@@ -117,8 +117,8 @@ export const TriggerMenuExtension = Extension.create({
         text-align: center;
         font-size: 14px;
       }
-    `;
-    document.head.appendChild(style);
+    `
+    document.head.appendChild(style)
 
     // Fonctions utilitaires pour la gestion des états
 
@@ -129,213 +129,213 @@ export const TriggerMenuExtension = Extension.create({
         props: {
           handleKeyDown(view, event) {
             // Vérification de l'audit ID depuis le path
-            let auditId = -1;
+            let auditId = -1
             try {
-              const path = window.location.pathname.split('/');
-              if (path && path.length > 3 && path[1] === "audits") {
-                auditId = path[2];
-                auditAPI = window.location.href.split("/audits/")[0]+"/api/audits/"+auditId;
-                
+              const path = window.location.pathname.split('/')
+              if (path && path.length > 3 && path[1] === 'audits') {
+                auditId = path[2]
+                auditAPI = `${window.location.href.split('/audits/')[0]}/api/audits/${auditId}`
+
               }
             } catch (error) {
-              console.error('Erreur lors de la récupération de l\'audit ID:', error);
-              return false;
+              console.error('Erreur lors de la récupération de l\'audit ID:', error)
+              return false
             }
 
             // Si pas d'audit valide, on ne continue pas
             if (auditAPI === -1) {
-              
-              return false;
+
+              return false
             }
             if (isMenuVisible && (event.key === 'Backspace' || event.key === 'Delete')) {
-                
-                closeMenu();
-                return false; // Permet à l'événement de se propager et de supprimer le caractère
-              }
-            
+
+              closeMenu()
+              return false // Permet à l'événement de se propager et de supprimer le caractère
+            }
+
             // Si le menu est visible, toute touche le ferme sauf les touches de navigation
             if (isMenuVisible) {
-              const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter'];
-              
+              const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter']
+
               if (!navigationKeys.includes(event.key)) {
-                
-                closeMenu();
-                return true;
+
+                closeMenu()
+                return true
               }
 
-              const options = menuElement.querySelectorAll('.menu-option');
-              
+              const options = menuElement.querySelectorAll('.menu-option')
+
               switch (event.key) {
-                case 'ArrowUp':
-                  event.preventDefault();
-                  if (options.length > 0) {
-                    selectedIndex = selectedIndex <= 0 ? options.length - 1 : selectedIndex - 1;
-                    updateSelectedOption(options);
+              case 'ArrowUp':
+                event.preventDefault()
+                if (options.length > 0) {
+                  selectedIndex = selectedIndex <= 0 ? options.length - 1 : selectedIndex - 1
+                  updateSelectedOption(options)
+                }
+                return true
+
+              case 'ArrowDown':
+                event.preventDefault()
+                if (options.length > 0) {
+                  selectedIndex = selectedIndex >= options.length - 1 ? 0 : selectedIndex + 1
+                  updateSelectedOption(options)
+                }
+                return true
+
+              case 'Enter':
+                if (selectedIndex >= 0) {
+                  event.preventDefault()
+                  const option = options[selectedIndex]
+                  if (option) {
+                    const value = option.getAttribute('data-value')
+                    insertOption(value, view)
                   }
-                  return true;
-                
-                case 'ArrowDown':
-                  event.preventDefault();
-                  if (options.length > 0) {
-                    selectedIndex = selectedIndex >= options.length - 1 ? 0 : selectedIndex + 1;
-                    updateSelectedOption(options);
-                  }
-                  return true;
-                
-                case 'Enter':
-                  if (selectedIndex >= 0) {
-                    event.preventDefault();
-                    const option = options[selectedIndex];
-                    if (option) {
-                      const value = option.getAttribute('data-value');
-                      insertOption(value, view);
-                    }
-                    return true;
-                  }
-                  break;
+                  return true
+                }
+                break
               }
             }
-            
+
             // Détection de :: pour ouvrir le menu
-            const { state } = view;
-            const { selection } = state;
-            const { $from } = selection;
-            const textBefore = $from.parent.textContent.slice($from.parentOffset - 2, $from.parentOffset);
+            const { state } = view
+            const { selection } = state
+            const { $from } = selection
+            const textBefore = $from.parent.textContent.slice($from.parentOffset - 2, $from.parentOffset)
 
             if (textBefore === '::') {
-              const coords = view.coordsAtPos($from.pos);
-              
-              showMenu(coords, view);
-              return true;
+              const coords = view.coordsAtPos($from.pos)
+
+              showMenu(coords, view)
+              return true
             }
-            return false;
-          }
+            return false
+          },
         },
       }),
-    ];
+    ]
 
     async function fetchMenuOptions() {
       try {
         if (auditAPI === -1) {
-          throw new Error('Aucun audit ID valide');
+          throw new Error('Aucun audit ID valide')
         }
 
         // URL avec l'audit ID
-        const url = auditAPI;
-        
+        const url = auditAPI
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch options');
-        const data = await response.json();
-        var retData = []
-        data.datas.findings.forEach( (x,i)=>{
-            retData.push({value:x.title,unique_id:x._id})
+
+        const response = await fetch(url)
+        if (!response.ok) throw new Error('Failed to fetch options')
+        const data = await response.json()
+        const retData = []
+        data.datas.findings.forEach( (x, i)=>{
+          retData.push({ value: x.title, unique_id: x._id })
         })
-        return retData;
+        return retData
       } catch (error) {
-        console.error('Error fetching menu options:', error);
-        throw error;
+        console.error('Error fetching menu options:', error)
+        throw error
       }
     }
     function showLoadingState() {
-        if (!menuElement) return;
-        menuElement.innerHTML = `
+      if (!menuElement) return
+      menuElement.innerHTML = `
           <div class="loading-state">
             <div class="spinner"></div>
             <span class="loading-text">Chargement des options...</span>
           </div>
-        `;
-      }
-  
-      function showErrorState(error) {
-        if (!menuElement) return;
-        menuElement.innerHTML = `
+        `
+    }
+
+    function showErrorState(error) {
+      if (!menuElement) return
+      menuElement.innerHTML = `
           <div class="error-state">
             <div>Une erreur est survenue</div>
             <div style="font-size: 12px; margin-top: 4px;">${error.message}</div>
           </div>
-        `;
-      }
-  
-      function showEmptyState() {
-        if (!menuElement) return;
-        menuElement.innerHTML = `
+        `
+    }
+
+    function showEmptyState() {
+      if (!menuElement) return
+      menuElement.innerHTML = `
           <div class="empty-state">
             Aucune option disponible
           </div>
-        `;
-      }
+        `
+    }
     function updateSelectedOption(options) {
-        options.forEach((option, index) => {
-          if (index === selectedIndex) {
-            option.classList.add('selected');
-          } else {
-            option.classList.remove('selected');
-          }
-        });
-      }
-  
-    function encodeHTMLEntities( s){ return s.replace(/[\u00A0-\u9999<>\&]/g, i => '&#'+i.charCodeAt(0)+';')}
-      function insertOption(selectedOption, view) {
-        const { state } = view;
-        const { tr } = state;
-        const { selection } = state;
-        const { $from } = selection;
-        
-        // Supprimer les '::'
-        const deleteFrom = $from.pos - 2;
-        tr.delete(deleteFrom, $from.pos);
-        const optionElement = menuElement.querySelector(`[data-value="${selectedOption}"]`);
-        const index = optionElement ? optionElement.getAttribute('data-index') : 0;
-        // Créer le lien au format texte cliquable
-        const linkMark = state.schema.marks.link;
-        const linkText = decodeURI(selectedOption); // Vous pouvez personnaliser le texte affiché
-        const linkUrl = decodeURI(selectedOption); // L'URL sera la valeur de l'option
-        
-        // Insérer le texte du lien
-        tr.insertText(linkText, deleteFrom);
-        
-        // Ajouter la marque de lien sur le texte inséré
-        tr.addMark(
-          deleteFrom,
-          deleteFrom + linkText.length,
-          linkMark.create({ href: "#"+index })
-        );
-        tr.removeStoredMark(linkMark);
-        const nonLinkMarks = (state.storedMarks || []).filter(mark => mark.type !== linkMark);
-
-        // Ajouter un espace après le lien
-        const spacePos = deleteFrom + linkText.length;
-        tr.insertText(' ', spacePos);
-        tr.setStoredMarks(nonLinkMarks);
-        // Déplacer le curseur après l'espace
-        const newPos = spacePos + 1;
-        tr.setSelection(state.selection.constructor.near(tr.doc.resolve(newPos)));
-        view.dispatch(tr);
-        closeMenu();
-      }
-      function padIndex(index) {
-        return String(index).padStart(3, '0');
-      }
-      function closeMenu() {
-        if (menuElement) {
-          menuElement.remove();
-          menuElement = null;
-          isMenuVisible = false;
-          selectedIndex = -1;
+      options.forEach((option, index) => {
+        if (index === selectedIndex) {
+          option.classList.add('selected')
+        } else {
+          option.classList.remove('selected')
         }
+      })
+    }
+
+    function encodeHTMLEntities( s) { return s.replace(/[\u00A0-\u9999<>\&]/g, i => `&#${i.charCodeAt(0)};`)}
+    function insertOption(selectedOption, view) {
+      const { state } = view
+      const { tr } = state
+      const { selection } = state
+      const { $from } = selection
+
+      // Supprimer les '::'
+      const deleteFrom = $from.pos - 2
+      tr.delete(deleteFrom, $from.pos)
+      const optionElement = menuElement.querySelector(`[data-value="${selectedOption}"]`)
+      const index = optionElement ? optionElement.getAttribute('data-index') : 0
+      // Créer le lien au format texte cliquable
+      const linkMark = state.schema.marks.link
+      const linkText = decodeURI(selectedOption) // Vous pouvez personnaliser le texte affiché
+      const linkUrl = decodeURI(selectedOption) // L'URL sera la valeur de l'option
+
+      // Insérer le texte du lien
+      tr.insertText(linkText, deleteFrom)
+
+      // Ajouter la marque de lien sur le texte inséré
+      tr.addMark(
+        deleteFrom,
+        deleteFrom + linkText.length,
+        linkMark.create({ href: `#${index}` }),
+      )
+      tr.removeStoredMark(linkMark)
+      const nonLinkMarks = (state.storedMarks || []).filter(mark => mark.type !== linkMark)
+
+      // Ajouter un espace après le lien
+      const spacePos = deleteFrom + linkText.length
+      tr.insertText(' ', spacePos)
+      tr.setStoredMarks(nonLinkMarks)
+      // Déplacer le curseur après l'espace
+      const newPos = spacePos + 1
+      tr.setSelection(state.selection.constructor.near(tr.doc.resolve(newPos)))
+      view.dispatch(tr)
+      closeMenu()
+    }
+    function padIndex(index) {
+      return String(index).padStart(3, '0')
+    }
+    function closeMenu() {
+      if (menuElement) {
+        menuElement.remove()
+        menuElement = null
+        isMenuVisible = false
+        selectedIndex = -1
       }
-        function renderMenuOptions(options) {
-      if (!menuElement) return;
-      
+    }
+    function renderMenuOptions(options) {
+      if (!menuElement) return
+
       if (!options || options.length === 0) {
-        showEmptyState();
-        return;
+        showEmptyState()
+        return
       }
 
       const menuContent = options.map((option, index) => {
         if (option === null) {
-          return '<div class="menu-separator"></div>';
+          return '<div class="menu-separator"></div>'
         }
         return `
           <div class="menu-option" data-value="${btoa(option.value)}" data-index="${option.unique_id}">
@@ -343,56 +343,56 @@ export const TriggerMenuExtension = Extension.create({
             ${encodeHTMLEntities(option.value)}
             ${option.shortcut ? `<span class="shortcut">${option.shortcut}</span>` : ''}
           </div>
-        `;
-      }).join('');
+        `
+      }).join('')
 
-      menuElement.innerHTML = menuContent;
+      menuElement.innerHTML = menuContent
     }
     async function showMenu(coords, view) {
       if (auditAPI === -1) {
-        console.error('❌ Tentative d\'ouverture du menu sans audit ID valide');
-        return;
+        console.error('❌ Tentative d\'ouverture du menu sans audit ID valide')
+        return
       }
 
-      closeMenu();
-    
-      menuElement = document.createElement('div');
-      menuElement.className = 'tiptap-trigger-menu';
-      menuElement.style.top = `${coords.top + window.scrollY}px`;
-      menuElement.style.left = `${coords.left + window.scrollX}px`;
-      
-      showLoadingState();
-      document.body.appendChild(menuElement);
-      isMenuVisible = true;
+      closeMenu()
+
+      menuElement = document.createElement('div')
+      menuElement.className = 'tiptap-trigger-menu'
+      menuElement.style.top = `${coords.top + window.scrollY}px`
+      menuElement.style.left = `${coords.left + window.scrollX}px`
+
+      showLoadingState()
+      document.body.appendChild(menuElement)
+      isMenuVisible = true
 
       try {
         // Simuler un délai réseau (à retirer en production)
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const options = await fetchMenuOptions();
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        const options = await fetchMenuOptions()
 
-        renderMenuOptions(options);
-        
-        selectedIndex = 0;
-        updateSelectedOption(menuElement.querySelectorAll('.menu-option'));
+        renderMenuOptions(options)
+
+        selectedIndex = 0
+        updateSelectedOption(menuElement.querySelectorAll('.menu-option'))
 
         menuElement.addEventListener('click', (e) => {
-          const option = e.target.closest('.menu-option');
+          const option = e.target.closest('.menu-option')
           if (option) {
-            const value = option.getAttribute('data-value');
-            insertOption(value, view);
+            const value = option.getAttribute('data-value')
+            insertOption(value, view)
           }
-        });
+        })
       } catch (error) {
-        showErrorState(error);
+        showErrorState(error)
       }
-    
+
       // Gestionnaire de clic extérieur
       document.addEventListener('click', function closeMenuOnClick(e) {
         if (!menuElement?.contains(e.target)) {
-          closeMenu();
-          document.removeEventListener('click', closeMenuOnClick);
+          closeMenu()
+          document.removeEventListener('click', closeMenuOnClick)
         }
-      });
+      })
     }
   },
-});
+})

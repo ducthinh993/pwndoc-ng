@@ -1,0 +1,350 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Design Tokens - Exact mapping from Quasar theme
+ * DO NOT MODIFY - These values preserve the exact visual appearance
+ */
+:root {
+  /* EXACT color mapping from Quasar theme */
+  --color-primary: 60 71 89;           /* #3c4759 */
+  --color-primary-foreground: 250 250 250; /* #fafafa */
+  --color-secondary: 38 166 154;       /* #26A69A */
+  --color-secondary-foreground: 250 250 250; /* #fafafa */
+  --color-success: 33 186 69;          /* #21BA45 */
+  --color-destructive: 219 40 40;      /* #DB2828 */
+  --color-destructive-foreground: 250 250 250; /* #fafafa */
+  --color-info: 49 204 236;            /* #31CCEC */
+  --color-warning: 242 192 55;         /* #F2C037 */
+  
+  /* Neutral Colors - matching Quasar's neutral palette */
+  --color-background: 0 0 100%;        /* #ffffff */
+  --color-foreground: 13 13 13;        /* #0d0d0d */
+  --color-card: 0 0 100%;              /* #ffffff */
+  --color-card-foreground: 13 13 13;   /* #0d0d0d */
+  --color-popover: 0 0 100%;           /* #ffffff */
+  --color-popover-foreground: 13 13 13; /* #0d0d0d */
+  --color-muted: 245 245 245;          /* #f5f5f5 - grey-1 */
+  --color-muted-foreground: 115 115 115; /* #737373 - grey-6 */
+  --color-accent: 245 245 245;         /* #f5f5f5 - grey-1 */
+  --color-accent-foreground: 13 13 13; /* #0d0d0d */
+  --color-border: 229 229 229;         /* #e5e5e5 - grey-3 */
+  --color-input: 229 229 229;          /* #e5e5e5 - grey-3 */
+  --color-ring: 60 71 89;              /* #3c4759 - primary */
+  
+  /* Typography - matching Quasar's typography system */
+  --font-family-sans: 'Helvetica', 'Arial', sans-serif;
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px - matches Quasar's default */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Spacing Scale - matching Quasar's spacing system */
+  --spacing-0: 0;
+  --spacing-0-5: 0.125rem;   /* 2px */
+  --spacing-1: 0.25rem;      /* 4px - q-pa-xs */
+  --spacing-2: 0.5rem;       /* 8px - q-pa-sm */
+  --spacing-3: 0.75rem;      /* 12px */
+  --spacing-4: 1rem;         /* 16px - q-pa-md */
+  --spacing-5: 1.25rem;      /* 20px */
+  --spacing-6: 1.5rem;       /* 24px - q-pa-lg */
+  --spacing-7: 1.75rem;      /* 28px */
+  --spacing-8: 2rem;         /* 32px - q-pa-xl */
+  --spacing-9: 2.25rem;      /* 36px */
+  --spacing-10: 2.5rem;      /* 40px */
+  --spacing-11: 2.75rem;     /* 44px */
+  --spacing-12: 3rem;        /* 48px */
+  --spacing-14: 3.5rem;      /* 56px */
+  --spacing-16: 4rem;        /* 64px */
+  --spacing-20: 5rem;        /* 80px */
+  --spacing-24: 6rem;        /* 96px */
+  --spacing-28: 7rem;        /* 112px */
+  --spacing-32: 8rem;        /* 128px */
+  
+  /* Border Radius - matching Quasar's border system */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.375rem;  /* 6px */
+  --radius-lg: 0.5rem;    /* 8px */
+  --radius-xl: 0.75rem;   /* 12px */
+  --radius-2xl: 1rem;     /* 16px */
+  --radius-3xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;
+  
+  /* Shadows - matching Quasar's shadow system */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  
+  /* Animation and Transitions */
+  --transition-duration-75: 75ms;
+  --transition-duration-100: 100ms;
+  --transition-duration-150: 150ms;
+  --transition-duration-200: 200ms;
+  --transition-duration-300: 300ms;
+  --transition-duration-500: 500ms;
+  --transition-duration-700: 700ms;
+  --transition-duration-1000: 1000ms;
+  
+  /* Z-Index Scale */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+/* Dark Mode - matching Quasar's dark mode exactly */
+.dark {
+  --color-background: 13 13 13;        /* #0d0d0d - cDark */
+  --color-foreground: 250 250 250;     /* #fafafa */
+  --color-card: 29 29 29;              /* #1d1d1d - darkGrey */
+  --color-card-foreground: 250 250 250; /* #fafafa */
+  --color-popover: 29 29 29;           /* #1d1d1d */
+  --color-popover-foreground: 250 250 250; /* #fafafa */
+  --color-muted: 38 38 38;             /* #262626 - darkGrey */
+  --color-muted-foreground: 163 163 163; /* #a3a3a3 - grey-6 */
+  --color-accent: 38 38 38;            /* #262626 - darkGrey */
+  --color-accent-foreground: 250 250 250; /* #fafafa */
+  --color-border: 38 38 38;            /* #262626 - darkGrey */
+  --color-input: 38 38 38;             /* #262626 - darkGrey */
+  --color-ring: 159 168 218;           /* #9fa8da - darkPrimary */
+  
+  /* Dark mode specific overrides */
+  --color-primary: 159 168 218;        /* #9fa8da - darkPrimary */
+  --color-primary-foreground: 13 13 13; /* #0d0d0d */
+}
+
+/* Base layer styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-sm); /* 14px - matches Quasar's default */
+  }
+  
+  /* Preserve existing sticky header table behavior */
+  .sticky-header-table {
+    max-height: calc(100vh - 82px);
+  }
+  
+  .sticky-header-table thead tr:first-child th {
+    @apply sticky top-0 z-10 border-b-0 bg-background;
+  }
+  
+  .sticky-header-table.q-table--loading thead tr:last-child th {
+    @apply z-20;
+  }
+  
+  .sticky-header-table tr {
+    @apply cursor-auto;
+  }
+  
+  .sticky-header-table-addfinding {
+    max-height: calc(100vh - 132px);
+  }
+  
+  .sticky-header-table-addfinding thead tr:first-child th {
+    @apply sticky top-0 z-10 border-b-0 bg-background;
+  }
+  
+  .sticky-header-table-addfinding.q-table--loading thead tr:last-child th {
+    @apply z-20;
+  }
+  
+  .sticky-header-table-addfinding tr {
+    @apply cursor-auto;
+  }
+  
+  /* Preserve existing diff background colors */
+  .bg-diffbackground {
+    @apply bg-red-50;
+  }
+  
+  .dark .bg-diffbackground {
+    background: rgba(244, 67, 54, 0.15); /* #f4433626 - red-6 + opacity */
+  }
+  
+  .diffbackground-text {
+    @apply text-red-50;
+  }
+  
+  .dark .diffbackground-text {
+    color: rgba(244, 67, 54, 0.15);
+  }
+  
+  /* Preserve existing chart styling */
+  .chart-wrapper {
+    @apply relative w-full h-full;
+  }
+  
+  .chart-wrapper canvas {
+    @apply block max-w-full max-h-full;
+  }
+  
+  .chart-card {
+    @apply shadow-sm rounded-lg;
+  }
+  
+  .chart-card .q-card-section {
+    @apply p-5;
+  }
+  
+  .chart-loading-state .q-card-section {
+    @apply relative min-h-[200px];
+  }
+  
+  /* Responsive chart design */
+  @media (max-width: 768px) {
+    .chart-wrapper {
+      @apply min-h-[300px];
+    }
+    
+    .chart-card .q-card-section {
+      @apply p-4;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .chart-wrapper {
+      @apply min-h-[250px];
+    }
+    
+    .chart-card .q-card-section {
+      @apply p-3;
+    }
+  }
+  
+  /* Dark mode chart support */
+  .dark .chart-wrapper canvas {
+    filter: brightness(0.9);
+  }
+  
+  .dark .chart-card {
+    @apply bg-card text-card-foreground;
+  }
+  
+  /* Preserve existing utility classes */
+  .chip-center .q-chip-main {
+    @apply mx-auto;
+  }
+  
+  .q-chip-one-line .q-chip {
+    @apply mr-full;
+  }
+  
+  .dropzone {
+    @apply border-2 border-dashed border-blue-500 rounded-md h-[50px] text-gray-800;
+  }
+  
+  .vertical-center {
+    @apply absolute top-1/2 left-0 transform -translate-y-1/2;
+  }
+  
+  .text-pre-wrap {
+    @apply whitespace-pre-wrap;
+  }
+  
+  .loading-error .material-icons {
+    @apply text-[100px];
+  }
+  
+  .loading-error p {
+    @apply text-xl;
+  }
+  
+  .loading-error:before {
+    @apply opacity-70;
+  }
+}
+
+/* Component layer styles */
+@layer components {
+  /* Chart action buttons */
+  .chart-actions {
+    @apply flex gap-1;
+  }
+  
+  .chart-actions .q-btn {
+    @apply opacity-70 transition-opacity duration-200;
+  }
+  
+  .chart-actions .q-btn:hover {
+    @apply opacity-100;
+  }
+  
+  /* Chart section headers */
+  .chart-section-header {
+    @apply flex items-center mb-4;
+  }
+  
+  .chart-section-header .q-icon {
+    @apply mr-2 text-primary;
+  }
+  
+  .chart-section-header .text-h6 {
+    @apply font-semibold text-gray-800;
+  }
+  
+  /* Chart empty state */
+  .chart-empty-state {
+    @apply text-center py-10 px-5;
+  }
+  
+  .chart-empty-state .q-icon {
+    @apply opacity-60;
+  }
+  
+  .chart-empty-state .text-h6 {
+    @apply mt-4 mb-2 font-medium;
+  }
+  
+  .chart-empty-state .text-body2 {
+    @apply mb-4 leading-relaxed;
+  }
+  
+  /* Chart loading state */
+  .chart-loading-overlay {
+    @apply absolute inset-0 bg-white/90 flex items-center justify-center z-10;
+  }
+  
+  .chart-loading-overlay .loading-content {
+    @apply text-center;
+  }
+  
+  .chart-loading-overlay .q-spinner {
+    @apply mb-4;
+  }
+  
+  /* Chart error state */
+  .chart-error-state {
+    @apply text-destructive text-center p-5;
+  }
+  
+  .chart-error-state .q-icon {
+    @apply mb-3;
+  }
+  
+  .chart-error-state .error-message {
+    @apply mb-4 text-sm leading-relaxed;
+  }
+  
+  .chart-error-state .q-btn {
+    @apply mt-2;
+  }
+} 

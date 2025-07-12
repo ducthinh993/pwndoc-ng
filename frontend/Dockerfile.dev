@@ -1,7 +1,23 @@
-FROM node:19.8.1-alpine3.16 AS build
+FROM node:20.0.0-alpine3.16
 
+# Install dependencies needed for native modules
+RUN apk --no-cache add --virtual builds-deps build-base python3 git
+
+# Create app directory
 RUN mkdir -p /app
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
+
+# Expose port for Vite dev server
+EXPOSE 8081
+
+# Set environment for development
+ENV NODE_ENV=development
+
+# Start development server
 ENTRYPOINT ["npm", "run", "dev"]

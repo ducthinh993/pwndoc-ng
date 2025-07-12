@@ -1,77 +1,94 @@
-import { Node, NodeSelection } from "@tiptap/core";
+import { Node, NodeSelection } from '@tiptap/core'
 
 export default class Caption extends Node {
   get name() {
-    return "caption";
+    return 'caption'
   }
 
   get schema() {
     return {
       attrs: {
         label: {
-          default: "Figure",
+          default: 'Figure',
         },
         alt: {
-          default: "",
+          default: '',
         },
       },
-      group: "block",
+      group: 'block',
       draggable: true,
       parseDOM: [
         {
-          tag: "legend[alt]",
+          tag: 'legend[alt]',
           getAttrs: (dom) => ({
-            label: dom.getAttribute("label"),
-            alt: dom.getAttribute("alt"),
+            label: dom.getAttribute('label'),
+            alt: dom.getAttribute('alt'),
           }),
         },
       ],
-      toDOM: (node) => ["legend", node.attrs],
-    };
+      toDOM: (node) => ['legend', node.attrs],
+    }
   }
 
   commands({ type }) {
     return (attrs) => (state, dispatch) =>
-      dispatch(state.tr.replaceSelectionWith(type.create(attrs)));
+      dispatch(state.tr.replaceSelectionWith(type.create(attrs)))
   }
 
   get view() {
     return {
-      props: ["node", "updateAttrs"],
+      props: ['node', 'updateAttrs'],
       computed: {
         label: {
           get() {
-            return this.node.attrs.label;
+            return this.node.attrs.label
           },
           set(label) {
             this.updateAttrs({
               label,
-            });
+            })
           },
         },
         alt: {
           get() {
-            return this.node.attrs.alt;
+            return this.node.attrs.alt
           },
           set(alt) {
             this.updateAttrs({
               alt,
-            });
+            })
           },
         },
       },
       template: `
       <div style="margin: 0px auto 16px auto; display: table">
-        <div style="max-width:600px" class="cursor-pointer">
+        <div style="max-width:600px" class="cursor-pointer inline-flex items-center gap-1 p-2 rounded hover:bg-gray-50">
           <span>{{label}} - </span>
-          <span v-if="alt" class="text-italic">{{alt}}</span>
-          <span v-else class="text-italic text-grey-7">Caption</span>
+          <span v-if="alt" class="italic">{{alt}}</span>
+          <span v-else class="italic text-gray-500">Caption</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1 opacity-50">
+            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+            <path d="m15 5 4 4"/>
+          </svg>
         </div>
-        <q-popup-edit v-model="alt" auto-save>
-          <q-input style="width:600px" autofocus :prefix="label+' - '" v-model="alt" placeholder="Caption" />
-        </q-popup-edit>
+        <popup-edit v-model="alt" :auto-save="true" :trigger-class="'w-full max-w-[600px]'">
+          <template #trigger>
+            <div class="w-full max-w-[600px] cursor-pointer inline-flex items-center gap-1 p-2 rounded hover:bg-gray-50">
+              <span>{{label}} - </span>
+              <span v-if="alt" class="italic">{{alt}}</span>
+              <span v-else class="italic text-gray-500">Caption</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1 opacity-50">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                <path d="m15 5 4 4"/>
+              </svg>
+            </div>
+          </template>
+        </popup-edit>
       </div>
       `,
-    };
+      components: {
+        'popup-edit': () => import('@/components/ui/popup-edit.vue'),
+      },
+    }
   }
 }

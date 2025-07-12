@@ -7,7 +7,7 @@ const Router = createRouter({
   base: process.env.VUE_ROUTER_BASE,
   scrollBehavior: () => ({ top: 0 }),
   history: createWebHistory(process.env.VUE_ROUTER_BASE),
-  routes
+  routes,
 })
 
 export default Router

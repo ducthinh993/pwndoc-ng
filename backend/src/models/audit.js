@@ -819,6 +819,70 @@ AuditSchema.statics.updateApprovals = (isAdmin, auditId, userId, update) => {
     });
 }
 
+// Get chart data for audit
+AuditSchema.statics.getChartData = (isAdmin, auditId, userId) => {
+    return new Promise((resolve, reject) => {
+        var chartService = require('../services/chart');
+        
+        Audit.getAudit(isAdmin, auditId, userId)
+        .then(audit => {
+            if (!audit) {
+                throw({fn: 'NotFound', message: 'Audit not found or Insufficient Privileges'});
+            }
+            
+            return chartService.getAuditChartData(audit);
+        })
+        .then(chartData => {
+            resolve(chartData);
+        })
+        .catch(err => {
+            reject(err);
+        });
+    });
+};
+
+// Get severity distribution for audit
+AuditSchema.statics.getSeverityDistribution = (isAdmin, auditId, userId) => {
+    return new Promise((resolve, reject) => {
+        var chartService = require('../services/chart');
+        
+        Audit.getAudit(isAdmin, auditId, userId)
+        .then(audit => {
+            if (!audit) {
+                throw({fn: 'NotFound', message: 'Audit not found or Insufficient Privileges'});
+            }
+            
+            return chartService.getAuditSeverityData(audit);
+        })
+        .then(chartData => {
+            resolve(chartData);
+        })
+        .catch(err => {
+            reject(err);
+        });
+    });
+};
+
+// Get category distribution for audit
+AuditSchema.statics.getCategoryDistribution = (isAdmin, auditId, userId) => {
+    return new Promise((resolve, reject) => {
+        var chartService = require('../services/chart');
+        
+        Audit.getAudit(isAdmin, auditId, userId)
+        .then(audit => {
+            if (!audit) {
+                throw({fn: 'NotFound', message: 'Audit not found or Insufficient Privileges'});
+            }
+            
+            var chartData = chartService.getAuditCategoryData(audit);
+            resolve(chartData);
+        })
+        .catch(err => {
+            reject(err);
+        });
+    });
+};
+
 /*
 *** Methods ***
 */

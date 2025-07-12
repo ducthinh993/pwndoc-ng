@@ -1,767 +1,821 @@
 <template>
-  <div>
-    <q-drawer side="left" :modelValue="true" :width="400">
-      <q-splitter horizontal v-model="splitterRatio" :limits="[50, 80]" style="height: 100%">
-        <template v-slot:before>
-          <q-list class="home-drawer">
-            <q-item style="padding:0px">
-              <q-item-section class="q-mx-md">{{$t('sections')}}</q-item-section>
-              <template v-if="$settings.reviews.enabled">
-              <q-item-section side class="topButtonSection" v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT">
-                <q-btn class="q-mx-xs q-px-xs" size="11px" unelevated dense color="secondary" :label="$t('btn.topButtonSection.submitReview')" no-caps @click="toggleAskReview" >
-                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.topButtonSection.submitReview')}}</q-tooltip> 
-                </q-btn>
-              </q-item-section>
-              <q-item-section side class="topButtonSection" v-if="[AUDIT_VIEW_STATE.REVIEW_EDITOR, AUDIT_VIEW_STATE.REVIEW_ADMIN, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED].includes(frontEndAuditState)">
-                <q-btn class="q-mx-xs q-px-xs" size="11px" unelevated dense color="amber-9" :label="$t('btn.topButtonSection.cancelReview')" no-caps @click="toggleAskReview" >
-                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.topButtonSection.cancelReview')}}</q-tooltip> 
-                </q-btn>
-              </q-item-section>
-              <q-item-section side class="topButtonSection" v-if="[AUDIT_VIEW_STATE.REVIEW, AUDIT_VIEW_STATE.REVIEW_ADMIN].includes(frontEndAuditState)">
-                <q-btn class="q-mx-xs q-px-xs" size="11px" unelevated dense color="green" :label="$t('btn.topButtonSection.approve')" no-caps @click="toggleApproval" >
-                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.topButtonSection.approve')}}</q-tooltip> 
-                </q-btn>
-              </q-item-section>
-              <q-item-section side class="topButtonSection" v-if="[AUDIT_VIEW_STATE.REVIEW_APPROVED, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED, AUDIT_VIEW_STATE.APPROVED_APPROVED].includes(frontEndAuditState)">
-                <q-btn class="q-mx-xs q-px-xs" size="11px" unelevated dense color="warning" :label="$t('btn.topButtonSection.removeApproval')" no-caps @click="toggleApproval" >
-                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.topButtonSection.removeApproval')}}</q-tooltip> 
-                </q-btn>
-              </q-item-section>
-              </template>
-              <q-item-section side class="topButtonSection">
-                <q-btn flat color="info" @click="generateReport">
-                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.downloadReport')}}</q-tooltip> 
-                  <i class="fa fa-download fa-lg"></i>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-  
-            <q-item :to='"/audits/"+auditId+"/general"'>
-              <q-item-section avatar>
-                <q-icon name="fa fa-cog"></q-icon>
-              </q-item-section>
-              <q-item-section>{{$t('generalInformation')}}</q-item-section>
-            </q-item>
-            
-            <div class="row">
-              <div v-for="(user,idx) in generalUsers" :key="idx" class="col multi-colors-bar" :style="{background:user.color}" />
-            </div>
-  
-            <q-item
-            v-if="!currentAuditType || !currentAuditType.hidden.includes('network')"
-            :to="'/audits/'+auditId+'/network'"
-            >
-              <q-item-section avatar>
-                <q-icon name="fa fa-globe"></q-icon>
-              </q-item-section>
-              <q-item-section>{{$t('networkScan')}}</q-item-section>
-            </q-item>
-  
-            <div class="row">
-              <div v-for="(user,idx) in networkUsers" :key="idx" class="col multi-colors-bar" :style="{background:user.color}" />
-            </div>
-  
-            <div v-if="!currentAuditType || !currentAuditType.hidden.includes('findings')">
-              <q-separator class="q-my-sm" />
-              <q-item>
-                <q-item-section avatar>
-                  <q-icon name="fa fa-list"></q-icon>
-                </q-item-section>
-                <q-item-section>{{$t('findings')}} ({{audit.findings.length || 0}})</q-item-section>
-                <q-item-section avatar>
-                  <q-btn
-                  @click="$router.push('/audits/'+auditId+'/findings/add').catch(err=>{})"
-                  icon="add"
-                  round
-                  dense
-                  color="secondary"
-                  v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                  />
-                </q-item-section>
-              </q-item>
-              
-              <div v-for="categoryFindings of findingList" :key="categoryFindings.category">
-                <q-item>
-                  <q-item-section>
-                    <q-item-label header>{{categoryFindings.category}}</q-item-label>
-                  </q-item-section>
-                  <q-item-section avatar>
-                    <q-btn icon="sort" flat v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT">
-                      <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.sortOptions')}}</q-tooltip>
-                      <q-menu content-style="width: 300px" anchor="bottom middle" self="top left">
-                        <q-item>
-                          <q-item-section>
-                            <q-toggle 
-                            v-model="categoryFindings.sortOption.sortAuto" 
-                            :label="$t('automaticSorting')"
-                            @update:modelValue="updateSortFindings"
-                            />
-                          </q-item-section>
-                        </q-item>
-                        <q-separator />
-                        <q-item>
-                          <q-item-section>
-                            <q-item-label>{{$t('sortBy')}}</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                        <q-item>
-                          <q-item-section>
-                            <q-option-group
-                            v-model="categoryFindings.sortOption.sortValue"
-                            :options="getSortOptions(categoryFindings.sortOption.category)"
-                            type="radio"
-                            :disable="!categoryFindings.sortOption.sortAuto"
-                            @update:modelValue="updateSortFindings"
-                            />
-                          </q-item-section>
-                        </q-item>
-                        <q-separator />
-                        <q-item>
-                          <q-item-section>
-                            <q-btn 
-                            flat
-                            icon="fa fa-long-arrow-alt-up"
-                            :label="$t('ascending')"
-                            dense
-                            no-caps
-                            align="left"
-                            :disable="!categoryFindings.sortOption.sortAuto"
-                            :color="(categoryFindings.sortOption.sortOrder === 'asc')?'green':''" 
-                            @click="categoryFindings.sortOption.sortOrder = 'asc'; updateSortFindings()" 
-                            />
-                          </q-item-section>
-                        </q-item>
-                        <q-item>
-                          <q-item-section>
-                            <q-btn 
-                            flat
-                            icon="fa fa-long-arrow-alt-down"
-                            :label="$t('descending')"
-                            dense
-                            no-caps
-                            align="left"
-                            :disable="!categoryFindings.sortOption.sortAuto"
-                            :color="(categoryFindings.sortOption.sortOrder === 'desc')?'green':''" 
-                            @click="categoryFindings.sortOption.sortOrder = 'desc'; updateSortFindings()" 
-                            />
-                          </q-item-section>
-                        </q-item>
-                      </q-menu>
-                    </q-btn>
-                  </q-item-section>
-                </q-item>
-                <q-list no-border>
-                  <draggable
-                  v-model="categoryFindings.findings"
-                  @end="moveFindingPosition($event, categoryFindings.category)"
-                  handle=".handle"
-                  ghost-class="drag-ghost"
-                  item-key="_id"
-                >
-                  <template #item="{ element: finding }">
-                    <div>
-                      <q-item
-                        dense
-                        class="cursor-pointer"
-                        :to="'/audits/' + auditId + '/findings/' + finding._id"
-                      >
-                        <q-item-section
-                          side
-                          v-if="!categoryFindings.sortOption.sortAuto && frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                        >
-                          <q-icon
-                            name="mdi-arrow-split-horizontal"
-                            class="cursor-pointer handle"
-                            color="grey"
-                          />
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-chip
-                            class="text-white"
-                            size="sm"
-                            square
-                            :style="`background: ${getFindingColor(finding)}`"
-                          >
-                            {{ getFindingSeverity(finding).substring(0, 1) }}
-                          </q-chip>
-                        </q-item-section>
-                        <q-item-section>
-                          <span>{{ finding.title }}</span>
-                        </q-item-section>
-                        <q-item-section side v-if="finding.status === 0">
-                          <q-icon name="check" color="green" />
-                        </q-item-section>
-                      </q-item>
+  <div class="flex h-screen bg-background">
+    <!-- Left Sidebar -->
+    <div class="flex w-96 flex-col border-r border-border">
+      <!-- Splitter Component -->
+      <div class="flex flex-1 flex-col">
+        <!-- Top Section (Sections Navigation) -->
+        <div :style="{ height: `${splitterRatio}%` }" class="flex min-h-0 flex-col">
+          <!-- Header with action buttons -->
+          <div class="border-b border-border p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold">
+                {{ $t('sections') }}
+              </h3>
 
-                      <div class="row">
+              <div class="flex items-center space-x-2">
+                <!-- Review/Approval buttons -->
+                <template v-if="$settings.reviews.enabled">
+                  <Button
+                    v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
+                    size="sm"
+                    variant="secondary"
+                    @click="toggleAskReview"
+                  >
+                    {{ $t('btn.topButtonSection.submitReview') }}
+                  </Button>
+
+                  <Button
+                    v-if="[AUDIT_VIEW_STATE.REVIEW_EDITOR, AUDIT_VIEW_STATE.REVIEW_ADMIN, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED].includes(frontEndAuditState)"
+                    size="sm"
+                    variant="outline"
+                    @click="toggleAskReview"
+                  >
+                    {{ $t('btn.topButtonSection.cancelReview') }}
+                  </Button>
+
+                  <Button
+                    v-if="[AUDIT_VIEW_STATE.REVIEW, AUDIT_VIEW_STATE.REVIEW_ADMIN].includes(frontEndAuditState)"
+                    size="sm"
+                    variant="default"
+                    @click="toggleApproval"
+                  >
+                    {{ $t('btn.topButtonSection.approve') }}
+                  </Button>
+
+                  <Button
+                    v-if="[AUDIT_VIEW_STATE.REVIEW_APPROVED, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED, AUDIT_VIEW_STATE.APPROVED_APPROVED].includes(frontEndAuditState)"
+                    size="sm"
+                    variant="outline"
+                    @click="toggleApproval"
+                  >
+                    {{ $t('btn.topButtonSection.removeApproval') }}
+                  </Button>
+                </template>
+
+                <!-- Download report button -->
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  @click="generateReport"
+                >
+                  <Download class="size-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Items -->
+          <div class="flex-1 overflow-y-auto p-2">
+            <!-- General Information -->
+            <div
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
+              :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/general') }"
+              @click="$router.push(`/audits/${auditId}/general`)"
+            >
+              <Settings class="size-5" />
+              <span>{{ $t('generalInformation') }}</span>
+            </div>
+
+            <!-- User activity indicator for general -->
+            <div v-if="generalUsers.length > 0" class="mx-3 mb-2 flex h-1">
+              <div
+                v-for="(user, idx) in generalUsers"
+                :key="idx"
+                class="h-full flex-1"
+                :style="{ backgroundColor: user.color }"
+              />
+            </div>
+
+            <!-- Network Scan -->
+            <div
+              v-if="!currentAuditType || !currentAuditType.hidden.includes('network')"
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
+              :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/network') }"
+              @click="$router.push(`/audits/${auditId}/network`)"
+            >
+              <Globe class="size-5" />
+              <span>{{ $t('networkScan') }}</span>
+            </div>
+
+            <!-- User activity indicator for network -->
+            <div v-if="networkUsers.length > 0" class="mx-3 mb-2 flex h-1">
+              <div
+                v-for="(user, idx) in networkUsers"
+                :key="idx"
+                class="h-full flex-1"
+                :style="{ backgroundColor: user.color }"
+              />
+            </div>
+
+            <!-- Charts -->
+            <div
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
+              :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/charts') }"
+              @click="$router.push(`/audits/${auditId}/charts`)"
+            >
+              <PieChart class="size-5" />
+              <span>{{ $t('charts') }}</span>
+            </div>
+
+            <!-- User activity indicator for charts -->
+            <div v-if="chartUsers.length > 0" class="mx-3 mb-2 flex h-1">
+              <div
+                v-for="(user, idx) in chartUsers"
+                :key="idx"
+                class="h-full flex-1"
+                :style="{ backgroundColor: user.color }"
+              />
+            </div>
+
+            <!-- Findings Section -->
+            <div v-if="!currentAuditType || !currentAuditType.hidden.includes('findings')">
+              <Separator class="my-4" />
+
+              <!-- Findings Header -->
+              <div class="flex items-center justify-between p-3">
+                <div class="flex items-center space-x-3">
+                  <List class="size-5" />
+                  <span>{{ $t('findings') }} ({{ audit.findings.length || 0 }})</span>
+                </div>
+
+                <Button
+                  v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
+                  size="sm"
+                  variant="secondary"
+                  @click="$router.push(`/audits/${auditId}/findings/add`)"
+                >
+                  <Plus class="size-4" />
+                </Button>
+              </div>
+
+              <!-- Findings by Category -->
+              <div v-for="categoryFindings in findingList" :key="categoryFindings.category" class="mb-4">
+                <div class="flex items-center justify-between rounded-lg bg-muted p-2">
+                  <h4 class="font-medium">
+                    {{ categoryFindings.category }}
+                  </h4>
+
+                  <!-- Sort options -->
+                  <DropdownMenu v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT">
+                    <DropdownMenuTrigger as-child>
+                      <Button variant="ghost" size="sm">
+                        <ArrowUpDown class="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="w-72">
+                      <DropdownMenuItem>
+                        <div class="flex items-center space-x-2">
+                          <Switch
+                            v-model:checked="categoryFindings.sortOption.sortAuto"
+                            @update:checked="updateSortFindings"
+                          />
+                          <Label>{{ $t('automaticSorting') }}</Label>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>{{ $t('sortBy') }}</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        v-for="option in getSortOptions(categoryFindings.sortOption.category)"
+                        :key="option.value"
+                        @click="categoryFindings.sortOption.sortValue = option.value; updateSortFindings()"
+                      >
+                        <div class="flex items-center space-x-2">
+                          <div class="flex size-4 items-center justify-center rounded-full border-2 border-primary">
+                            <div
+                              v-if="categoryFindings.sortOption.sortValue === option.value"
+                              class="size-2 rounded-full bg-primary"
+                            />
+                          </div>
+                          <span>{{ option.label }}</span>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        @click="categoryFindings.sortOption.sortOrder = 'asc'; updateSortFindings()"
+                      >
+                        <ArrowUp class="mr-2 size-4" />
+                        {{ $t('ascending') }}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        @click="categoryFindings.sortOption.sortOrder = 'desc'; updateSortFindings()"
+                      >
+                        <ArrowDown class="mr-2 size-4" />
+                        {{ $t('descending') }}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <!-- Draggable Findings List -->
+                <div class="ml-2">
+                  <draggable
+                    v-model="categoryFindings.findings"
+                    handle=".drag-handle"
+                    ghost-class="opacity-50"
+                    item-key="_id"
+                    class="space-y-1"
+                    @end="moveFindingPosition($event, categoryFindings.category)"
+                  >
+                    <template #item="{ element: finding }">
+                      <div
+                        class="flex cursor-pointer items-center space-x-2 rounded-lg p-2 transition-colors hover:bg-muted"
+                        :class="{ 'bg-primary text-primary-foreground': $route.params.findingId === finding._id }"
+                        @click="$router.push(`/audits/${auditId}/findings/${finding._id}`)"
+                      >
+                        <!-- Drag handle -->
+                        <div
+                          v-if="!categoryFindings.sortOption.sortAuto && frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
+                          class="drag-handle cursor-move"
+                        >
+                          <GripVertical class="size-4 text-muted-foreground" />
+                        </div>
+
+                        <!-- Severity badge -->
+                        <div
+                          class="flex size-8 items-center justify-center rounded text-sm font-bold text-white"
+                          :style="{ backgroundColor: getFindingColor(finding) }"
+                        >
+                          {{ getFindingSeverity(finding).substring(0, 1) }}
+                        </div>
+
+                        <!-- Finding title -->
+                        <div class="min-w-0 flex-1">
+                          <p class="truncate">
+                            {{ finding.title }}
+                          </p>
+                        </div>
+
+                        <!-- Status indicator -->
+                        <div v-if="finding.status === 0" class="shrink-0">
+                          <Check class="size-4 text-green-600" />
+                        </div>
+                      </div>
+
+                      <!-- User activity indicator -->
+                      <div v-if="filteredFindingUsers(finding._id).length > 0" class="ml-10 flex h-1">
                         <div
                           v-for="user in filteredFindingUsers(finding._id)"
                           :key="user._id"
-                          class="col multi-colors-bar"
-                          :style="{ background: user.color }"
+                          class="h-full flex-1"
+                          :style="{ backgroundColor: user.color }"
                         />
                       </div>
-                    </div>
-                  </template>
-                </draggable>
-
-                </q-list>
+                    </template>
+                  </draggable>
+                </div>
               </div>
-              <q-separator class="q-my-sm" />
+
+              <Separator class="my-4" />
             </div>
-            <q-list v-for="section of audit.sections" :key="section._id">
-              <q-item :to="'/audits/'+auditId+'/sections/'+section._id">
-                <q-item-section avatar>
-                  <q-icon :name="getSectionIcon(section)"></q-icon>
-                </q-item-section>
-                <q-item-section>
-                  <span>{{section.name}}</span>
-                </q-item-section>
-              </q-item>
-              <div class="row">
-                <div v-for="(user, idx) in filteredSectionUsers(section._id)" :key="user._id || idx" class="col multi-colors-bar" :style="{ background: user.color }" />
+
+            <!-- Custom Sections -->
+            <div v-for="section in audit.sections" :key="section._id" class="mb-2">
+              <div
+                class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
+                :class="{ 'bg-primary text-primary-foreground': $route.params.sectionId === section._id }"
+                @click="$router.push(`/audits/${auditId}/sections/${section._id}`)"
+              >
+                <component :is="getSectionIcon(section)" class="size-5" />
+                <span>{{ section.name }}</span>
               </div>
-            </q-list>
-          </q-list>
-        </template>
-        <template v-slot:after>
-          <q-list>
-            <q-separator />
-            <q-item class="q-py-lg">
-              <q-item-section avatar>
-                <q-icon name="fa fa-user"></q-icon>
-              </q-item-section>
-              <q-item-section>{{$t('usersConnected')}}</q-item-section>	
-            </q-item>
-            <q-list dense>
-              <q-item v-for="user of users" :key="user._id">
-                <q-item-section side>
-                  <q-chip :style="{'background-color':user.color}" square size="sm" />
-                </q-item-section>
-                <q-item-section>
-                  <span v-if="user.me">{{user.username}} ({{$t('me')}})</span>
-                  <span v-else>{{user.username}}</span>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-list>
-        </template>
-        
-      </q-splitter>
-    </q-drawer>
-    <router-view :key="$route.fullPath" :frontEndAuditState="frontEndAuditState" :parentState="audit.state" :parentApprovals="audit.approvals"  :audit="audit" />
+
+              <!-- User activity indicator for section -->
+              <div v-if="filteredSectionUsers(section._id).length > 0" class="mx-3 mb-2 flex h-1">
+                <div
+                  v-for="(user, idx) in filteredSectionUsers(section._id)"
+                  :key="user._id || idx"
+                  class="h-full flex-1"
+                  :style="{ backgroundColor: user.color }"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Splitter Handle -->
+        <div class="flex cursor-row-resize justify-center bg-muted py-1 hover:bg-muted/80" @mousedown="startSplitterDrag">
+          <div class="h-1 w-8 rounded-full bg-border" />
+        </div>
+
+        <!-- Bottom Section (Connected Users) -->
+        <div :style="{ height: `${100 - splitterRatio}%` }" class="flex min-h-0 flex-col">
+          <div class="border-b border-border p-4">
+            <div class="flex items-center space-x-3">
+              <Users class="size-5" />
+              <span class="font-medium">{{ $t('usersConnected') }}</span>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-2">
+            <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 rounded-lg p-2">
+              <div
+                class="size-4 rounded"
+                :style="{ backgroundColor: user.color }"
+              />
+              <span class="text-sm">
+                {{ user.username }}
+                <span v-if="user.me" class="text-muted-foreground">({{ $t('me') }})</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </template>
-  
-  <script>
-import { defineComponent } from 'vue';
 
-import { Loading, Notify, QSpinnerGears } from 'quasar';
+    <!-- Main Content Area -->
+    <div class="min-w-0 flex-1">
+      <router-view
+        :key="$route.fullPath"
+        :front-end-audit-state="frontEndAuditState"
+        :parent-state="audit.state"
+        :parent-approvals="audit.approvals"
+        :audit="audit"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 import draggable from 'vuedraggable'
+import _ from 'lodash'
 
-import AuditService from '@/services/audit';
-import UserService from '@/services/user';
-import DataService from '@/services/data';
-import Utils from '@/services/utils';
+// Components
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
-import { $t } from '@/boot/i18n';
+// Icons
+import {
+  Settings,
+  Globe,
+  PieChart,
+  List,
+  Plus,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  GripVertical,
+  Check,
+  Download,
+  Users,
+  FileText,
+} from 'lucide-vue-next'
 
-export default defineComponent({
-  data () {
-      return {
-        auditId: "",
-        findings: [],
-        users: [],
-        audit: {findings: {}},
-        sections: [],
-        splitterRatio: 80,
-        loading: true,
-        vulnCategories: [],
-        customFields: [],
-        auditTypes: [],
-        vulnCategories: [],
-        findingList: [],
-        frontEndAuditState: Utils.AUDIT_VIEW_STATE.EDIT_READONLY,
-        AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE
-      }
-  },
+// Services
+import AuditService from '@/services/audit'
+import UserService from '@/services/user'
+import DataService from '@/services/data'
+import Utils from '@/services/utils'
+import { CVSS31 } from '@/boot/cvss'
 
-  components: {
-    draggable
-  },
+// Composables
+import { $t } from '@/boot/i18n'
 
-  created: function() {
-    Loading.show();
-    this.auditId = this.$route.params.auditId;
-    this.getCustomFields();
-    this.getAuditTypes();
-    this.getAudit(); // Calls getSections
-    Loading.hide();				
-  },
+const route = useRoute()
+const router = useRouter()
+const { toast } = useToast()
 
-  unmounted: function() {
-    if (!this.loading) {
-      this.$socket.emit('leave', {username: UserService.user.username, room: this.auditId});
-      this.$socket.off()
+// Reactive data
+const auditId = ref('')
+const findings = ref([])
+const users = ref([])
+const audit = ref({ findings: {}, sections: [], sortFindings: [] })
+const sections = ref([])
+const splitterRatio = ref(80)
+const loading = ref(true)
+const vulnCategories = ref([])
+const customFields = ref([])
+const auditTypes = ref([])
+const findingList = ref([])
+const frontEndAuditState = ref(Utils.AUDIT_VIEW_STATE.EDIT_READONLY)
+const AUDIT_VIEW_STATE = Utils.AUDIT_VIEW_STATE
+
+// Computed properties
+const generalUsers = computed(() => users.value.filter(user => user.menu === 'general'))
+const networkUsers = computed(() => users.value.filter(user => user.menu === 'network'))
+const chartUsers = computed(() => users.value.filter(user => user.menu === 'charts'))
+const findingUsers = computed(() => users.value.filter(user => user.menu === 'editFinding'))
+const sectionUsers = computed(() => users.value.filter(user => user.menu === 'editSection'))
+
+const currentAuditType = computed(() => {
+  return auditTypes.value.find(e => e.name === audit.value.auditType)
+})
+
+// Methods
+const getFindingColor = (finding) => {
+  const severity = getFindingSeverity(finding)
+
+  if (window.$settings?.report?.public?.cvssColors) {
+    const severityColorName = `${severity.toLowerCase()}Color`
+    const cvssColors = window.$settings.report.public.cvssColors
+    return cvssColors[severityColorName] || cvssColors.noneColor
+  } else {
+    switch (severity) {
+    case 'Low': return '#22c55e'
+    case 'Medium': return '#f97316'
+    case 'High': return '#ef4444'
+    case 'Critical': return '#1f2937'
+    default: return '#3b82f6'
     }
-  },
+  }
+}
 
-  watch: {
-    'audit.findings': {
-      handler(newVal, oldVal) {
-        var result = _.chain(this.audit.findings)
-        .groupBy("category")
-        .map((value, key) => {
-          if (key === 'undefined') key = 'No Category'
-          var sortOption = this.audit.sortFindings.find(option => option.category === key) // Get sort option saved in audit
-          
-          if (!sortOption) { // no option for category in audit
-            sortOption = this.vulnCategories.find(e => e.name === key) // Get sort option from default in vulnerability category
-            if (sortOption) // found sort option from vuln categories
-              sortOption.category = sortOption.name
-            else // no default option or category don't exist
-              sortOption = {category: key, sortValue: 'cvssScore', sortOrder: 'desc', sortAuto: true} // set a default sort option
-            
-            this.audit.sortFindings.push({
-              category: sortOption.category,
-              sortValue: sortOption.sortValue,
-              sortOrder: sortOption.sortOrder,
-              sortAuto: sortOption.sortAuto
-            })
+const filteredFindingUsers = (findingId) => {
+  return findingUsers.value.filter(user => user.finding === findingId)
+}
+
+const filteredSectionUsers = (sectionId) => {
+  return sectionUsers.value.filter(user => user.section === sectionId)
+}
+
+const getFindingSeverity = (finding) => {
+  let severity = 'None'
+  const cvss = CVSS31.calculateCVSSFromVector(finding.cvssv3)
+
+  if (cvss.success) {
+    const score = cvss.score
+    if (score >= 9.0) severity = 'Critical'
+    else if (score >= 7.0) severity = 'High'
+    else if (score >= 4.0) severity = 'Medium'
+    else if (score >= 0.1) severity = 'Low'
+  }
+
+  return severity
+}
+
+const getSectionIcon = (section) => {
+  const sectionData = sections.value.find(e => e.field === section.field)
+
+  // Map common icons to Lucide icons
+  const iconMap = {
+    'fa fa-cog': Settings,
+    'fa fa-globe': Globe,
+    'fa fa-chart-pie': PieChart,
+    'fa fa-list': List,
+    'fa fa-file-text': FileText,
+    'notes': FileText,
+  }
+
+  const iconName = sectionData?.icon || 'notes'
+  return iconMap[iconName] || FileText
+}
+
+const getSortOptions = (category) => {
+  // Return available sort options for findings
+  return [
+    { label: $t('cvssScore'), value: 'cvssScore' },
+    { label: $t('title'), value: 'title' },
+    { label: $t('severity'), value: 'severity' },
+    { label: $t('position'), value: 'position' },
+  ]
+}
+
+const getMenuSection = () => {
+  const routeName = route.name
+
+  if (routeName === 'general') {
+    return { menu: 'general', room: auditId.value }
+  } else if (routeName === 'network') {
+    return { menu: 'network', room: auditId.value }
+  } else if (routeName === 'charts') {
+    return { menu: 'charts', room: auditId.value }
+  } else if (routeName === 'addFindings') {
+    return { menu: 'addFindings', room: auditId.value }
+  } else if (routeName === 'editFinding' && route.params.findingId) {
+    return { menu: 'editFinding', finding: route.params.findingId, room: auditId.value }
+  } else if (routeName === 'editSection' && route.params.sectionId) {
+    return { menu: 'editSection', section: route.params.sectionId, room: auditId.value }
+  }
+
+  return { menu: 'undefined', room: auditId.value }
+}
+
+const handleSocket = () => {
+  const socket = window.$socket
+  if (!socket) return
+
+  socket.emit('join', { username: UserService.user.username, room: auditId.value })
+
+  socket.on('roomUsers', (socketUsers) => {
+    let userIndex = 0
+    users.value = socketUsers.map((user, index) => {
+      if (user.username === UserService.user.username) {
+        user.color = '#77C84E'
+        user.me = true
+        userIndex = index
+      }
+      return user
+    })
+    users.value.unshift(users.value.splice(userIndex, 1)[0])
+  })
+
+  socket.on('updateUsers', () => {
+    socket.emit('updateUsers', { room: auditId.value })
+  })
+
+  socket.on('updateAudit', () => {
+    getAudit()
+  })
+
+  socket.on('disconnect', () => {
+    socket.emit('join', { username: UserService.user.username, room: auditId.value })
+    socket.emit('menu', getMenuSection())
+  })
+}
+
+const isUserAReviewer = () => {
+  const isAuthor = audit.value.creator._id === UserService.user.id
+  const isCollaborator = audit.value.collaborators.some(element => element._id === UserService.user.id)
+  const isReviewer = audit.value.reviewers.some(element => element._id === UserService.user.id)
+  const hasReviewAll = UserService.isAllowed('audits:review-all')
+
+  return !(isAuthor || isCollaborator) && (isReviewer || hasReviewAll)
+}
+
+const isUserAnEditor = () => {
+  const isAuthor = audit.value.creator._id === UserService.user.id
+  const isCollaborator = audit.value.collaborators.some(element => element._id === UserService.user.id)
+  const hasUpdateAll = UserService.isAllowed('audits:update-all')
+
+  return (isAuthor || isCollaborator || hasUpdateAll)
+}
+
+const userHasAlreadyApproved = () => {
+  return audit.value.approvals.some(element => element._id === UserService.user.id)
+}
+
+const getUIState = () => {
+  if (!window.$settings?.reviews?.enabled || audit.value.state === 'EDIT') {
+    frontEndAuditState.value = isUserAnEditor() ? Utils.AUDIT_VIEW_STATE.EDIT : Utils.AUDIT_VIEW_STATE.EDIT_READONLY
+  } else if (audit.value.state === 'REVIEW') {
+    if (!isUserAReviewer()) {
+      frontEndAuditState.value = isUserAnEditor() ? Utils.AUDIT_VIEW_STATE.REVIEW_EDITOR : Utils.AUDIT_VIEW_STATE.REVIEW_READONLY
+      return
+    }
+    if (isUserAnEditor()) {
+      frontEndAuditState.value = userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED : Utils.AUDIT_VIEW_STATE.REVIEW_ADMIN
+      return
+    }
+    frontEndAuditState.value = userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.REVIEW_APPROVED : Utils.AUDIT_VIEW_STATE.REVIEW
+  } else if (audit.value.state === 'APPROVED') {
+    if (!isUserAReviewer()) {
+      frontEndAuditState.value = Utils.AUDIT_VIEW_STATE.APPROVED_READONLY
+    } else {
+      frontEndAuditState.value = userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.APPROVED_APPROVED : Utils.AUDIT_VIEW_STATE.APPROVED
+    }
+  }
+}
+
+const getAudit = async () => {
+  try {
+    // Get vulnerability categories first
+    const vulnCategoriesResponse = await DataService.getVulnerabilityCategories()
+    vulnCategories.value = vulnCategoriesResponse.data.datas
+
+    // Get audit data
+    const auditResponse = await AuditService.getAudit(auditId.value)
+    audit.value = auditResponse.data.datas
+
+    getUIState()
+    await getSections()
+
+    if (loading.value) {
+      handleSocket()
+    }
+
+    loading.value = false
+  } catch (error) {
+    if (error.response.status === 403) {
+      router.push({ name: '403', params: { error: error.response.data.datas } })
+    } else if (error.response.status === 404) {
+      router.push({ name: '404', params: { error: error.response.data.datas } })
+    }
+  }
+}
+
+const getCustomFields = async () => {
+  try {
+    const response = await DataService.getCustomFields()
+    customFields.value = response.data.datas
+  } catch (error) {
+    console.error('Error fetching custom fields:', error)
+  }
+}
+
+const getSections = async () => {
+  try {
+    const response = await DataService.getSections()
+    sections.value = response.data.datas
+  } catch (error) {
+    console.error('Error fetching sections:', error)
+  }
+}
+
+const getAuditTypes = async () => {
+  try {
+    const response = await DataService.getAuditTypes()
+    auditTypes.value = response.data.datas
+  } catch (error) {
+    console.error('Error fetching audit types:', error)
+  }
+}
+
+const generateReport = async () => {
+  try {
+    const response = await AuditService.generateReport(auditId.value)
+    // Handle file download
+    const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${audit.value.name || 'report'}.docx`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('Error generating report:', error)
+  }
+}
+
+const toggleAskReview = async () => {
+  try {
+    const newState = audit.value.state === 'EDIT' ? 'REVIEW' : 'EDIT'
+    await AuditService.updateReadyForReview(auditId.value, { state: newState })
+
+    audit.value.state = newState
+    getUIState()
+
+    toast({
+      title: $t('success'),
+      description: $t('msg.auditReviewUpdateOk'),
+      variant: 'default',
+    })
+  } catch (error) {
+    toast({
+      title: $t('error'),
+      description: error.response?.data?.datas || error.message,
+      variant: 'destructive',
+    })
+  }
+}
+
+const toggleApproval = async () => {
+  try {
+    await AuditService.toggleApproval(auditId.value)
+
+    toast({
+      title: $t('success'),
+      description: $t('msg.auditApprovalUpdateOk'),
+      variant: 'default',
+    })
+  } catch (error) {
+    toast({
+      title: $t('error'),
+      description: error.response?.data?.datas || error.message,
+      variant: 'destructive',
+    })
+  }
+}
+
+const moveFindingPosition = async (event, category) => {
+  try {
+    const { oldIndex, newIndex } = event
+    if (oldIndex === newIndex) return
+
+    const categoryData = findingList.value.find(item => item.category === category)
+    if (!categoryData) return
+
+    const finding = categoryData.findings[newIndex]
+
+    await AuditService.updateFindingPosition(auditId.value, finding._id, {
+      position: newIndex,
+      category,
+    })
+  } catch (error) {
+    console.error('Error updating finding position:', error)
+  }
+}
+
+const updateSortFindings = async () => {
+  try {
+    await AuditService.updateSortFindings(auditId.value, audit.value.sortFindings)
+
+    toast({
+      title: $t('success'),
+      description: $t('msg.sortFindingsUpdated'),
+      variant: 'default',
+    })
+  } catch (error) {
+    console.error('Error updating sort findings:', error)
+  }
+}
+
+// Splitter functionality
+const startSplitterDrag = (event) => {
+  const startY = event.clientY
+  const startRatio = splitterRatio.value
+
+  const handleMouseMove = (e) => {
+    const deltaY = e.clientY - startY
+    const containerHeight = e.target.closest('.flex-col').offsetHeight
+    const deltaRatio = (deltaY / containerHeight) * 100
+
+    const newRatio = Math.max(20, Math.min(80, startRatio + deltaRatio))
+    splitterRatio.value = newRatio
+  }
+
+  const handleMouseUp = () => {
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleMouseUp)
+  }
+
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+}
+
+// Watch for audit findings changes
+watch(
+  () => audit.value.findings,
+  (newVal) => {
+    if (!newVal) return
+
+    const result = _.chain(audit.value.findings)
+      .groupBy('category')
+      .map((value, key) => {
+        if (key === 'undefined') key = 'No Category'
+
+        let sortOption = audit.value.sortFindings.find(option => option.category === key)
+
+        if (!sortOption) {
+          sortOption = vulnCategories.value.find(e => e.name === key)
+          if (sortOption) {
+            sortOption.category = sortOption.name
+          } else {
+            sortOption = { category: key, sortValue: 'cvssScore', sortOrder: 'desc', sortAuto: true }
           }
-          
-          return {category: key, findings: value, sortOption: sortOption}
-        })
-        .value()
 
-        this.findingList = result
-      },
-      deep: true,
-      immediate: true
-    }
-  },
-
-  computed: {
-    generalUsers: function() {return this.users.filter(user => user.menu === 'general')},
-    networkUsers: function() {return this.users.filter(user => user.menu === 'network')},
-    findingUsers: function() {return this.users.filter(user => user.menu === 'editFinding')},
-    sectionUsers: function() {return this.users.filter(user => user.menu === 'editSection')},
-
-    currentAuditType: function() {
-      return this.auditTypes.find(e => e.name === this.audit.auditType)
-    }
-  },
-
-  methods: {
-    getFindingColor: function(finding) {
-      let severity = this.getFindingSeverity(finding)
-
-      if(this.$settings.report) {
-        const severityColorName = `${severity.toLowerCase()}Color`;
-        const cvssColors = this.$settings.report.public.cvssColors;
-
-        return cvssColors[severityColorName] || cvssColors.noneColor;
-      } else {
-        switch(severity) {
-          case "Low": 
-            return "green";
-          case "Medium":
-            return "orange";
-          case "High":
-            return "red";
-          case "Critical":
-            return "black";
-          default:
-            return "blue";
-        }
-      }
-    },
-    filteredFindingUsers(findingId) {
-      return this.findingUsers.filter(user => user.finding === findingId)
-    },
-    filteredSectionUsers(sectionId) {
-      return this.sectionUsers.filter(user => user.section === sectionId)
-    },
-    getFindingSeverity: function(finding) {
-      let severity = "None"
-      let cvss = CVSS31.calculateCVSSFromVector(finding.cvssv3)
-      if (cvss.success) {
-        severity = cvss.baseSeverity
-
-        let category = finding.category || "No Category"
-        let sortOption = this.audit.sortFindings.find(e => e.category === category)
-
-        if (sortOption) {
-          if (sortOption.sortValue === "cvssEnvironmentalScore")
-            severity = cvss.environmentalSeverity
-          else if (sortOption.sortValue === "cvssTemporalScore")
-            severity = cvss.temporalSeverity
-        }
-      }
-      return severity
-    },
-
-    getMenuSection: function() {
-      if (this.$router.currentRoute.name && this.$router.currentRoute.name === 'general')
-        return {menu: 'general', room: this.auditId}
-      else if (this.$router.currentRoute.name && this.$router.currentRoute.name === 'network')
-        return {menu: 'network', room: this.auditId}
-      else if (this.$router.currentRoute.name && this.$router.currentRoute.name === 'addFindings')
-        return {menu: 'addFindings', room: this.auditId}
-      else if (this.$router.currentRoute.name && this.$router.currentRoute.name === 'editFinding' && this.$router.currentRoute.params.findingId)
-        return {menu: 'editFinding', finding: this.$router.currentRoute.params.findingId, room: this.auditId}
-      else if (this.$router.currentRoute.name && this.$router.currentRoute.name === 'editSection' && this.$router.currentRoute.params.sectionId)
-        return {menu: 'editSection', section: this.$router.currentRoute.params.sectionId, room: this.auditId}
-      
-      return {menu: 'undefined', room: this.auditId}
-    },
-
-    // Sockets handle
-    handleSocket: function() {
-      this.$socket.emit('join', {username: UserService.user.username, room: this.auditId});
-      this.$socket.on('roomUsers', (users) => {
-        var userIndex = 0;
-        this.users = users.map((user,index) => {
-          if (user.username === UserService.user.username) {
-            user.color = "#77C84E";
-            user.me = true;
-            userIndex = index;
-          }
-          return user;
-        });
-        this.users.unshift(this.users.splice(userIndex, 1)[0]);
-      })
-      this.$socket.on('updateUsers', () => {
-        this.$socket.emit('updateUsers', {room: this.auditId})
-      })
-      this.$socket.on('updateAudit', () => {
-        this.getAudit();
-      })
-      this.$socket.on('disconnect', () => {
-        this.$socket.emit('join', {username: UserService.user.username, room: this.auditId})
-        this.$socket.emit('menu', this.getMenuSection())
-      })
-    },
-    // Tells the UI if the user is supposed to be reviewing the audit
-    isUserAReviewer: function() {
-      var isAuthor = this.audit.creator._id === UserService.user.id;
-      var isCollaborator = this.audit.collaborators.some((element) => element._id === UserService.user.id);
-      var isReviewer = this.audit.reviewers.some((element) => element._id === UserService.user.id);
-      var hasReviewAll = UserService.isAllowed('audits:review-all');
-      return !(isAuthor || isCollaborator) && (isReviewer || hasReviewAll);
-    },
-
-    // Tells the UI if the user is supposed to be editing the audit
-    isUserAnEditor: function() {
-      var isAuthor = this.audit.creator._id === UserService.user.id;
-      var isCollaborator = this.audit.collaborators.some((element) => element._id === UserService.user.id);
-      var hasUpdateAll = UserService.isAllowed('audits:update-all');
-      return (isAuthor || isCollaborator || hasUpdateAll);
-    },
-
-    userHasAlreadyApproved: function() {
-      return this.audit.approvals.some((element) => element._id === UserService.user.id);
-    },
-
-    getUIState: function() {
-      if(!this.$settings.reviews.enabled || this.audit.state === "EDIT") {
-        this.frontEndAuditState = this.isUserAnEditor() ? Utils.AUDIT_VIEW_STATE.EDIT : Utils.AUDIT_VIEW_STATE.EDIT_READONLY;
-      } 
-      else if (this.audit.state === "REVIEW") {
-        if (!this.isUserAReviewer()) {
-          this.frontEndAuditState = this.isUserAnEditor()? Utils.AUDIT_VIEW_STATE.REVIEW_EDITOR : Utils.AUDIT_VIEW_STATE.REVIEW_READONLY;
-          return;
-        }
-        if (this.isUserAnEditor()) {
-          this.frontEndAuditState = this.userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED : Utils.AUDIT_VIEW_STATE.REVIEW_ADMIN;
-          return;
-        }
-        this.frontEndAuditState = this.userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.REVIEW_APPROVED : Utils.AUDIT_VIEW_STATE.REVIEW;
-      } 
-      else if (this.audit.state === "APPROVED") {
-        if (!this.isUserAReviewer()) {
-          this.frontEndAuditState = Utils.AUDIT_VIEW_STATE.APPROVED_READONLY;
-        } else {
-          this.frontEndAuditState = this.userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.APPROVED_APPROVED : Utils.AUDIT_VIEW_STATE.APPROVED
-        }
-      }
-    },
-
-    getAudit: function() {
-      DataService.getVulnerabilityCategories() // Vuln Categories must exist before getting audit data for handling default sort options
-      .then(data => {
-        this.vulnCategories = data.data.datas
-        return AuditService.getAudit(this.auditId)
-      })
-      .then((data) => {
-        this.audit = data.data.datas;
-        this.getUIState();
-        this.getSections()
-        if (this.loading)
-          this.handleSocket()
-        this.loading = false
-      })
-      .catch((err) => {
-        if (err.response.status === 403)
-          this.$router.push({name: '403', params: {error: err.response.data.datas}})
-        else if (err.response.status === 404)
-          this.$router.push({name: '404', params: {error: err.response.data.datas}})
-      })
-    },
-
-    getCustomFields: function() {
-      DataService.getCustomFields()
-      .then((data) => {
-        this.customFields = data.data.datas;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    },
-
-    getSections: function() {
-      DataService.getSections()
-      .then((data) => {
-        this.sections = data.data.datas;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    },
-
-    getSectionIcon: function(section) {
-      var section = this.sections.find(e => e.field === section.field)
-      if (section)
-        return section.icon || 'notes'
-      return 'notes'
-    },
-
-    getAuditTypes: function() {
-      DataService.getAuditTypes()
-      .then((data) => {
-        this.auditTypes = data.data.datas;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    },
-
-    // Convert blob to text
-    BlobReader: function(data) {
-      const fileReader = new FileReader();
-
-      return new Promise((resolve, reject) => {
-        fileReader.onerror = () => {
-          fileReader.abort()
-          reject(new Error('Problem parsing blob'));
-        }
-
-        fileReader.onload = () => {
-          resolve(fileReader.result)
-        }
-
-        fileReader.readAsText(data)
-      })
-    },
-
-    generateReport: function() {
-      const downloadNotif = Notify.create({
-        spinner: QSpinnerGears,
-        message: 'Generating the Report',
-        color: "blue",
-        timeout: 0,
-        group: false
-      })
-      AuditService.generateAuditReport(this.auditId)
-      .then(response => {
-        var blob = new Blob([response.data], {type: "application/octet-stream"});
-        var link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = decodeURIComponent(response.headers['content-disposition'].split('"')[1]);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        
-        downloadNotif({
-          icon: 'done',
-          spinner: false,
-          message: 'Report successfully generated',
-          color: 'green',
-          timeout: 2500
-        })
-      })
-      .catch( async err => {
-        var message = "Error generating template"
-        if (err.response && err.response.data) {
-          var blob = new Blob([err.response.data], {type: "application/json"})
-          var blobData = await this.BlobReader(blob)
-          message = JSON.parse(blobData).datas
-        }
-        downloadNotif()
-        Notify.create({
-          message: message,
-          type: 'negative',
-          textColor:'white',
-          position: 'top',
-          closeBtn: true,
-          timeout: 0,
-          classes: "text-pre-wrap"
-        })
-      })
-    },
-
-    updateSortFindings: function() {
-      AuditService.updateAuditSortFindings(this.auditId, {sortFindings: this.audit.sortFindings})
-    },
-
-    getSortOptions: function(category) {
-      var options = [
-        {label: $t('cvssScore'), value: 'cvssScore'},
-        {label: $t('cvssTemporalScore'), value: 'cvssTemporalScore'},
-        {label: $t('cvssEnvironmentalScore'), value: 'cvssEnvironmentalScore'},
-        {label: $t('priority'), value: 'priority'},
-        {label: $t('remediationDifficulty'), value: 'remediationComplexity'}
-      ]
-      var allowedFieldTypes = ['date', 'input', 'radio', 'select']
-      this.customFields.forEach(e => {
-        if (
-          (e.display === 'finding' || e.display === 'vulnerability') && 
-          (!e.displaySub || e.displaySub === category) && 
-          allowedFieldTypes.includes(e.fieldType)
-        ) {
-          options.push({label: e.label, value: e.label})
-        }
-      })
-      return options
-    },
-
-    moveFindingPosition: function(event, category) {
-      var index = this.audit.findings.findIndex(e => {
-        if (category === 'No Category')
-          return !e.category
-        else
-          return e.category === category
-      })
-      if (index > -1) {
-        var realOldIndex = event.oldIndex + index
-        var realNewIndex = event.newIndex + index
-
-        AuditService.updateAuditFindingPosition(this.auditId, {oldIndex: realOldIndex, newIndex: realNewIndex})
-        .then(msg => this.getAudit())
-        .catch(err => {
-          console.log(err.response.data.datas)
-          Notify.create({
-            message: err.response.data.datas || err.message,
-            color: 'negative',
-            textColor:'white',
-            position: 'top-right'
+          audit.value.sortFindings.push({
+            category: sortOption.category,
+            sortValue: sortOption.sortValue,
+            sortOrder: sortOption.sortOrder,
+            sortAuto: sortOption.sortAuto,
           })
-          this.getAudit()
-        })
-      }
-    },
+        }
 
-    toggleAskReview: function() {
-      AuditService.updateReadyForReview(this.auditId, { state: this.audit.state === "EDIT" ? "REVIEW" : "EDIT" })
-      .then(() => {
-        this.audit.state = this.audit.state === "EDIT" ? "REVIEW" : "EDIT";
-        this.getUIState();
-        Notify.create({
-          message: $t('msg.auditReviewUpdateOk'),
-          color: 'positive',
-          textColor:'white',
-          position: 'top-right'
-        })
+        return { category: key, findings: value, sortOption }
       })
-      .catch((err) => {     
-        console.log(err)
-        Notify.create({
-          message: err.response.data.datas || err.message,
-          color: 'negative',
-          textColor:'white',
-          position: 'top-right'
-        })
-      });
-    },
+      .value()
 
-    toggleApproval: function() {
-      AuditService.toggleApproval(this.auditId)
-      .then(() => {
-        Notify.create({
-          message: $t('msg.auditApprovalUpdateOk'),
-          color: 'positive',
-          textColor:'white',
-          position: 'top-right'
-        })
-      })
-      .catch((err) => {          
-        console.log(err)
-        Notify.create({
-          message: err.response.data.datas || err.message,
-          color: 'negative',
-          textColor:'white',
-          position: 'top-right'
-        })
-      });
-    }
+    findingList.value = result
   },
-});
+  { deep: true, immediate: true },
+)
+
+// Initialize component
+onMounted(() => {
+  auditId.value = route.params.auditId
+  getCustomFields()
+  getAuditTypes()
+  getAudit()
+})
+
+// Cleanup
+onUnmounted(() => {
+  if (!loading.value && window.$socket) {
+    window.$socket.emit('leave', { username: UserService.user.username, room: auditId.value })
+    window.$socket.off()
+  }
+})
 </script>
-  
-  <style lang="stylus">
-  .edit-container {
-      margin-top: 50px;
-      /*margin-left: 0px; Cancel q-col-gutter-md for left*/
-      /*margin-right: 16px; Cancel q-col-gutter-md for right*/
-  }
-  
-  .edit-breadcrumb {
-      position: fixed;
-      top: 50px;
-      right: 0;
-      left: 300px;
-      z-index: 1;
-  }
-  
-  .q-menu > .q-item--active {
-      color: white;
-      background-color: $blue-14;
-  }
-  
-  .card-screenshots {
-    height: calc(100vh - 120px); /* 100% Full-height */
-    overflow-x: hidden; /* Disable horizontal scroll */
-    margin-right: 16px;
-  }
-  
-  .affix {
-    width: calc(16.6667% - 69px);
-  }
-  
-  .caption-text input {
-      text-align: center;
-  }
-  
-  .multi-colors-bar {
-    height: 5px;
-  }
-  
-  .drawer-footer {
-    // left: 0!important;
-    // height: 30%;
-    background-color: white;
-    color: black;
-    font-size: 12px;
-  }
-  
-  .edit-drawer {
-    // height: 70%;
-  
-  }
-  
-  .topButtonSection {
-      padding-left: 0px!important;
-    padding-right: 0px!important;
-  }
-  </style>
-  
+
+<style scoped>
+.drag-ghost {
+  opacity: 0.5;
+}
+
+.multi-colors-bar {
+  height: 4px;
+}
+
+.cursor-move {
+  cursor: move;
+}
+
+.cursor-row-resize {
+  cursor: row-resize;
+}
+</style>

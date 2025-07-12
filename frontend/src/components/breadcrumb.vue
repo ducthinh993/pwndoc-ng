@@ -1,92 +1,159 @@
 <template>
-    <q-card flat color="white" text-color="black" class="row card-breadcrumb">
-        <q-btn 
-        v-if="typeof(buttons) !== 'undefined'" 
-        flat 
-        color="secondary"
-        @click="$router.push('/audits')"
-        >
-            <i class="fa fa-home fa-lg"></i>
-        </q-btn>
-        <span v-if="typeof(title) === 'undefined'" class="breadcrumb-title">{{bread[last].name}}</span>
-        <div v-else-if="$settings.reviews.enabled && state !== 'EDIT'" class="breadcrumb-title">
-            <span class="text-bold">{{title}}</span> 
-            <audit-state-icon class="q-mx-sm" :approvals="approvals" :state="state"/>
+  <div class="border-b border-border bg-card">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex min-h-[38px] items-center justify-between">
+        <!-- Left side: Home button + Title/Breadcrumb -->
+        <div class="flex items-center space-x-4">
+          <!-- Home button (when in buttons mode) -->
+          <Button
+            v-if="typeof buttons !== 'undefined'"
+            variant="ghost"
+            size="sm"
+            class="text-secondary hover:bg-secondary/10 hover:text-secondary"
+            @click="$router.push('/audits')"
+          >
+            <Home class="size-4" />
+          </Button>
+
+          <!-- Title with audit state (when title is provided) -->
+          <div v-if="typeof title !== 'undefined'" class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold text-foreground">
+              {{ title }}
+            </h1>
+            <AuditStateIcon
+              v-if="$settings.reviews.enabled && state !== 'EDIT'"
+              :approvals="approvals"
+              :state="state"
+              class="ml-2"
+            />
+          </div>
+
+          <!-- Dynamic title from breadcrumb (when no title is provided) -->
+          <h1 v-else-if="bread.length > 0" class="text-xl font-bold text-foreground">
+            {{ bread[last].name }}
+          </h1>
+
+          <!-- Breadcrumb navigation (when not in buttons mode) -->
+          <nav v-if="typeof buttons === 'undefined'" class="flex items-center space-x-2 text-sm text-muted-foreground">
+            <template v-for="(breadcrumb, index) in bread" :key="breadcrumb.path">
+              <Button
+                v-if="index < bread.length - 1"
+                variant="ghost"
+                size="sm"
+                class="h-auto p-0 font-normal text-muted-foreground hover:text-foreground"
+                @click="$router.push(breadcrumb.path)"
+              >
+                {{ breadcrumb.name }}
+              </Button>
+              <span v-else class="font-medium text-foreground">{{ breadcrumb.name }}</span>
+              <ChevronRight
+                v-if="index < bread.length - 1"
+                class="size-4 text-muted-foreground"
+              />
+            </template>
+          </nav>
         </div>
-        <div v-else class="q-mt-md">
-            <span class="text-bold">{{title}}</span> 
+
+        <!-- Right side: Custom buttons slot -->
+        <div v-if="typeof buttons !== 'undefined'" class="flex items-center space-x-2">
+          <slot name="buttons" />
         </div>
-        <q-space />
-        <q-breadcrumbs v-if="typeof(buttons) === 'undefined'" separator="/" active-color="secondary" color="light" align="right">
-            <q-breadcrumbs-el v-for="breadcrumb in bread" :label="breadcrumb.name" :to="breadcrumb.path" :key="breadcrumb.path" />
-        </q-breadcrumbs>
-        <div v-else class="breadcrumb-buttons">
-            <slot name="buttons"></slot>
-        </div>
-    </q-card>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-import AuditStateIcon from 'components/audit-state-icon';
+// Components
+import { Button } from '@/components/ui/button'
+import AuditStateIcon from '@/components/audit-state-icon.vue'
 
-export default defineComponent({
-  name: 'breadcrumb',
-  props: ['buttons', 'title', 'approvals', 'state'],
+// Icons
+import { Home, ChevronRight } from 'lucide-vue-next'
 
-  components: {
-      AuditStateIcon
+// Props
+const props = defineProps({
+  buttons: {
+    type: [Boolean, String],
+    default: undefined,
   },
+  title: {
+    type: String,
+    default: undefined,
+  },
+  approvals: {
+    type: Array,
+    default: () => [],
+  },
+  state: {
+    type: String,
+    default: 'EDIT',
+  },
+})
 
-  data: function() {
-      return {
-          bread: [],
-          last: 0
+const route = useRoute()
+const router = useRouter()
+
+// Reactive data
+const bread = ref([])
+const last = ref(0)
+
+// Methods
+const initBreadcrumb = () => {
+  bread.value = []
+  const breadArray = route.matched
+
+  breadArray.forEach((element) => {
+    if (element.meta?.breadcrumb) {
+      const entry = {
+        name: element.meta.breadcrumb,
+        path: element.path === '' ? '/' : element.path,
       }
-  },
+      bread.value.push(entry)
+    }
+  })
 
-  created: function() {
-      this.initBreadcrumb();
-  },
+  last.value = bread.value.length - 1
+}
 
-  methods: {
-      initBreadcrumb: function() {
-          var breadArray = this.$route.matched;
-          breadArray.forEach((element) => {
-              var entry = {};
-              if (element.meta.breadcrumb) {
-                  entry.name = element.meta.breadcrumb;
-                  entry.path = (element.path === "") ? "/" : element.path;
-                  this.bread.push(entry);
-              }
-          });
-          this.last = this.bread.length - 1;
-      }
-  },
-});
+// Initialize breadcrumb on component mount
+onMounted(() => {
+  initBreadcrumb()
+})
 </script>
 
-<style lang="stylus" scoped>
-.card-breadcrumb {
-    height: 50px
-    padding-right: 20px
+<style scoped>
+.container {
+  max-width: 1200px;
 }
 
-.breadcrumb-title {
-    margin-top: 11px
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
-.breadcrumb-buttons {
-    margin-top: 7px
-}
+  .flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-.card-breadcrumb>.q-breadcrumbs {
-    margin-top: 17px
-}
+  .justify-between {
+    width: 100%;
+    justify-content: flex-start;
+  }
 
-.approvedMark {
-    margin-left: 10px;
-    font-size: 1.25em!important;
+  .space-x-4 > * + * {
+    margin-left: 0;
+  }
+
+  .space-x-2 > * + * {
+    margin-left: 0.5rem;
+  }
 }
 </style>
