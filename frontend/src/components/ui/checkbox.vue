@@ -27,12 +27,12 @@
           checkboxClass
         )"
         :data-state="getDataState()"
+        v-bind="$attrs"
         @change="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
-        v-bind="$attrs"
-      />
-      
+      >
+
       <!-- Check Icon -->
       <div
         :class="cn(
@@ -56,7 +56,7 @@
           />
         </svg>
       </div>
-      
+
       <!-- Indeterminate Icon -->
       <div
         :class="cn(
@@ -75,11 +75,17 @@
           fill="currentColor"
           viewBox="0 0 12 12"
         >
-          <rect x="2" y="5" width="8" height="2" rx="1" />
+          <rect
+            x="2"
+            y="5"
+            width="8"
+            height="2"
+            rx="1"
+          />
         </svg>
       </div>
     </div>
-    
+
     <div v-if="label || $slots.default" class="grid gap-1.5 leading-none">
       <label
         :for="inputId"
@@ -95,7 +101,7 @@
       >
         <slot>{{ label }}</slot>
       </label>
-      
+
       <p
         v-if="description"
         :class="cn(
@@ -110,7 +116,7 @@
       </p>
     </div>
   </div>
-  
+
   <!-- Error Message -->
   <p
     v-if="error && errorMessage"
@@ -194,7 +200,7 @@ const getDataState = () => {
 const handleChange = (event: Event) => {
   const target = event.target as HTMLInputElement
   const newValue = target.checked
-  
+
   emit('update:modelValue', newValue)
   emit('change', newValue, event)
 }
@@ -209,7 +215,7 @@ const handleBlur = (event: FocusEvent) => {
 
 const toggle = () => {
   if (props.disabled) return
-  
+
   const newValue = !checked.value
   emit('update:modelValue', newValue)
   emit('change', newValue, new Event('change'))
@@ -239,7 +245,7 @@ watch(
       el.indeterminate = indeterminate.value
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // Expose methods
@@ -309,4 +315,4 @@ input[type="checkbox"]:focus-visible {
 .peer-data-\[state\=indeterminate\]\:text-primary-foreground {
   color: hsl(var(--primary-foreground));
 }
-</style> 
+</style>

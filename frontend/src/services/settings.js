@@ -2,22 +2,22 @@ import { api } from '@/boot/axios'
 
 export default {
   getSettings() {
-    return api.get(`settings`)
+    return api.get('settings')
   },
 
   getPublicSettings() {
-    return api.get(`settings/public`)
+    return api.get('settings/public')
   },
 
   updateSettings(params) {
-    return api.put(`settings`, params)
+    return api.put('settings', params)
   },
 
   exportSettings() {
-    return api.get(`settings/export`)
+    return api.get('settings/export')
   },
 
   revertDefaults() {
-    return api.put(`settings/revert`)
-  }
+    return api.put('settings/revert')
+  },
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="chart-wrapper">
-    <canvas 
+    <canvas
       :id="chartId"
       ref="chartCanvas"
       :aria-label="$t('pieChartAriaLabel')"
@@ -19,7 +19,7 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  PieController
+  PieController,
 } from 'chart.js'
 
 // Register Chart.js components
@@ -30,7 +30,7 @@ ChartJS.register(
   ArcElement,
   CategoryScale,
   LinearScale,
-  PieController
+  PieController,
 )
 
 export default defineComponent({
@@ -38,29 +38,30 @@ export default defineComponent({
   props: {
     chartData: {
       type: Object,
-      required: true
+      required: true,
     },
     chartOptions: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     chartId: {
       type: String,
-      required: true
+      required: true,
     },
     width: {
       type: Number,
-      default: 400
+      default: 400,
     },
     height: {
       type: Number,
-      default: 400
-    }
+      default: 400,
+    },
   },
+  emits: ['chart-created', 'chart-error'],
   setup(props, { emit }) {
     const chartCanvas = ref(null)
     const chartInstance = ref(null)
-    
+
     // Default chart options optimized for PwnDoc-ng
     const defaultOptions = {
       responsive: true,
@@ -71,11 +72,11 @@ export default defineComponent({
           labels: {
             padding: 20,
             font: {
-              size: 12
+              size: 12,
             },
             usePointStyle: true,
-            pointStyle: 'circle'
-          }
+            pointStyle: 'circle',
+          },
         },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -86,31 +87,31 @@ export default defineComponent({
           cornerRadius: 6,
           displayColors: true,
           callbacks: {
-            label: function(context) {
+            label(context) {
               const label = context.label || ''
               const value = context.parsed || 0
               const total = context.dataset.data.reduce((a, b) => a + b, 0)
               const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
               return `${label}: ${value} (${percentage}%)`
-            }
-          }
-        }
+            },
+          },
+        },
       },
       animation: {
         duration: 750,
-        easing: 'easeOutQuart'
+        easing: 'easeOutQuart',
       },
       // Better accessibility
       accessibility: {
-        enabled: true
-      }
+        enabled: true,
+      },
     }
 
     // Merge default options with provided options
     const mergedOptions = computed(() => {
       return {
         ...defaultOptions,
-        ...props.chartOptions
+        ...props.chartOptions,
       }
     })
 
@@ -123,7 +124,7 @@ export default defineComponent({
           chartInstance.value.update()
         }
       },
-      { deep: true }
+      { deep: true },
     )
 
     // Watch for option changes
@@ -135,7 +136,7 @@ export default defineComponent({
           chartInstance.value.update()
         }
       },
-      { deep: true }
+      { deep: true },
     )
 
     const renderChart = async () => {
@@ -160,7 +161,7 @@ export default defineComponent({
         chartInstance.value = new ChartJS(chartCanvas.value, {
           type: 'pie',
           data: props.chartData,
-          options: mergedOptions.value
+          options: mergedOptions.value,
         })
 
         // Emit chart instance for parent component access
@@ -185,10 +186,9 @@ export default defineComponent({
     return {
       chartCanvas,
       chartInstance,
-      renderChart
+      renderChart,
     }
   },
-  emits: ['chart-created', 'chart-error']
 })
 </script>
 
@@ -197,7 +197,7 @@ export default defineComponent({
   position: relative;
   width: 100%;
   height: 100%;
-  
+
   canvas {
     width: 100% !important;
     height: 100% !important;
@@ -221,4 +221,4 @@ export default defineComponent({
     }
   }
 }
-</style> 
+</style>

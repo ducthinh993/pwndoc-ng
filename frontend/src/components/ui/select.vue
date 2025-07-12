@@ -18,7 +18,7 @@
       )"
     >
       {{ label }}
-      <span v-if="required" class="text-destructive ml-1">*</span>
+      <span v-if="required" class="ml-1 text-destructive">*</span>
     </label>
 
     <!-- Select Trigger -->
@@ -46,7 +46,7 @@
       @keydown="handleTriggerKeydown"
     >
       <!-- Selected Value Display -->
-      <div class="flex-1 flex items-center gap-1 overflow-hidden">
+      <div class="flex flex-1 items-center gap-1 overflow-hidden">
         <template v-if="multiple && selectedValues.length > 0">
           <!-- Multiple Selection Chips -->
           <div
@@ -60,28 +60,38 @@
             <span class="truncate">{{ getOptionLabel(value) }}</span>
             <button
               v-if="!disabled && clearable"
-              @click.stop="removeValue(value)"
-              class="ml-1 hover:bg-secondary-foreground/20 rounded-full p-0.5"
+              class="ml-1 rounded-full p-0.5 hover:bg-secondary-foreground/20"
               :aria-label="`Remove ${getOptionLabel(value)}`"
+              @click.stop="removeValue(value)"
             >
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="size-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
-          <span v-if="selectedValues.length > maxChips" class="text-muted-foreground text-xs">
+          <span v-if="selectedValues.length > maxChips" class="text-xs text-muted-foreground">
             +{{ selectedValues.length - maxChips }} more
           </span>
         </template>
-        
+
         <template v-else-if="!multiple && selectedValues.length > 0">
           <!-- Single Selection -->
           <span class="truncate">{{ getOptionLabel(selectedValues[0]) }}</span>
         </template>
-        
+
         <template v-else>
           <!-- Placeholder -->
-          <span class="text-muted-foreground truncate">{{ placeholder }}</span>
+          <span class="truncate text-muted-foreground">{{ placeholder }}</span>
         </template>
       </div>
 
@@ -90,16 +100,26 @@
         <!-- Clear Button -->
         <button
           v-if="clearable && selectedValues.length > 0 && !disabled"
-          @click.stop="clearSelection"
           :class="cn(
             'flex items-center justify-center w-4 h-4 rounded-full hover:bg-muted',
             'transition-colors focus:outline-none focus:ring-1 focus:ring-ring',
             clearButtonClass
           )"
           :aria-label="clearLabel"
+          @click.stop="clearSelection"
         >
-          <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="size-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
@@ -116,7 +136,12 @@
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </div>
     </div>
@@ -161,7 +186,7 @@
             searchInputClass
           )"
           @keydown="handleSearchKeydown"
-        />
+        >
       </div>
 
       <!-- Options List -->
@@ -193,21 +218,26 @@
             @click="selectOption(option)"
             @mouseover="highlightedIndex = index"
           >
-            <div class="flex items-center justify-between w-full">
+            <div class="flex w-full items-center justify-between">
               <span class="truncate">{{ getOptionLabel(option) }}</span>
               <svg
                 v-if="isSelected(getOptionValue(option))"
-                class="h-4 w-4 text-current"
+                class="size-4 text-current"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
           </div>
         </template>
-        
+
         <template v-else>
           <div
             :class="cn(
@@ -325,7 +355,7 @@ const filteredOptions = computed(() => {
   if (!props.searchable || !searchQuery.value) {
     return props.options
   }
-  
+
   return props.options.filter(option => {
     const label = getOptionLabel(option).toLowerCase()
     return label.includes(searchQuery.value.toLowerCase())
@@ -360,7 +390,7 @@ const isSelected = (value: any): boolean => {
 // Actions
 const toggleDropdown = () => {
   if (props.disabled) return
-  
+
   if (isOpen.value) {
     closeDropdown()
   } else {
@@ -372,9 +402,9 @@ const openDropdown = async () => {
   isOpen.value = true
   highlightedIndex.value = -1
   emit('open')
-  
+
   await nextTick()
-  
+
   if (props.searchable && searchRef.value) {
     searchRef.value.focus()
   }
@@ -385,7 +415,7 @@ const closeDropdown = () => {
   searchQuery.value = ''
   highlightedIndex.value = -1
   emit('close')
-  
+
   if (triggerRef.value) {
     triggerRef.value.focus()
   }
@@ -393,17 +423,17 @@ const closeDropdown = () => {
 
 const selectOption = (option: any) => {
   const value = getOptionValue(option)
-  
+
   if (props.multiple) {
     const currentValues = [...selectedValues.value]
     const index = currentValues.indexOf(value)
-    
+
     if (index > -1) {
       currentValues.splice(index, 1)
     } else {
       currentValues.push(value)
     }
-    
+
     emit('update:modelValue', currentValues)
     emit('change', currentValues)
   } else {
@@ -431,46 +461,46 @@ const clearSelection = () => {
 // Keyboard navigation
 const handleTriggerKeydown = (event: KeyboardEvent) => {
   switch (event.key) {
-    case 'Enter':
-    case ' ':
-      event.preventDefault()
-      toggleDropdown()
-      break
-    case 'ArrowDown':
-      event.preventDefault()
-      if (!isOpen.value) {
-        openDropdown()
-      }
-      break
-    case 'Escape':
-      if (isOpen.value) {
-        closeDropdown()
-      }
-      break
+  case 'Enter':
+  case ' ':
+    event.preventDefault()
+    toggleDropdown()
+    break
+  case 'ArrowDown':
+    event.preventDefault()
+    if (!isOpen.value) {
+      openDropdown()
+    }
+    break
+  case 'Escape':
+    if (isOpen.value) {
+      closeDropdown()
+    }
+    break
   }
 }
 
 const handleSearchKeydown = (event: KeyboardEvent) => {
   switch (event.key) {
-    case 'ArrowDown':
-      event.preventDefault()
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, filteredOptions.value.length - 1)
-      scrollToHighlighted()
-      break
-    case 'ArrowUp':
-      event.preventDefault()
-      highlightedIndex.value = Math.max(highlightedIndex.value - 1, 0)
-      scrollToHighlighted()
-      break
-    case 'Enter':
-      event.preventDefault()
-      if (highlightedIndex.value >= 0 && highlightedIndex.value < filteredOptions.value.length) {
-        selectOption(filteredOptions.value[highlightedIndex.value])
-      }
-      break
-    case 'Escape':
-      closeDropdown()
-      break
+  case 'ArrowDown':
+    event.preventDefault()
+    highlightedIndex.value = Math.min(highlightedIndex.value + 1, filteredOptions.value.length - 1)
+    scrollToHighlighted()
+    break
+  case 'ArrowUp':
+    event.preventDefault()
+    highlightedIndex.value = Math.max(highlightedIndex.value - 1, 0)
+    scrollToHighlighted()
+    break
+  case 'Enter':
+    event.preventDefault()
+    if (highlightedIndex.value >= 0 && highlightedIndex.value < filteredOptions.value.length) {
+      selectOption(filteredOptions.value[highlightedIndex.value])
+    }
+    break
+  case 'Escape':
+    closeDropdown()
+    break
   }
 }
 
@@ -485,9 +515,9 @@ const scrollToHighlighted = () => {
 
 // Click outside handler
 const handleClickOutside = (event: MouseEvent) => {
-  if (isOpen.value && 
-      !triggerRef.value?.contains(event.target as Node) &&
-      !dropdownRef.value?.contains(event.target as Node)) {
+  if (isOpen.value &&
+    !triggerRef.value?.contains(event.target as Node) &&
+    !dropdownRef.value?.contains(event.target as Node)) {
     closeDropdown()
   }
 }
@@ -539,4 +569,4 @@ defineExpose({
 .zoom-in-95 {
   animation: zoom-in 0.2s ease-out;
 }
-</style> 
+</style>

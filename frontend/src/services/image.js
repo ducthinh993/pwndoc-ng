@@ -1,14 +1,14 @@
 import { api } from '@/boot/axios'
 export default {
-  getImage: function(imageId) {
+  getImage(imageId) {
     return  api.get(`images/${imageId}`)
   },
 
-  createImage: function(image) {
+  createImage(image) {
     return  api.post('images', image)
   },
 
-  deleteImage: function(imageId) {
+  deleteImage(imageId) {
     return  api.delete(`images/${imageId}`)
-  }
+  },
 }

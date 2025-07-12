@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-card border-b border-border">
+  <div class="border-b border-border bg-card">
     <div class="container mx-auto px-4 py-3">
-      <div class="flex items-center justify-between min-h-[38px]">
+      <div class="flex min-h-[38px] items-center justify-between">
         <!-- Left side: Home button + Title/Breadcrumb -->
         <div class="flex items-center space-x-4">
           <!-- Home button (when in buttons mode) -->
@@ -9,15 +9,17 @@
             v-if="typeof buttons !== 'undefined'"
             variant="ghost"
             size="sm"
+            class="text-secondary hover:bg-secondary/10 hover:text-secondary"
             @click="$router.push('/audits')"
-            class="text-secondary hover:text-secondary hover:bg-secondary/10"
           >
-            <Home class="h-4 w-4" />
+            <Home class="size-4" />
           </Button>
 
           <!-- Title with audit state (when title is provided) -->
           <div v-if="typeof title !== 'undefined'" class="flex items-center space-x-2">
-            <h1 class="text-xl font-bold text-foreground">{{ title }}</h1>
+            <h1 class="text-xl font-bold text-foreground">
+              {{ title }}
+            </h1>
             <AuditStateIcon
               v-if="$settings.reviews.enabled && state !== 'EDIT'"
               :approvals="approvals"
@@ -38,15 +40,15 @@
                 v-if="index < bread.length - 1"
                 variant="ghost"
                 size="sm"
-                @click="$router.push(breadcrumb.path)"
                 class="h-auto p-0 font-normal text-muted-foreground hover:text-foreground"
+                @click="$router.push(breadcrumb.path)"
               >
                 {{ breadcrumb.name }}
               </Button>
               <span v-else class="font-medium text-foreground">{{ breadcrumb.name }}</span>
               <ChevronRight
                 v-if="index < bread.length - 1"
-                class="h-4 w-4 text-muted-foreground"
+                class="size-4 text-muted-foreground"
               />
             </template>
           </nav>
@@ -54,7 +56,7 @@
 
         <!-- Right side: Custom buttons slot -->
         <div v-if="typeof buttons !== 'undefined'" class="flex items-center space-x-2">
-          <slot name="buttons"></slot>
+          <slot name="buttons" />
         </div>
       </div>
     </div>
@@ -76,20 +78,20 @@ import { Home, ChevronRight } from 'lucide-vue-next'
 const props = defineProps({
   buttons: {
     type: [Boolean, String],
-    default: undefined
+    default: undefined,
   },
   title: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   approvals: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   state: {
     type: String,
-    default: 'EDIT'
-  }
+    default: 'EDIT',
+  },
 })
 
 const route = useRoute()
@@ -103,17 +105,17 @@ const last = ref(0)
 const initBreadcrumb = () => {
   bread.value = []
   const breadArray = route.matched
-  
+
   breadArray.forEach((element) => {
     if (element.meta?.breadcrumb) {
       const entry = {
         name: element.meta.breadcrumb,
-        path: element.path === "" ? "/" : element.path
+        path: element.path === '' ? '/' : element.path,
       }
       bread.value.push(entry)
     }
   })
-  
+
   last.value = bread.value.length - 1
 }
 
@@ -134,22 +136,22 @@ onMounted(() => {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .flex {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .justify-between {
     width: 100%;
     justify-content: flex-start;
   }
-  
+
   .space-x-4 > * + * {
     margin-left: 0;
   }
-  
+
   .space-x-2 > * + * {
     margin-left: 0.5rem;
   }

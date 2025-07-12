@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb
+    <Breadcrumb
       buttons
       :title="audit?.name ? `${audit.name} (${audit.auditType || $t('msg.auditTypeNotSet')})` : 'Loading...'"
       :state="parentState"
@@ -12,7 +12,7 @@
             <DropdownMenuTrigger as-child>
               <Button variant="outline" class="mr-2">
                 {{ $t('import') }}
-                <ChevronDownIcon class="ml-2 h-4 w-4" />
+                <ChevronDownIcon class="ml-2 size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -24,7 +24,7 @@
                   accept=".xml"
                   class="hidden"
                   @change="importNetworkScan($event.target.files, 'nmap')"
-                />
+                >
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem @click="$refs.nessusFile.click()">
@@ -35,21 +35,21 @@
                   accept=".nessus"
                   class="hidden"
                   @change="importNetworkScan($event.target.files, 'nessus')"
-                />
+                >
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button 
-            variant="default" 
+          <Button
+            variant="default"
             @click="updateAuditNetwork"
           >
             {{ $t('btn.save') + ' (ctrl+s)' }}
           </Button>
         </div>
       </template>
-    </breadcrumb>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+    </Breadcrumb>
+
+    <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
       <div>
         <Card>
           <CardHeader>
@@ -57,7 +57,9 @@
           </CardHeader>
           <CardContent>
             <div v-for="scope of audit.scope" :key="scope.name" class="mb-6">
-              <h3 class="text-lg font-semibold mb-3">{{ scope.name }}</h3>
+              <h3 class="mb-3 text-lg font-semibold">
+                {{ scope.name }}
+              </h3>
               <div class="space-y-4">
                 <div class="flex items-center gap-2">
                   <Select
@@ -69,8 +71,8 @@
                       <SelectValue :placeholder="selectHostsLabel" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem 
-                        v-for="option in targetsOptions" 
+                      <SelectItem
+                        v-for="option in targetsOptions"
                         :key="option.value"
                         :value="option"
                       >
@@ -78,12 +80,12 @@
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="icon"
                     @click="updateScopeHosts(scope)"
                   >
-                    <PlusIcon class="h-4 w-4" />
+                    <PlusIcon class="size-4" />
                   </Button>
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -98,10 +100,10 @@
                     <Button
                       variant="ghost"
                       size="icon"
-                      class="ml-2 h-4 w-4 p-0"
+                      class="ml-2 size-4 p-0"
                       @click.stop="scope.hosts.splice(index, 1)"
                     >
-                      <XIcon class="h-3 w-3" />
+                      <XIcon class="size-3" />
                     </Button>
                   </Badge>
                 </div>
@@ -110,7 +112,7 @@
           </CardContent>
         </Card>
       </div>
-      
+
       <div v-if="currentHost !== null">
         <Card>
           <CardHeader>
@@ -191,21 +193,31 @@ export default {
     TableRow,
     ChevronDownIcon,
     PlusIcon,
-    XIcon
+    XIcon,
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.$_.isEqual(this.audit, this.auditOrig)) {
+      next()
+    } else {
+      // TODO: Replace with Vue Shadcn Dialog
+      if (confirm(`${this.$t('msg.thereAreUnsavedChanges')  }\n${  this.$t('msg.doYouWantToLeave')}`)) {
+        next()
+      }
+    }
   },
   props: {
     frontEndAuditState: {
       type: Number,
-      required: true
+      required: true,
     },
     parentState: {
       type: String,
-      required: true
+      required: true,
     },
     parentApprovals: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -225,13 +237,13 @@ export default {
         language: '',
         template: '',
         customFields: [],
-        approvals: []
+        approvals: [],
       },
       auditOrig: {},
       targetsOptions: [],
       selectedTargets: [],
       currentHost: null,
-      AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE
+      AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE,
     }
   },
   computed: {
@@ -241,28 +253,18 @@ export default {
       } else {
         return this.$t('msg.importHostsFirst')
       }
-    }
+    },
   },
   mounted() {
     this.auditId = this.$route.params.auditId
     this.getAuditNetwork()
     this.getAuditGeneral()
     this.$socket.emit('menu', { menu: 'network', room: this.auditId })
-    
+
     document.addEventListener('keydown', this._listener, false)
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this._listener, false)
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.$_.isEqual(this.audit, this.auditOrig)) {
-      next()
-    } else {
-      // TODO: Replace with Vue Shadcn Dialog
-      if (confirm(this.$t('msg.thereAreUnsavedChanges') + '\n' + this.$t('msg.doYouWantToLeave'))) {
-        next()
-      }
-    }
   },
   methods: {
     _listener(e) {
@@ -273,7 +275,7 @@ export default {
         }
       }
     },
-    
+
     getAuditNetwork() {
       AuditService.getAuditNetwork(this.auditId)
         .then((data) => {
@@ -284,7 +286,7 @@ export default {
           console.log(err)
         })
     },
-    
+
     getAuditGeneral() {
       DataService.getCustomFields()
         .then((data) => {
@@ -294,30 +296,30 @@ export default {
           console.log(err.response)
         })
     },
-    
+
     updateAuditNetwork() {
       const { toast } = useToast()
-      
+
       AuditService.updateAuditNetwork(this.auditId, this.audit)
         .then(() => {
           this.auditOrig = this.$_.cloneDeep(this.audit)
           toast({
             title: this.$t('msg.auditUpdateOk'),
-            variant: 'default'
+            variant: 'default',
           })
         })
         .catch((err) => {
           toast({
             title: err.response.data.datas,
-            variant: 'destructive'
+            variant: 'destructive',
           })
         })
     },
-    
+
     importNetworkScan(files, type) {
       const file = files[0]
       const fileReader = new FileReader()
-      
+
       fileReader.onloadend = () => {
         if (type === 'nmap') {
           this.parseXmlNmap(fileReader.result)
@@ -325,10 +327,10 @@ export default {
           this.parseXmlNessus(fileReader.result)
         }
       }
-      
+
       fileReader.readAsText(file)
     },
-    
+
     updateScopeHosts(scope) {
       if (!this.selectedTargets[scope.name]) {
         console.error(`Scope "${scope.name}" not found in selectedTargets.`)
@@ -338,7 +340,7 @@ export default {
         scope.hosts.push(this.selectedTargets[scope.name][i].host)
       }
     },
-    
+
     getXmlElementByAttribute(elmts, attr, val) {
       for (let i = 0; i < elmts.length; i++) {
         if (elmts[i].getAttribute(attr) === val) {
@@ -347,28 +349,28 @@ export default {
       }
       return null
     },
-    
+
     parseXmlNmap(data) {
       const { toast } = useToast()
       console.log('Starting Nmap parser')
-      
+
       const parser = new DOMParser()
       const xmlData = parser.parseFromString(data, 'application/xml')
-      
+
       try {
         const hosts = xmlData.getElementsByTagName('host')
         if (hosts.length === 0) throw new Error('Parsing Error: No host element')
-        
+
         const hostsRes = []
         for (let i = 0; i < hosts.length; i++) {
           if (hosts[i].getElementsByTagName('status')[0].getAttribute('state') === 'up') {
             const host = {}
             const addrElmt = hosts[i].getElementsByTagName('address')[0]
             if (typeof addrElmt === 'undefined') {
-              throw new Error('Parsing Error: No address element in host number ' + i)
+              throw new Error(`Parsing Error: No address element in host number ${  i}`)
             }
             host.ip = addrElmt.getAttribute('addr')
-            
+
             const osElmt = hosts[i].getElementsByTagName('os')[0]
             if (typeof osElmt !== 'undefined') {
               const osClassElmt = osElmt.getElementsByTagName('osclass')[0]
@@ -378,7 +380,7 @@ export default {
                 host.os = osClassElmt.getAttribute('osfamily')
               }
             }
-            
+
             const hostnamesElmt = hosts[i].getElementsByTagName('hostnames')[0]
             if (typeof hostnamesElmt === 'undefined') {
               host.hostname = 'Unknown'
@@ -386,12 +388,12 @@ export default {
               const dnElmt = this.getXmlElementByAttribute(hostnamesElmt.getElementsByTagName('hostname'), 'type', 'PTR')
               host.hostname = dnElmt ? dnElmt.getAttribute('name') : 'Unknown'
             }
-            
+
             const portsElmt = hosts[i].getElementsByTagName('ports')[0]
             if (typeof portsElmt === 'undefined') {
-              throw new Error('Parsing Error: No ports element in host number ' + i)
+              throw new Error(`Parsing Error: No ports element in host number ${  i}`)
             }
-            
+
             const ports = portsElmt.getElementsByTagName('port')
             host.services = []
             for (let j = 0; j < ports.length; j++) {
@@ -399,7 +401,7 @@ export default {
               service.protocol = ports[j].getAttribute('protocol')
               service.port = ports[j].getAttribute('portid')
               service.state = ports[j].getElementsByTagName('state')[0].getAttribute('state')
-              
+
               const serviceDetails = ports[j].getElementsByTagName('service')[0]
               if (typeof serviceDetails === 'undefined') {
                 service.product = 'Unknown'
@@ -410,52 +412,52 @@ export default {
                 service.name = serviceDetails.getAttribute('name') || 'Unknown'
                 service.version = serviceDetails.getAttribute('version') || 'Unknown'
               }
-              
+
               if (service.state === 'open') {
                 host.services.push(service)
               }
             }
-            
-            hostsRes.push({ label: host.ip, value: host.ip, host: host })
+
+            hostsRes.push({ label: host.ip, value: host.ip, host })
           }
         }
-        
+
         this.targetsOptions = hostsRes
         toast({
           title: `Successfully imported ${hostsRes.length} hosts`,
-          variant: 'default'
+          variant: 'default',
         })
       } catch (err) {
         console.log(err)
         toast({
           title: 'Error parsing Nmap',
-          variant: 'destructive'
+          variant: 'destructive',
         })
       }
     },
-    
+
     parseXmlNessus(data) {
       const { toast } = useToast()
       console.log('Starting Nessus parser')
-      
+
       const parser = new DOMParser()
       const hostsRes = []
       const xmlData = parser.parseFromString(data, 'application/xml')
-      
+
       try {
         const hosts = xmlData.getElementsByTagName('ReportHost')
         if (hosts.length === 0) throw new Error('Parsing Error: No ReportHost element')
-        
+
         for (let i = 0; i < hosts.length; i++) {
           const host = {}
           const properties = hosts[i].getElementsByTagName('HostProperties')[0]
           const tags = properties.getElementsByTagName('tag')
-          
+
           for (let j = 0; j < tags.length; j++) {
             const tag = tags[j]
             const tagName = tag.getAttribute('name')
             const tagContent = tag.innerHTML
-            
+
             if (tagName === 'host-ip') {
               host.ip = tagContent
             }
@@ -469,56 +471,56 @@ export default {
               host.hostname = tagContent
             }
           }
-          
+
           if (!host.ip) {
             host.ip = hosts[i].getAttribute('name') || 'n/a'
           }
-          
+
           const reports = hosts[i].getElementsByTagName('ReportItem')
           host.services = []
-          
+
           for (let j = 0; j < reports.length; j++) {
             const port = reports[j].getAttribute('port')
             const protocol = reports[j].getAttribute('protocol')
             const svcName = reports[j].getAttribute('svc_name')
             const product = reports[j].getAttribute('svc_product')
             const version = reports[j].getAttribute('svc_version')
-            
+
             if (port !== '0') {
-              const prev = host.services.filter(function(service) {
+              const prev = host.services.filter((service) => {
                 return service.port === port
               })
-              
+
               const service = prev.length === 0 ? {} : prev[0]
-              
+
               service.protocol = protocol
               service.port = port
               service.name = svcName || 'n/a'
               service.product = product || 'n/a'
               service.version = version || 'n/a'
-              
+
               if (prev.length === 0) {
                 host.services.push(service)
               }
             }
           }
-          
-          hostsRes.push({ label: host.ip, value: host.ip, host: host })
+
+          hostsRes.push({ label: host.ip, value: host.ip, host })
         }
-        
+
         this.targetsOptions = hostsRes
         toast({
           title: `Successfully imported ${hostsRes.length} hosts`,
-          variant: 'default'
+          variant: 'default',
         })
       } catch (err) {
         console.log(err)
         toast({
           title: 'Error parsing Nessus',
-          variant: 'destructive'
+          variant: 'destructive',
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>

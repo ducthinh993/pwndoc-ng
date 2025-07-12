@@ -44,7 +44,11 @@ app.use(i18n)
 
 // Install boot plugins
 axiosPlugin({ app })
-authPlugin({ app })
+authPlugin({
+  urlPath: window.location.pathname,
+  router,
+  redirect: (path: string) => router.push(path),
+})
 settingsPlugin({ app })
 i18nPlugin({ app })
 socketioPlugin({ app })
@@ -85,4 +89,4 @@ app.mount('#app')
 // Add loaded class to prevent FOUC
 document.getElementById('app')?.classList.add('loaded')
 
-export default app 
+export default app

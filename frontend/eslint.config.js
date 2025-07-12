@@ -8,10 +8,10 @@ import { resolve } from 'path'
 
 export default [
   js.configs.recommended,
-  
+
   // Vue.js configuration
   ...vue.configs['flat/recommended'],
-  
+
   // Global configuration
   {
     languageOptions: {
@@ -21,6 +21,7 @@ export default [
         browser: true,
         node: true,
         es2021: true,
+        process: true,
       },
     },
     rules: {
@@ -51,7 +52,7 @@ export default [
       'no-duplicate-imports': 'error',
     },
   },
-  
+
   // TypeScript configuration
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -72,12 +73,11 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'warn',
-      '@typescript-eslint/prefer-const': 'error',
       '@typescript-eslint/no-var-requires': 'off',
       'no-unused-vars': 'off', // Handled by TypeScript
     },
   },
-  
+
   // Vue.js configuration
   {
     files: ['**/*.vue'],
@@ -128,7 +128,7 @@ export default [
       'indent': 'off', // Handled by vue/script-indent
     },
   },
-  
+
   // Tailwind CSS configuration
   {
     files: ['**/*.vue', '**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx'],
@@ -225,7 +225,7 @@ export default [
       },
     },
   },
-  
+
   // Ignore patterns
   {
     ignores: [
@@ -238,4 +238,4 @@ export default [
       '.quasar/**',
     ],
   },
-] 
+]

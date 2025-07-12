@@ -9,7 +9,7 @@
   >
     <!-- Trigger Content -->
     <slot />
-    
+
     <!-- Tooltip Portal -->
     <teleport to="body">
       <div
@@ -37,7 +37,7 @@
             {{ content }}
           </slot>
         </div>
-        
+
         <!-- Tooltip Arrow -->
         <div
           v-if="showArrow"
@@ -100,9 +100,9 @@ const arrowStyle = ref<Record<string, string>>({})
 // Methods
 const show = async () => {
   if (props.disabled || !triggerRef.value) return
-  
+
   clearTimeout(hideTimeout.value)
-  
+
   showTimeout.value = setTimeout(async () => {
     isVisible.value = true
     await nextTick()
@@ -112,7 +112,7 @@ const show = async () => {
 
 const hide = () => {
   clearTimeout(showTimeout.value)
-  
+
   hideTimeout.value = setTimeout(() => {
     isVisible.value = false
   }, props.hideDelay)
@@ -120,20 +120,20 @@ const hide = () => {
 
 const updatePosition = () => {
   if (!triggerRef.value || !tooltipRef.value) return
-  
+
   const triggerRect = triggerRef.value.getBoundingClientRect()
   const tooltipRect = tooltipRef.value.getBoundingClientRect()
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
-  
+
   const positions = calculatePosition(triggerRect, tooltipRect, viewportWidth, viewportHeight)
-  
+
   tooltipStyle.value = {
     left: `${positions.tooltip.x}px`,
     top: `${positions.tooltip.y}px`,
     maxWidth: props.maxWidth,
   }
-  
+
   if (props.showArrow) {
     arrowStyle.value = {
       left: `${positions.arrow.x}px`,
@@ -146,55 +146,55 @@ const calculatePosition = (
   triggerRect: DOMRect,
   tooltipRect: DOMRect,
   viewportWidth: number,
-  viewportHeight: number
+  viewportHeight: number,
 ) => {
   const arrowSize = 8
   const offset = props.offset
-  
+
   let tooltipX = 0
   let tooltipY = 0
   let arrowX = 0
   let arrowY = 0
-  
+
   // Calculate base positions
   switch (props.placement) {
-    case 'top':
-    case 'top-start':
-    case 'top-end':
-      tooltipX = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2)
-      tooltipY = triggerRect.top - tooltipRect.height - offset
-      arrowX = tooltipRect.width / 2 - arrowSize / 2
-      arrowY = tooltipRect.height
-      break
-      
-    case 'bottom':
-    case 'bottom-start':
-    case 'bottom-end':
-      tooltipX = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2)
-      tooltipY = triggerRect.bottom + offset
-      arrowX = tooltipRect.width / 2 - arrowSize / 2
-      arrowY = -arrowSize / 2
-      break
-      
-    case 'left':
-    case 'left-start':
-    case 'left-end':
-      tooltipX = triggerRect.left - tooltipRect.width - offset
-      tooltipY = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2)
-      arrowX = tooltipRect.width
-      arrowY = tooltipRect.height / 2 - arrowSize / 2
-      break
-      
-    case 'right':
-    case 'right-start':
-    case 'right-end':
-      tooltipX = triggerRect.right + offset
-      tooltipY = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2)
-      arrowX = -arrowSize / 2
-      arrowY = tooltipRect.height / 2 - arrowSize / 2
-      break
+  case 'top':
+  case 'top-start':
+  case 'top-end':
+    tooltipX = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2)
+    tooltipY = triggerRect.top - tooltipRect.height - offset
+    arrowX = tooltipRect.width / 2 - arrowSize / 2
+    arrowY = tooltipRect.height
+    break
+
+  case 'bottom':
+  case 'bottom-start':
+  case 'bottom-end':
+    tooltipX = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2)
+    tooltipY = triggerRect.bottom + offset
+    arrowX = tooltipRect.width / 2 - arrowSize / 2
+    arrowY = -arrowSize / 2
+    break
+
+  case 'left':
+  case 'left-start':
+  case 'left-end':
+    tooltipX = triggerRect.left - tooltipRect.width - offset
+    tooltipY = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2)
+    arrowX = tooltipRect.width
+    arrowY = tooltipRect.height / 2 - arrowSize / 2
+    break
+
+  case 'right':
+  case 'right-start':
+  case 'right-end':
+    tooltipX = triggerRect.right + offset
+    tooltipY = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2)
+    arrowX = -arrowSize / 2
+    arrowY = tooltipRect.height / 2 - arrowSize / 2
+    break
   }
-  
+
   // Adjust for start/end variants
   if (props.placement.includes('start')) {
     if (props.placement.includes('top') || props.placement.includes('bottom')) {
@@ -213,13 +213,13 @@ const calculatePosition = (
       arrowY = tooltipRect.height - (triggerRect.height / 2) - arrowSize / 2
     }
   }
-  
+
   // Viewport boundary checks
   if (tooltipX < 0) tooltipX = 8
   if (tooltipX + tooltipRect.width > viewportWidth) tooltipX = viewportWidth - tooltipRect.width - 8
   if (tooltipY < 0) tooltipY = 8
   if (tooltipY + tooltipRect.height > viewportHeight) tooltipY = viewportHeight - tooltipRect.height - 8
-  
+
   return {
     tooltip: { x: tooltipX, y: tooltipY },
     arrow: { x: arrowX, y: arrowY },
@@ -361,4 +361,4 @@ defineExpose({
 .select-none {
   user-select: none;
 }
-</style> 
+</style>

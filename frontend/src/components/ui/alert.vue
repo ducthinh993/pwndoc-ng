@@ -14,7 +14,7 @@
           :class="cn('h-5 w-5', iconClasses)"
         />
       </div>
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0 flex-1">
         <div v-if="title" class="mb-1 font-medium leading-none tracking-tight">
           {{ title }}
         </div>
@@ -29,11 +29,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Info, 
-  XCircle 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  XCircle,
 } from 'lucide-vue-next'
 
 interface Props {
@@ -80,4 +80,4 @@ const iconClasses = computed(() => {
   }
   return classes[props.variant]
 })
-</script> 
+</script>

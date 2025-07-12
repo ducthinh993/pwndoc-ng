@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb
+    <Breadcrumb
       buttons
       :title="audit ? `${audit.name} (${audit.auditType || 'Audit Type not set'})` : 'Loading...'"
       :state="parentState"
@@ -15,24 +15,24 @@
           {{ $t('btn.save') + ' (ctrl+s)' }}
         </Button>
       </template>
-    </breadcrumb>
-    
+    </Breadcrumb>
+
     <div class="grid grid-cols-1 gap-4 p-4">
-      <div class="col-span-1 md:col-start-2 md:col-span-8 lg:col-start-3 lg:col-span-6">
+      <div class="col-span-1 md:col-span-8 md:col-start-2 lg:col-span-6 lg:col-start-3">
         <Card>
           <CardContent class="p-6">
             <!-- For retrocompatibility, test if section.text exists -->
-            <basic-editor 
+            <BasicEditor
               v-if="section.text"
-              ref="basiceditor_section" 
-              v-model="section.text" 
-              no-sync 
-              :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT" 
+              ref="basiceditor_section"
+              v-model="section.text"
+              no-sync
+              :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
             />
-            <custom-fields 
+            <CustomFields
               v-else
-              ref="customfields" 
-              v-model="section.customFields" 
+              ref="customfields"
+              v-model="section.customFields"
               custom-element="div"
               no-sync-editor
               :readonly="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT"
@@ -69,62 +69,13 @@ export default {
     CustomFields,
     Button,
     Card,
-    CardContent
-  },
-  props: {
-    frontEndAuditState: {
-      type: Number,
-      required: true
-    },
-    parentState: {
-      type: String,
-      required: true
-    },
-    parentApprovals: {
-      type: Array,
-      required: true
-    },
-    audit: {
-      type: Object,
-      required: false,
-      default: () => ({})
-    }
-  },
-  data() {
-    return {
-      auditId: null,
-      sectionId: null,
-      section: {
-        field: '',
-        name: '',
-        customFields: []
-      },
-      sectionOrig: {},
-      customFields: [],
-      AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE
-    }
-  },
-  mounted() {
-    this.auditId = this.$route.params.auditId
-    this.sectionId = this.$route.params.sectionId
-    this.getSection()
-    
-    this.$socket.emit('menu', { 
-      menu: 'editSection', 
-      section: this.sectionId, 
-      room: this.auditId 
-    })
-    
-    document.addEventListener('keydown', this._listener, false)
-  },
-  beforeUnmount() {
-    document.removeEventListener('keydown', this._listener, false)
+    CardContent,
   },
   beforeRouteLeave(to, from, next) {
     Utils.syncEditors(this.$refs)
     if (this.unsavedChanges()) {
       // TODO: Replace with Vue Shadcn Dialog
-      if (confirm(this.$t('msg.thereAreUnsavedChanges') + '\n' + this.$t('msg.doYouWantToLeave'))) {
+      if (confirm(`${this.$t('msg.thereAreUnsavedChanges')  }\n${  this.$t('msg.doYouWantToLeave')}`)) {
         next()
       }
     } else {
@@ -135,12 +86,61 @@ export default {
     Utils.syncEditors(this.$refs)
     if (this.unsavedChanges()) {
       // TODO: Replace with Vue Shadcn Dialog
-      if (confirm(this.$t('msg.thereAreUnsavedChanges') + '\n' + this.$t('msg.doYouWantToLeave'))) {
+      if (confirm(`${this.$t('msg.thereAreUnsavedChanges')  }\n${  this.$t('msg.doYouWantToLeave')}`)) {
         next()
       }
     } else {
       next()
     }
+  },
+  props: {
+    frontEndAuditState: {
+      type: Number,
+      required: true,
+    },
+    parentState: {
+      type: String,
+      required: true,
+    },
+    parentApprovals: {
+      type: Array,
+      required: true,
+    },
+    audit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      auditId: null,
+      sectionId: null,
+      section: {
+        field: '',
+        name: '',
+        customFields: [],
+      },
+      sectionOrig: {},
+      customFields: [],
+      AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE,
+    }
+  },
+  mounted() {
+    this.auditId = this.$route.params.auditId
+    this.sectionId = this.$route.params.sectionId
+    this.getSection()
+
+    this.$socket.emit('menu', {
+      menu: 'editSection',
+      section: this.sectionId,
+      room: this.auditId,
+    })
+
+    document.addEventListener('keydown', this._listener, false)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this._listener, false)
   },
   methods: {
     _listener(e) {
@@ -151,7 +151,7 @@ export default {
         }
       }
     },
-    
+
     getSection() {
       DataService.getCustomFields()
         .then((data) => {
@@ -169,43 +169,43 @@ export default {
           console.log(err)
         })
     },
-    
+
     updateSection() {
       const { toast } = useToast()
-      
+
       Utils.syncEditors(this.$refs)
       nextTick(() => {
         if (this.$refs.customfields && this.$refs.customfields.requiredFieldsEmpty()) {
           toast({
             title: this.$t('msg.fieldRequired'),
-            variant: 'destructive'
+            variant: 'destructive',
           })
           return
         }
-        
+
         AuditService.updateSection(this.auditId, this.sectionId, this.section)
           .then(() => {
             this.sectionOrig = this.$_.cloneDeep(this.section)
             toast({
               title: this.$t('msg.sectionUpdateOk'),
-              variant: 'default'
+              variant: 'default',
             })
           })
           .catch((err) => {
             toast({
               title: err.response.data.datas,
-              variant: 'destructive'
+              variant: 'destructive',
             })
           })
       })
     },
-    
+
     unsavedChanges() {
       if (!this.$_.isEqual(this.section.customFields, this.sectionOrig.customFields)) {
         return true
       }
       return false
-    }
-  }
+    },
+  },
 }
 </script>

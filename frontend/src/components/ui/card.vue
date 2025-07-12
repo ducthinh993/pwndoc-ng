@@ -16,7 +16,7 @@
         </div>
       </slot>
     </div>
-    
+
     <!-- Card Content -->
     <div
       v-if="$slots.default"
@@ -24,7 +24,7 @@
     >
       <slot />
     </div>
-    
+
     <!-- Card Actions/Footer -->
     <div
       v-if="$slots.actions || $slots.footer"
@@ -81,37 +81,37 @@ const variantClasses = computed(() => {
       {
         'border-0': !props.bordered,
         'rounded-none': props.square,
-      }
+      },
     ),
-    
+
     // Outlined variant - matches q-card outlined (border only, no shadow)
     outlined: cn(
       'border-2 bg-card text-card-foreground',
       {
         'border-0': !props.bordered,
         'rounded-none': props.square,
-      }
+      },
     ),
-    
+
     // Elevated variant - matches q-card with stronger shadow
     elevated: cn(
       'bg-card text-card-foreground shadow-lg',
       {
         'border': props.bordered,
         'rounded-none': props.square,
-      }
+      },
     ),
-    
+
     // Flat variant - matches q-card flat (no border, no shadow)
     flat: cn(
       'bg-card text-card-foreground',
       {
         'border': props.bordered,
         'rounded-none': props.square,
-      }
+      },
     ),
   }
-  
+
   return variants[props.variant]
 })
 
@@ -182,4 +182,4 @@ const actionsPaddingClasses = computed(() => {
 .card-section + .card-section {
   border-top: 1px solid hsl(var(--color-border));
 }
-</style> 
+</style>

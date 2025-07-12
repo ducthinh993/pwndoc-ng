@@ -45,11 +45,11 @@ const resolvedTheme = computed(() => {
 
 const themeClasses = computed(() => {
   const baseClasses = ['min-h-screen', 'bg-background', 'text-foreground', 'transition-colors']
-  
+
   if (resolvedTheme.value === 'dark') {
     baseClasses.push('dark')
   }
-  
+
   return baseClasses.join(' ')
 })
 
@@ -60,27 +60,27 @@ const setTheme = (newTheme: Theme) => {
     const css = document.createElement('style')
     css.appendChild(
       document.createTextNode(
-        `*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}`
-      )
+        '*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}',
+      ),
     )
     document.head.appendChild(css)
-    
+
     // Force reflow
     document.body.offsetHeight
-    
+
     // Remove after a frame
     setTimeout(() => {
       document.head.removeChild(css)
     }, 1)
   }
-  
+
   theme.value = newTheme
-  
+
   // Update localStorage
   if (typeof window !== 'undefined') {
     localStorage.setItem(props.storageKey, newTheme)
   }
-  
+
   // Update document class
   updateDocumentClass()
 }
@@ -97,37 +97,37 @@ const toggleTheme = () => {
 
 const updateDocumentClass = () => {
   if (typeof window === 'undefined') return
-  
+
   const root = document.documentElement
-  
+
   // Remove existing theme classes
   root.classList.remove('light', 'dark')
-  
+
   // Add current theme class
   root.classList.add(resolvedTheme.value)
-  
+
   // Set color scheme for better browser integration
   root.style.colorScheme = resolvedTheme.value
 }
 
 const getSystemTheme = (): 'light' | 'dark' => {
   if (typeof window === 'undefined') return 'light'
-  
+
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 const setupSystemThemeListener = () => {
   if (typeof window === 'undefined' || !props.enableSystem) return
-  
+
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  
+
   const handleChange = (e: MediaQueryListEvent) => {
     systemTheme.value = e.matches ? 'dark' : 'light'
   }
-  
+
   mediaQuery.addEventListener('change', handleChange)
   systemTheme.value = mediaQuery.matches ? 'dark' : 'light'
-  
+
   return () => {
     mediaQuery.removeEventListener('change', handleChange)
   }
@@ -135,7 +135,7 @@ const setupSystemThemeListener = () => {
 
 const loadStoredTheme = () => {
   if (typeof window === 'undefined') return
-  
+
   const stored = localStorage.getItem(props.storageKey)
   if (stored && ['light', 'dark', 'system'].includes(stored)) {
     theme.value = stored as Theme
@@ -197,4 +197,4 @@ defineExpose({
 :not(.dark) {
   color-scheme: light;
 }
-</style> 
+</style>

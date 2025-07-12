@@ -11,7 +11,7 @@
       >
         <slot name="trigger">
           <span>{{ displayValue || placeholder || 'Click to edit' }}</span>
-          <EditIcon class="h-3 w-3 opacity-50" />
+          <EditIcon class="size-3 opacity-50" />
         </slot>
       </button>
     </PopoverTrigger>
@@ -41,8 +41,8 @@
           </Button>
           <Button
             size="sm"
-            @click="saveValue"
             :disabled="!hasChanges"
+            @click="saveValue"
           >
             Save
           </Button>
@@ -56,7 +56,8 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { cn } from '@/lib/utils'
 import Popover from './popover.vue'
-import { PopoverTrigger, PopoverContent } from './popover.vue'
+import PopoverTrigger from './popover-trigger.vue'
+import PopoverContent from './popover-content.vue'
 import Button from './button.vue'
 import Input from './input.vue'
 
@@ -77,7 +78,7 @@ const EditIcon = {
       <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
       <path d="m15 5 4 4"/>
     </svg>
-  `
+  `,
 }
 
 interface Props {
@@ -85,7 +86,7 @@ interface Props {
   label?: string
   placeholder?: string
   autoSave?: boolean
-  inputComponent?: string | object
+  inputComponent?: any
   triggerClass?: string
   contentClass?: string
   inputClass?: string
@@ -124,7 +125,7 @@ async function openEditor() {
   isOpen.value = true
   localValue.value = props.modelValue
   originalValue.value = props.modelValue
-  
+
   await nextTick()
   if (inputRef.value?.focus) {
     inputRef.value.focus()
@@ -133,9 +134,10 @@ async function openEditor() {
 
 function saveValue() {
   if (props.autoSave || hasChanges.value) {
-    emit('update:modelValue', localValue.value)
-    emit('save', localValue.value)
-    originalValue.value = localValue.value
+    const value = localValue.value ?? ''
+    emit('update:modelValue', value)
+    emit('save', value)
+    originalValue.value = value
   }
   isOpen.value = false
 }
@@ -149,8 +151,9 @@ function cancelEdit() {
 // Auto-save functionality
 watch(localValue, (newValue) => {
   if (props.autoSave && isOpen.value) {
-    emit('update:modelValue', newValue)
-    emit('save', newValue)
+    const value = newValue ?? ''
+    emit('update:modelValue', value)
+    emit('save', value)
   }
 })
-</script> 
+</script>

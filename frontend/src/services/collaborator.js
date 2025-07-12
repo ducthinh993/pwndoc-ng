@@ -1,23 +1,23 @@
 import { api } from '@/boot/axios'
 
 export default {
-  getCollabs: function() {
-    return  api.get(`users`)
+  getCollabs() {
+    return  api.get('users')
   },
 
-  createCollab: function(collab) {
+  createCollab(collab) {
     return  api.post('users', collab)
   },
 
-  updateCollab: function(collabId, collab) {
+  updateCollab(collabId, collab) {
     return  api.put(`users/${collabId}`, collab)
   },
 
-  deleteCollab: function(collabId) {
+  deleteCollab(collabId) {
     return  api.delete(`users/${collabId}`)
   },
 
-  deleteAllCollab: function() {
-    return  api.delete(`users`)
-  }
+  deleteAllCollab() {
+    return  api.delete('users')
+  },
 }

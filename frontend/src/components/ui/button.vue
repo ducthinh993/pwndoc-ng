@@ -63,22 +63,22 @@ const variantClasses = computed(() => {
   const variants = {
     // Default variant - matches q-btn default (primary color)
     default: 'bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary',
-    
+
     // Primary variant - same as default for consistency
     primary: 'bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary',
-    
+
     // Secondary variant - matches q-btn secondary
     secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-secondary',
-    
+
     // Destructive variant - matches q-btn negative/danger
     destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive',
-    
+
     // Outline variant - matches q-btn outline
     outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring',
-    
+
     // Ghost variant - matches q-btn flat/ghost
     ghost: 'hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring',
-    
+
     // Link variant - matches q-btn link style
     link: 'text-primary underline-offset-4 hover:underline focus-visible:ring-primary',
   }
@@ -90,16 +90,16 @@ const sizeClasses = computed(() => {
   const sizes = {
     // Extra small - matches q-btn size="xs"
     xs: 'h-8 px-2 text-xs gap-1',
-    
+
     // Small - matches q-btn size="sm"
     sm: 'h-9 px-3 text-sm gap-1.5',
-    
+
     // Default - matches q-btn default size
     default: 'h-10 px-4 py-2 text-sm gap-2',
-    
+
     // Large - matches q-btn size="lg"
     lg: 'h-11 px-8 text-base gap-2',
-    
+
     // Extra large - matches q-btn size="xl"
     xl: 'h-12 px-10 text-lg gap-2.5',
   }
@@ -122,13 +122,13 @@ const iconSizeClasses = computed(() => {
 const stateClasses = computed(() => ({
   // Disabled state - matches q-btn disabled styling
   'opacity-50 cursor-not-allowed': props.disabled,
-  
+
   // Loading state - matches q-btn loading styling
   'cursor-wait': props.loading,
-  
+
   // Focus visible ring offset for non-outline variants
   'focus-visible:ring-offset-2': props.variant !== 'outline',
-  
+
   // Additional state for outline variant
   'border-2': props.variant === 'outline',
 }))
@@ -148,4 +148,4 @@ const stateClasses = computed(() => ({
   opacity: 0.1;
   border-radius: inherit;
 }
-</style> 
+</style>

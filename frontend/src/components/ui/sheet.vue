@@ -85,7 +85,7 @@ const checkMobile = () => {
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  
+
   // Handle escape key
   if (!props.noEscapeKey) {
     document.addEventListener('keydown', handleEscapeKey)
@@ -105,9 +105,9 @@ const positionClasses = computed(() => {
     top: 'top-0 left-0 w-full',
     bottom: 'bottom-0 left-0 w-full',
   }
-  
+
   const basePosition = 'fixed z-50'
-  
+
   return cn(basePosition, positions[props.side])
 })
 
@@ -237,4 +237,4 @@ const handleEscapeKey = (event: KeyboardEvent) => {
   box-shadow: none !important;
   border: none !important;
 }
-</style> 
+</style>

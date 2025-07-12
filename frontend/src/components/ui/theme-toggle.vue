@@ -1,51 +1,51 @@
 <template>
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
+    <DropdownMenuTrigger as-child>
       <Button variant="ghost" size="icon" class="relative">
-        <component 
-          :is="themeIcon" 
-          class="h-4 w-4 transition-all duration-200"
+        <component
+          :is="themeIcon"
+          class="size-4 transition-all duration-200"
           :class="{ 'animate-spin': isTransitioning }"
         />
         <span class="sr-only">Toggle theme</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" class="w-48">
-      <DropdownMenuItem 
-        @click="setTheme(THEMES.LIGHT)"
+      <DropdownMenuItem
         :class="{ 'bg-accent': theme === THEMES.LIGHT }"
+        @click="setTheme(THEMES.LIGHT)"
       >
-        <Sun class="h-4 w-4 mr-2" />
+        <Sun class="mr-2 size-4" />
         Light
         <span v-if="theme === THEMES.LIGHT" class="ml-auto">
-          <Check class="h-4 w-4" />
+          <Check class="size-4" />
         </span>
       </DropdownMenuItem>
-      
-      <DropdownMenuItem 
-        @click="setTheme(THEMES.DARK)"
+
+      <DropdownMenuItem
         :class="{ 'bg-accent': theme === THEMES.DARK }"
+        @click="setTheme(THEMES.DARK)"
       >
-        <Moon class="h-4 w-4 mr-2" />
+        <Moon class="mr-2 size-4" />
         Dark
         <span v-if="theme === THEMES.DARK" class="ml-auto">
-          <Check class="h-4 w-4" />
+          <Check class="size-4" />
         </span>
       </DropdownMenuItem>
-      
-      <DropdownMenuItem 
-        @click="setTheme(THEMES.SYSTEM)"
+
+      <DropdownMenuItem
         :class="{ 'bg-accent': theme === THEMES.SYSTEM }"
+        @click="setTheme(THEMES.SYSTEM)"
       >
-        <Monitor class="h-4 w-4 mr-2" />
+        <Monitor class="mr-2 size-4" />
         System
         <span v-if="theme === THEMES.SYSTEM" class="ml-auto">
-          <Check class="h-4 w-4" />
+          <Check class="size-4" />
         </span>
       </DropdownMenuItem>
-      
+
       <DropdownMenuSeparator />
-      
+
       <div class="px-2 py-1.5 text-xs text-muted-foreground">
         Current: {{ resolvedTheme }}
         <span v-if="isSystemMode" class="ml-1">
@@ -60,23 +60,23 @@
 import { ref, computed, watch } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 import { Button } from '@/components/ui/button'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sun, Moon, Monitor, Check } from 'lucide-vue-next'
 
-const { 
-  theme, 
-  resolvedTheme, 
-  isDarkMode, 
-  isSystemMode, 
-  systemPrefersDark, 
-  setTheme, 
-  THEMES 
+const {
+  theme,
+  resolvedTheme,
+  isDarkMode,
+  isSystemMode,
+  systemPrefersDark,
+  setTheme,
+  THEMES,
 } = useTheme()
 
 // Transition state for visual feedback
@@ -110,4 +110,4 @@ watch(resolvedTheme, () => {
 .animate-spin {
   animation: theme-transition 0.2s ease-in-out;
 }
-</style> 
+</style>

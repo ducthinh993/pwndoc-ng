@@ -7,9 +7,9 @@
       :class="cn(labelClasses)"
     >
       {{ label }}
-      <span v-if="required" class="text-destructive ml-1">*</span>
+      <span v-if="required" class="ml-1 text-destructive">*</span>
     </label>
-    
+
     <!-- Input field -->
     <input
       :id="inputId"
@@ -32,8 +32,8 @@
       @blur="onBlur"
       @focus="onFocus"
       @keyup.enter="onEnter"
-    />
-    
+    >
+
     <!-- Prefix icon -->
     <div
       v-if="prefixIcon"
@@ -41,7 +41,7 @@
     >
       <component :is="iconComponent" :name="prefixIcon" />
     </div>
-    
+
     <!-- Suffix icon -->
     <div
       v-if="suffixIcon || clearable"
@@ -56,16 +56,16 @@
       >
         <component :is="iconComponent" name="close" />
       </button>
-      
+
       <!-- Suffix icon -->
       <component
-        v-else-if="suffixIcon"
         :is="iconComponent"
+        v-else-if="suffixIcon"
         :name="suffixIcon"
         :class="cn('text-muted-foreground')"
       />
     </div>
-    
+
     <!-- Error message -->
     <p
       v-if="error && errorMessage"
@@ -73,7 +73,7 @@
     >
       {{ errorMessage }}
     </p>
-    
+
     <!-- Helper text -->
     <p
       v-else-if="hint && !error"
@@ -150,15 +150,15 @@ const wrapperClasses = computed(() => ({
 }))
 
 // Label classes - matches q-input label styling
-const labelClasses = computed(() => 
+const labelClasses = computed(() =>
   cn(
     'block text-sm font-medium mb-2',
     {
       'text-destructive': props.error,
       'text-foreground': !props.error && !props.disabled,
       'text-muted-foreground': props.disabled,
-    }
-  )
+    },
+  ),
 )
 
 // Size classes - exact mapping from Quasar input sizes
@@ -166,28 +166,28 @@ const sizeClasses = computed(() => {
   const sizes = {
     // Extra small - matches q-input dense
     xs: 'h-8 px-2 py-1 text-xs',
-    
+
     // Small - matches q-input size="sm"
     sm: 'h-9 px-3 py-2 text-sm',
-    
+
     // Default - matches q-input default size
     default: 'h-10 px-3 py-2 text-sm',
-    
+
     // Large - matches q-input size="lg"
     lg: 'h-11 px-4 py-3 text-base',
-    
+
     // Extra large - matches q-input size="xl"
     xl: 'h-12 px-4 py-3 text-lg',
   }
-  
+
   const sizeClass = sizes[props.size]
-  
+
   // Adjust padding for icons
   const paddingAdjustments = {
     'pl-10': props.prefixIcon,
     'pr-10': props.suffixIcon || props.clearable,
   }
-  
+
   return cn(sizeClass, paddingAdjustments)
 })
 
@@ -230,12 +230,12 @@ const suffixIconClasses = computed(() => {
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   let value: string | number = target.value
-  
+
   // Handle number type conversion
   if (props.type === 'number' && value !== '') {
     value = Number(value)
   }
-  
+
   emit('update:modelValue', value)
 }
 
@@ -254,7 +254,7 @@ const onEnter = (event: KeyboardEvent) => {
 const onClear = () => {
   emit('update:modelValue', '')
   emit('clear')
-  
+
   // Focus the input after clearing
   nextTick(() => {
     inputRef.value?.focus()
@@ -291,4 +291,4 @@ input:disabled {
 input::placeholder {
   opacity: 1;
 }
-</style> 
+</style>

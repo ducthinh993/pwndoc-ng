@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     :class="cn(
       'min-h-screen bg-background font-sans antialiased',
       {
@@ -41,4 +41,4 @@ const isDark = inject('isDark', false)
 .dark .home-background {
   background-color: hsl(var(--color-background));
 }
-</style> 
+</style>

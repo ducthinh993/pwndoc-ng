@@ -9,29 +9,29 @@ export function useToast() {
       id,
       type,
       message,
-      duration
+      duration,
     }
-    
+
     toasts.value.push(toast)
-    
+
     // Auto remove toast after duration
     setTimeout(() => {
       removeToast(id)
     }, duration)
-    
+
     return id
   }
-  
+
   const removeToast = (id) => {
     const index = toasts.value.findIndex(toast => toast.id === id)
     if (index > -1) {
       toasts.value.splice(index, 1)
     }
   }
-  
+
   return {
     toasts,
     showToast,
-    removeToast
+    removeToast,
   }
-} 
+}

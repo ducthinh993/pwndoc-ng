@@ -8,7 +8,7 @@
         'h-6 px-2 py-1 text-xs': size === 'sm',
         'h-7 px-2.5 py-1.5 text-xs': size === 'default',
         'h-8 px-3 py-2 text-sm': size === 'lg',
-        
+
         // Style variants
         'bg-primary text-primary-foreground hover:bg-primary/80': variant === 'default',
         'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
@@ -17,11 +17,11 @@
         'bg-warning text-warning-foreground hover:bg-warning/80': variant === 'warning',
         'bg-info text-info-foreground hover:bg-info/80': variant === 'info',
         'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
-        
+
         // Shape variants
         'rounded-full': shape === 'rounded',
         'rounded-md': shape === 'square',
-        
+
         // Interactive states
         'cursor-pointer': clickable || removable,
         'opacity-50 cursor-not-allowed': disabled,
@@ -34,19 +34,19 @@
     @keydown="handleKeydown"
   >
     <!-- Leading Icon -->
-    <slot name="icon" v-if="$slots.icon" />
-    
+    <slot v-if="$slots.icon" name="icon" />
+
     <!-- Icon (prop) -->
     <component
-      v-if="icon"
       :is="icon"
+      v-if="icon"
       :class="cn('h-3 w-3', {
         'h-2.5 w-2.5': size === 'sm',
         'h-3 w-3': size === 'default',
         'h-4 w-4': size === 'lg',
       })"
     />
-    
+
     <!-- Content -->
     <span
       v-if="$slots.default || label"
@@ -58,7 +58,7 @@
     >
       <slot>{{ label }}</slot>
     </span>
-    
+
     <!-- Remove Button -->
     <button
       v-if="removable && !disabled"
@@ -67,9 +67,9 @@
         'transition-colors duration-200',
         removeButtonClass
       )"
+      :aria-label="removeLabel"
       @click.stop="handleRemove"
       @keydown.stop="handleRemoveKeydown"
-      :aria-label="removeLabel"
     >
       <svg
         :class="cn('h-3 w-3', {
@@ -81,12 +81,17 @@
         stroke="currentColor"
         viewBox="0 0 24 24"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
       </svg>
     </button>
-    
+
     <!-- Trailing Icon -->
-    <slot name="trailing-icon" v-if="$slots['trailing-icon']" />
+    <slot v-if="$slots['trailing-icon']" name="trailing-icon" />
   </div>
 </template>
 
@@ -133,7 +138,7 @@ const emit = defineEmits<BadgeEmits>()
 // Methods
 const handleClick = (event: MouseEvent) => {
   if (props.disabled) return
-  
+
   if (props.clickable) {
     emit('click', event)
   }
@@ -141,15 +146,15 @@ const handleClick = (event: MouseEvent) => {
 
 const handleRemove = (event: MouseEvent) => {
   if (props.disabled) return
-  
+
   emit('remove', event)
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (props.disabled) return
-  
+
   emit('keydown', event)
-  
+
   // Handle Enter and Space for clickable badges
   if ((event.key === 'Enter' || event.key === ' ') && props.clickable) {
     event.preventDefault()
@@ -159,7 +164,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 const handleRemoveKeydown = (event: KeyboardEvent) => {
   if (props.disabled) return
-  
+
   // Handle Enter and Space for remove button
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
@@ -264,4 +269,4 @@ button:hover {
 .max-w-32 {
   max-width: 8rem;
 }
-</style> 
+</style>

@@ -1,14 +1,13 @@
 <template>
   <div class="space-y-2">
-    <label 
-      v-if="label" 
+    <label
+      v-if="label"
       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
     >
       {{ label }}
     </label>
     <textarea
       v-model="dataString"
-      @input="updateParent"
       :readonly="readonly"
       :disabled="readonly"
       :class="cn(
@@ -18,6 +17,7 @@
         readonly && 'bg-muted cursor-not-allowed'
       )"
       rows="4"
+      @input="updateParent"
     />
   </div>
 </template>
@@ -28,25 +28,25 @@ import { cn } from '@/lib/utils'
 
 export default defineComponent({
   name: 'TextareaArrayShadcn',
-  emits: ['update:modelValue'],
   props: {
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     modelValue: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     noEmptyLine: {
       type: Boolean,
-      default: false
+      default: false,
     },
     readonly: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
+  emits: ['update:modelValue'],
   setup(props, { emit }) {
     const dataString = ref('')
 
@@ -75,7 +75,7 @@ export default defineComponent({
         }
         dataString.value = str
       },
-      { deep: true }
+      { deep: true },
     )
 
     return {
@@ -83,10 +83,10 @@ export default defineComponent({
       updateParent,
       cn,
     }
-  }
+  },
 })
 </script>
 
 <style scoped>
 /* Additional styling if needed */
-</style> 
+</style>

@@ -8,21 +8,21 @@
         // Active state
         'bg-accent text-accent-foreground': active,
         'hover:bg-accent hover:text-accent-foreground': !active && !disabled,
-        
+
         // Disabled state
         'opacity-50 cursor-not-allowed': disabled,
         'cursor-pointer': !disabled && (clickable || to || href),
-        
+
         // Nested levels
         'pl-6': level === 1,
         'pl-9': level === 2,
         'pl-12': level === 3,
         'pl-15': level === 4,
-        
+
         // Dense variant
         'py-1': dense,
         'py-2': !dense,
-        
+
         // Size variants
         'text-xs px-2 py-1': size === 'sm',
         'text-sm px-3 py-2': size === 'default',
@@ -48,8 +48,8 @@
     >
       <slot name="icon">
         <component
-          v-if="icon"
           :is="icon"
+          v-if="icon"
           :class="cn('h-full w-full', {
             'text-muted-foreground': !active,
             'text-current': active,
@@ -59,10 +59,10 @@
     </div>
 
     <!-- Content -->
-    <div class="flex-1 min-w-0">
+    <div class="min-w-0 flex-1">
       <!-- Main content -->
       <div class="flex items-center justify-between">
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0 flex-1">
           <!-- Title -->
           <div
             v-if="title || $slots.default"
@@ -73,7 +73,7 @@
           >
             <slot>{{ title }}</slot>
           </div>
-          
+
           <!-- Caption -->
           <div
             v-if="caption || $slots.caption"
@@ -81,15 +81,17 @@
               'opacity-70': active,
             })"
           >
-            <slot name="caption">{{ caption }}</slot>
+            <slot name="caption">
+              {{ caption }}
+            </slot>
           </div>
         </div>
-        
+
         <!-- Side content -->
-        <div v-if="$slots.side" class="flex-shrink-0 ml-2">
+        <div v-if="$slots.side" class="ml-2 shrink-0">
           <slot name="side" />
         </div>
-        
+
         <!-- Chevron for expandable items -->
         <div
           v-if="expandable"
@@ -98,12 +100,17 @@
           })"
         >
           <svg
-            class="h-4 w-4 text-muted-foreground"
+            class="size-4 text-muted-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </div>
       </div>
@@ -120,8 +127,8 @@
     >
       <slot name="trailing">
         <component
-          v-if="trailingIcon"
           :is="trailingIcon"
+          v-if="trailingIcon"
           :class="cn('h-full w-full', {
             'text-muted-foreground': !active,
             'text-current': active,
@@ -187,9 +194,9 @@ const tag = computed(() => {
 // Methods
 const handleClick = (event: MouseEvent) => {
   if (props.disabled) return
-  
+
   emit('click', event)
-  
+
   if (props.expandable) {
     emit('expand', !props.expanded)
   }
@@ -197,7 +204,7 @@ const handleClick = (event: MouseEvent) => {
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (props.disabled) return
-  
+
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
     handleClick(event as unknown as MouseEvent)
@@ -274,21 +281,21 @@ const handleKeydown = (event: KeyboardEvent) => {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
-  
+
   .pl-6 {
     padding-left: 1.25rem;
   }
-  
+
   .pl-9 {
     padding-left: 2rem;
   }
-  
+
   .pl-12 {
     padding-left: 2.75rem;
   }
-  
+
   .pl-15 {
     padding-left: 3.5rem;
   }
 }
-</style> 
+</style>

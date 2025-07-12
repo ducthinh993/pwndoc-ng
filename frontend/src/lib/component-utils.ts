@@ -22,25 +22,25 @@ export type ComponentVariant = 'default' | 'primary' | 'secondary' | 'destructiv
 export const componentBaseClasses = {
   // Button base classes
   button: 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-  
+
   // Input base classes
   input: 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-  
+
   // Card base classes
   card: 'rounded-lg border bg-card text-card-foreground shadow-sm',
-  
+
   // Dialog base classes
   dialog: 'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full',
-  
+
   // Table base classes
   table: 'w-full caption-bottom text-sm',
-  
+
   // Badge base classes
   badge: 'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-  
+
   // Label base classes
   label: 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-  
+
   // Separator base classes
   separator: 'shrink-0 bg-border',
 } as const
@@ -165,15 +165,15 @@ export const componentUtils = {
     component: keyof typeof componentBaseClasses,
     variant: ComponentVariant = 'default',
     size: ComponentSize = 'default',
-    className?: string
+    className?: string,
   ) => {
     const baseClasses = componentBaseClasses[component]
     const sizeClasses = componentSizeVariants[component as keyof typeof componentSizeVariants]?.[size] || ''
     const variantClasses = componentColorVariants[component as keyof typeof componentColorVariants]?.[variant] || ''
-    
+
     return cn(baseClasses, sizeClasses, variantClasses, className)
   },
-  
+
   /**
    * Get interactive state classes
    */
@@ -185,31 +185,31 @@ export const componentUtils = {
       interactiveStateClasses.active,
       {
         [interactiveStateClasses.disabled]: disabled,
-      }
+      },
     )
   },
-  
+
   /**
    * Get responsive container classes
    */
   getContainerClasses: (variant: keyof typeof responsiveContainerClasses = 'default') => {
     return responsiveContainerClasses[variant]
   },
-  
+
   /**
    * Get responsive grid classes
    */
   getGridClasses: (variant: keyof typeof responsiveGridClasses = 'default') => {
     return responsiveGridClasses[variant]
   },
-  
+
   /**
    * Get animation classes
    */
   getAnimationClasses: (animation: keyof typeof animationClasses) => {
     return animationClasses[animation]
   },
-  
+
   /**
    * Get loading state classes
    */
@@ -228,14 +228,14 @@ export const styleValidators = {
   isValidSize: (size: string): size is ComponentSize => {
     return ['xs', 'sm', 'default', 'lg', 'xl'].includes(size)
   },
-  
+
   /**
    * Validate component variant
    */
   isValidVariant: (variant: string): variant is ComponentVariant => {
     return ['default', 'primary', 'secondary', 'destructive', 'outline', 'ghost', 'link'].includes(variant)
   },
-  
+
   /**
    * Validate class name string
    */
@@ -275,4 +275,4 @@ export const componentKit = {
   defaults: componentDefaults,
 } as const
 
-export default componentKit 
+export default componentKit

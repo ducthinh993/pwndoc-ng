@@ -7,11 +7,11 @@
       :approvals="parentApprovals"
     />
 
-    <div class="max-w-6xl mx-auto mt-8">
+    <div class="mx-auto mt-8 max-w-6xl">
       <Card>
         <CardHeader>
           <!-- Top Controls -->
-          <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 md:items-end">
+          <div class="flex flex-col space-y-4 md:flex-row md:items-end md:space-x-4 md:space-y-0">
             <!-- Language Selector -->
             <div class="w-full md:w-48">
               <Label for="language-select">{{ $t('language') }}</Label>
@@ -31,7 +31,7 @@
               </Select>
             </div>
 
-            <div class="flex-1"></div>
+            <div class="flex-1" />
 
             <!-- Create Finding Input -->
             <div class="flex-1 md:max-w-md">
@@ -41,15 +41,15 @@
                   id="finding-title"
                   v-model="findingTitle"
                   :placeholder="$t('enterFindingTitle')"
-                  @keyup.enter="addFinding()"
                   class="flex-1"
+                  @keyup.enter="addFinding()"
                 />
-                
+
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger as-child>
                     <Button variant="default">
                       {{ $t('btn.create') }}
-                      <ChevronDown class="h-4 w-4 ml-2" />
+                      <ChevronDown class="ml-2 size-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -72,7 +72,7 @@
           </div>
 
           <!-- Search Filters -->
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="md:col-span-2">
               <Label for="search-title">{{ $t('search') }} {{ $t('title') }}</Label>
               <Input
@@ -81,7 +81,7 @@
                 :placeholder="$t('searchByTitle')"
               />
             </div>
-            
+
             <div>
               <Label for="search-category">{{ $t('search') }} {{ $t('category') }}</Label>
               <Select v-model="search.category">
@@ -89,7 +89,9 @@
                   <SelectValue :placeholder="$t('allCategories')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{{ $t('allCategories') }}</SelectItem>
+                  <SelectItem value="">
+                    {{ $t('allCategories') }}
+                  </SelectItem>
                   <SelectItem
                     v-for="category in vulnCategoriesOptions"
                     :key="category"
@@ -100,7 +102,7 @@
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label for="search-type">{{ $t('search') }} {{ $t('vulnType') }}</Label>
               <Select v-model="search.vulnType">
@@ -108,7 +110,9 @@
                   <SelectValue :placeholder="$t('allTypes')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{{ $t('allTypes') }}</SelectItem>
+                  <SelectItem value="">
+                    {{ $t('allTypes') }}
+                  </SelectItem>
                   <SelectItem
                     v-for="type in vulnTypeOptions"
                     :key="type"
@@ -124,8 +128,8 @@
 
         <CardContent>
           <!-- Loading State -->
-          <div v-if="loading" class="flex justify-center items-center py-8">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div v-if="loading" class="flex items-center justify-center py-8">
+            <div class="size-8 animate-spin rounded-full border-b-2 border-primary" />
           </div>
 
           <!-- Vulnerabilities Table -->
@@ -133,10 +137,18 @@
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead class="w-[50%]">{{ $t('title') }}</TableHead>
-                  <TableHead class="w-[20%]">{{ $t('category') }}</TableHead>
-                  <TableHead class="w-[20%]">{{ $t('vulnType') }}</TableHead>
-                  <TableHead class="w-[10%]">{{ $t('action') }}</TableHead>
+                  <TableHead class="w-[50%]">
+                    {{ $t('title') }}
+                  </TableHead>
+                  <TableHead class="w-[20%]">
+                    {{ $t('category') }}
+                  </TableHead>
+                  <TableHead class="w-[20%]">
+                    {{ $t('vulnType') }}
+                  </TableHead>
+                  <TableHead class="w-[10%]">
+                    {{ $t('action') }}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -151,8 +163,8 @@
                           size="sm"
                           @click="toggleExpand(vulnerability._id)"
                         >
-                          <ChevronDown 
-                            class="h-4 w-4 transition-transform"
+                          <ChevronDown
+                            class="size-4 transition-transform"
                             :class="{ 'rotate-180': expandedRows.includes(vulnerability._id) }"
                           />
                         </Button>
@@ -172,23 +184,23 @@
                       <Button
                         variant="ghost"
                         size="sm"
-                        @click="addFindingFromVuln(vulnerability)"
                         class="text-primary hover:text-primary"
+                        @click="addFindingFromVuln(vulnerability)"
                       >
-                        <Plus class="h-4 w-4 mr-1" />
+                        <Plus class="mr-1 size-4" />
                         {{ $t('add') }}
                       </Button>
                     </TableCell>
                   </TableRow>
-                  
+
                   <!-- Expanded description row -->
                   <TableRow v-if="expandedRows.includes(vulnerability._id)" class="bg-muted/30">
                     <TableCell colspan="4" class="p-4">
                       <div class="prose prose-sm max-w-none">
-                        <div class="text-sm text-muted-foreground mb-2 font-medium">
+                        <div class="mb-2 text-sm font-medium text-muted-foreground">
                           {{ $t('description') }}:
                         </div>
-                        <div 
+                        <div
                           class="text-sm leading-relaxed"
                           v-html="htmlEncode(vulnerability.detail.description)"
                         />
@@ -205,7 +217,7 @@
             <div class="text-sm text-muted-foreground">
               <span>{{ filteredVulnerabilities.length }} / {{ vulnerabilities.length }} {{ $t('vulnerabilitiesNums') }}</span>
             </div>
-            
+
             <div class="flex items-center space-x-2">
               <span class="text-sm text-muted-foreground">{{ $t('resultsPerPage') }}</span>
               <Select v-model="vulnPagination.rowsPerPage">
@@ -222,39 +234,39 @@
                   </SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <div class="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  @click="vulnPagination.page--"
                   :disabled="vulnPagination.page <= 1"
+                  @click="vulnPagination.page--"
                 >
-                  <ChevronLeft class="h-4 w-4" />
+                  <ChevronLeft class="size-4" />
                 </Button>
-                
+
                 <div class="flex items-center space-x-1">
                   <Button
                     v-for="page in paginationPages"
                     :key="page"
                     variant="outline"
                     size="sm"
-                    @click="vulnPagination.page = page"
                     :class="[
                       vulnPagination.page === page ? 'bg-primary text-primary-foreground' : ''
                     ]"
+                    @click="vulnPagination.page = page"
                   >
                     {{ page }}
                   </Button>
                 </div>
-                
+
                 <Button
                   variant="outline"
                   size="sm"
-                  @click="vulnPagination.page++"
                   :disabled="vulnPagination.page >= totalPages"
+                  @click="vulnPagination.page++"
                 >
-                  <ChevronRight class="h-4 w-4" />
+                  <ChevronRight class="size-4" />
                 </Button>
               </div>
             </div>
@@ -279,13 +291,13 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import Breadcrumb from '@/components/breadcrumb.vue'
 
@@ -305,7 +317,7 @@ import { $t } from '@/boot/i18n'
 const props = defineProps({
   frontEndAuditState: Number,
   parentState: String,
-  parentApprovals: Array
+  parentApprovals: Array,
 })
 
 const route = useRoute()
@@ -326,7 +338,7 @@ const finding = ref({
   cvssv3: '',
   remediationComplexity: null,
   priority: null,
-  remediation: ''
+  remediation: '',
 })
 
 const findingTitle = ref('')
@@ -353,7 +365,7 @@ const audit = ref({
   language: '',
   template: '',
   customFields: [],
-  approvals: []
+  approvals: [],
 })
 
 // Table configuration
@@ -361,21 +373,21 @@ const vulnPagination = ref({
   page: 1,
   rowsPerPage: 25,
   sortBy: 'title',
-  pagesNumber: 1
+  pagesNumber: 1,
 })
 
 const rowsPerPageOptions = ref([
   { label: '25', value: 25 },
   { label: '50', value: 50 },
   { label: '100', value: 100 },
-  { label: 'All', value: 0 }
+  { label: 'All', value: 0 },
 ])
 
 // Search filters
 const search = ref({
   title: '',
   vulnType: '',
-  category: ''
+  category: '',
 })
 
 const htmlEncode = Utils.htmlEncode
@@ -385,7 +397,7 @@ const AUDIT_VIEW_STATE = Utils.AUDIT_VIEW_STATE
 const searchObject = computed(() => ({
   title: search.value.title,
   category: search.value.category,
-  vulnType: search.value.vulnType
+  vulnType: search.value.vulnType,
 }))
 
 const vulnCategoriesOptions = computed(() => {
@@ -406,20 +418,20 @@ const filteredVulnerabilities = computed(() => {
 
   // Filter by search criteria
   if (search.value.title) {
-    filtered = filtered.filter(vuln => 
-      vuln.detail.title.toLowerCase().includes(search.value.title.toLowerCase())
+    filtered = filtered.filter(vuln =>
+      vuln.detail.title.toLowerCase().includes(search.value.title.toLowerCase()),
     )
   }
 
   if (search.value.category) {
-    filtered = filtered.filter(vuln => 
-      (vuln.category || $t('noCategory')) === search.value.category
+    filtered = filtered.filter(vuln =>
+      (vuln.category || $t('noCategory')) === search.value.category,
     )
   }
 
   if (search.value.vulnType) {
-    filtered = filtered.filter(vuln => 
-      (vuln.detail?.vulnType || $t('undefined')) === search.value.vulnType
+    filtered = filtered.filter(vuln =>
+      (vuln.detail?.vulnType || $t('undefined')) === search.value.vulnType,
     )
   }
 
@@ -434,12 +446,12 @@ const totalPages = computed(() => {
 
 const paginatedVulnerabilities = computed(() => {
   const { page, rowsPerPage } = vulnPagination.value
-  
+
   if (rowsPerPage === 0) return filteredVulnerabilities.value
-  
+
   const start = (page - 1) * rowsPerPage
   const end = start + rowsPerPage
-  
+
   return filteredVulnerabilities.value.slice(start, end)
 })
 
@@ -447,20 +459,20 @@ const paginationPages = computed(() => {
   const current = vulnPagination.value.page
   const total = totalPages.value
   const pages = []
-  
+
   // Show first page
   if (current > 3) pages.push(1)
   if (current > 4) pages.push('...')
-  
+
   // Show pages around current
   for (let i = Math.max(1, current - 2); i <= Math.min(total, current + 2); i++) {
     pages.push(i)
   }
-  
+
   // Show last page
   if (current < total - 3) pages.push('...')
   if (current < total - 2) pages.push(total)
-  
+
   return pages.filter(page => page !== '...' || pages.indexOf(page) === pages.lastIndexOf(page))
 })
 
@@ -476,7 +488,7 @@ const getLanguages = async () => {
 
 const getVulnerabilities = async () => {
   if (!dtLanguage.value) return
-  
+
   loading.value = true
   try {
     const response = await VulnService.getVulnByLanguage(dtLanguage.value)
@@ -522,7 +534,7 @@ const addFinding = async (category) => {
     toast({
       title: $t('error'),
       description: $t('titleRequired'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -531,16 +543,16 @@ const addFinding = async (category) => {
     const newFinding = {
       title: findingTitle.value,
       category: category?.name || '',
-      status: 1
+      status: 1,
     }
 
     const response = await AuditService.createFinding(route.params.auditId, newFinding)
     findingTitle.value = ''
-    
+
     toast({
       title: $t('success'),
       description: $t('findingCreatedSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
 
     // Navigate to edit the new finding
@@ -549,7 +561,7 @@ const addFinding = async (category) => {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('createFindingError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -565,15 +577,15 @@ const addFindingFromVuln = async (vulnerability) => {
       category: vulnerability.category || '',
       references: vulnerability.detail.references || [],
       customFields: vulnerability.detail.customFields || [],
-      status: 1
+      status: 1,
     }
 
     const response = await AuditService.createFinding(route.params.auditId, newFinding)
-    
+
     toast({
       title: $t('success'),
       description: $t('findingCreatedFromVuln'),
-      variant: 'default'
+      variant: 'default',
     })
 
     // Navigate to edit the new finding
@@ -582,7 +594,7 @@ const addFindingFromVuln = async (vulnerability) => {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('createFindingError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }

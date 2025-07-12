@@ -10,7 +10,7 @@ class ChartCache {
   set(key, value) {
     const item = {
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
     this.cache.set(key, item)
   }
@@ -46,9 +46,9 @@ export default {
    * @param {boolean} useCache - Whether to use cached data
    * @returns {Promise} Promise resolving to chart data
    */
-  getAuditChartData: function(auditId, useCache = true) {
+  getAuditChartData(auditId, useCache = true) {
     const cacheKey = `audit-chart-${auditId}`
-    
+
     if (useCache) {
       const cached = chartCache.get(cacheKey)
       if (cached) {
@@ -76,9 +76,9 @@ export default {
    * @param {boolean} useCache - Whether to use cached data
    * @returns {Promise} Promise resolving to severity chart data
    */
-  getAuditSeverityData: function(auditId, useCache = true) {
+  getAuditSeverityData(auditId, useCache = true) {
     const cacheKey = `audit-severity-${auditId}`
-    
+
     if (useCache) {
       const cached = chartCache.get(cacheKey)
       if (cached) {
@@ -106,9 +106,9 @@ export default {
    * @param {boolean} useCache - Whether to use cached data
    * @returns {Promise} Promise resolving to category chart data
    */
-  getAuditCategoryData: function(auditId, useCache = true) {
+  getAuditCategoryData(auditId, useCache = true) {
     const cacheKey = `audit-category-${auditId}`
-    
+
     if (useCache) {
       const cached = chartCache.get(cacheKey)
       if (cached) {
@@ -136,9 +136,9 @@ export default {
    * @param {boolean} useCache - Whether to use cached data
    * @returns {Promise} Promise resolving to type chart data
    */
-  getAuditTypeData: function(auditId, useCache = true) {
+  getAuditTypeData(auditId, useCache = true) {
     const cacheKey = `audit-type-${auditId}`
-    
+
     if (useCache) {
       const cached = chartCache.get(cacheKey)
       if (cached) {
@@ -166,9 +166,9 @@ export default {
    * @param {boolean} useCache - Whether to use cached data
    * @returns {Promise} Promise resolving to status chart data
    */
-  getAuditStatusData: function(auditId, useCache = true) {
+  getAuditStatusData(auditId, useCache = true) {
     const cacheKey = `audit-status-${auditId}`
-    
+
     if (useCache) {
       const cached = chartCache.get(cacheKey)
       if (cached) {
@@ -195,7 +195,7 @@ export default {
    * @param {Object} severityData - Raw severity data from API
    * @returns {Object} Chart.js formatted data
    */
-  transformSeverityToPieChart: function(severityData) {
+  transformSeverityToPieChart(severityData) {
     if (!severityData || !severityData.severityStats) {
       return { labels: [], datasets: [] }
     }
@@ -209,7 +209,7 @@ export default {
 
     // Order severity levels consistently
     const severityOrder = ['critical', 'high', 'medium', 'low', 'information']
-    
+
     severityOrder.forEach(severity => {
       if (stats[severity] > 0) {
         labels.push(this.capitalizeSeverity(severity))
@@ -224,8 +224,8 @@ export default {
         data,
         backgroundColor,
         borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
+        borderColor: '#ffffff',
+      }],
     }
   },
 
@@ -234,7 +234,7 @@ export default {
    * @param {Object} severityData - Raw severity data from API
    * @returns {Object} Chart.js formatted data
    */
-  transformSeverityToBarChart: function(severityData) {
+  transformSeverityToBarChart(severityData) {
     if (!severityData || !severityData.severityStats) {
       return { labels: [], datasets: [] }
     }
@@ -248,7 +248,7 @@ export default {
 
     // Order severity levels consistently
     const severityOrder = ['critical', 'high', 'medium', 'low', 'information']
-    
+
     severityOrder.forEach(severity => {
       labels.push(this.capitalizeSeverity(severity))
       data.push(stats[severity] || 0)
@@ -262,8 +262,8 @@ export default {
         data,
         backgroundColor,
         borderWidth: 1,
-        borderColor: backgroundColor.map(color => this.darkenColor(color, 0.2))
-      }]
+        borderColor: backgroundColor.map(color => this.darkenColor(color, 0.2)),
+      }],
     }
   },
 
@@ -272,7 +272,7 @@ export default {
    * @param {Object} categoryData - Raw category data from API
    * @returns {Object} Chart.js formatted data
    */
-  transformCategoryToChart: function(categoryData) {
+  transformCategoryToChart(categoryData) {
     if (!categoryData || !categoryData.categoryStats) {
       return { labels: [], datasets: [] }
     }
@@ -280,7 +280,7 @@ export default {
     const stats = categoryData.categoryStats
     const labels = Object.keys(stats)
     const data = Object.values(stats)
-    
+
     // Generate colors for categories
     const backgroundColor = this.generateColors(labels.length)
 
@@ -290,8 +290,8 @@ export default {
         data,
         backgroundColor,
         borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
+        borderColor: '#ffffff',
+      }],
     }
   },
 
@@ -300,7 +300,7 @@ export default {
    * @param {Object} typeData - Raw type data from API
    * @returns {Object} Chart.js formatted data
    */
-  transformTypeToChart: function(typeData) {
+  transformTypeToChart(typeData) {
     if (!typeData || !typeData.typeStats) {
       return { labels: [], datasets: [] }
     }
@@ -308,7 +308,7 @@ export default {
     const stats = typeData.typeStats
     const labels = Object.keys(stats)
     const data = Object.values(stats)
-    
+
     // Generate colors for types
     const backgroundColor = this.generateColors(labels.length)
 
@@ -319,8 +319,8 @@ export default {
         data,
         backgroundColor,
         borderWidth: 1,
-        borderColor: backgroundColor.map(color => this.darkenColor(color, 0.2))
-      }]
+        borderColor: backgroundColor.map(color => this.darkenColor(color, 0.2)),
+      }],
     }
   },
 
@@ -329,23 +329,23 @@ export default {
    * @param {Error} error - The error object
    * @returns {Error} Processed error
    */
-  handleApiError: function(error) {
+  handleApiError(error) {
     if (error.response) {
       // API responded with error status
       const status = error.response.status
       const message = error.response.data?.message || error.response.data?.datas || 'Unknown error'
-      
+
       switch (status) {
-        case 401:
-          return new Error('Authentication required')
-        case 403:
-          return new Error('Access denied')
-        case 404:
-          return new Error('Audit not found')
-        case 500:
-          return new Error('Server error')
-        default:
-          return new Error(`API Error: ${message}`)
+      case 401:
+        return new Error('Authentication required')
+      case 403:
+        return new Error('Access denied')
+      case 404:
+        return new Error('Audit not found')
+      case 500:
+        return new Error('Server error')
+      default:
+        return new Error(`API Error: ${message}`)
       }
     } else if (error.request) {
       // Network error
@@ -361,7 +361,7 @@ export default {
    * @param {string} severity - Severity level
    * @returns {string} Capitalized severity
    */
-  capitalizeSeverity: function(severity) {
+  capitalizeSeverity(severity) {
     return severity.charAt(0).toUpperCase() + severity.slice(1)
   },
 
@@ -370,13 +370,13 @@ export default {
    * @param {string} severity - Severity level
    * @returns {string} Hex color
    */
-  getDefaultColor: function(severity) {
+  getDefaultColor(severity) {
     const colors = {
       critical: '#212121',
       high: '#fe0000',
       medium: '#f9a009',
       low: '#008000',
-      information: '#4a86e8'
+      information: '#4a86e8',
     }
     return colors[severity] || '#666666'
   },
@@ -386,12 +386,12 @@ export default {
    * @param {number} count - Number of colors needed
    * @returns {Array} Array of hex colors
    */
-  generateColors: function(count) {
+  generateColors(count) {
     const colors = [
       '#3498db', '#e74c3c', '#f39c12', '#2ecc71', '#9b59b6',
-      '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#f1c40f'
+      '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#f1c40f',
     ]
-    
+
     const result = []
     for (let i = 0; i < count; i++) {
       result.push(colors[i % colors.length])
@@ -405,21 +405,21 @@ export default {
    * @param {number} percent - Percentage to darken (0-1)
    * @returns {string} Darkened hex color
    */
-  darkenColor: function(color, percent) {
+  darkenColor(color, percent) {
     const num = parseInt(color.replace('#', ''), 16)
     const amt = Math.round(2.55 * percent * 100)
     const R = (num >> 16) + amt
     const G = (num >> 8 & 0x00FF) + amt
     const B = (num & 0x0000FF) + amt
-    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    return `#${  (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
       (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)
+      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)}`
   },
 
   /**
    * Clear all cached data
    */
-  clearCache: function() {
+  clearCache() {
     chartCache.clear()
   },
 
@@ -427,15 +427,15 @@ export default {
    * Clear cache for specific audit
    * @param {string} auditId - The audit ID
    */
-  clearAuditCache: function(auditId) {
+  clearAuditCache(auditId) {
     const keys = [
       `audit-chart-${auditId}`,
       `audit-severity-${auditId}`,
       `audit-category-${auditId}`,
       `audit-type-${auditId}`,
-      `audit-status-${auditId}`
+      `audit-status-${auditId}`,
     ]
-    
+
     keys.forEach(key => chartCache.delete(key))
-  }
-} 
+  },
+}

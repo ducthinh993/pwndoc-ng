@@ -20,7 +20,7 @@
       :src="src"
       :alt="alt"
       :class="cn('aspect-square h-full w-full object-cover')"
-    />
+    >
     <div
       v-else
       :class="cn(
@@ -79,7 +79,7 @@ function getColorValue(color: string): string {
     warning: 'hsl(var(--color-warning))',
     error: 'hsl(var(--color-destructive))',
     info: 'hsl(var(--color-info))',
-    
+
     // Legacy compatibility
     positive: 'hsl(var(--color-success))',
     negative: 'hsl(var(--color-destructive))',
@@ -90,7 +90,7 @@ function getColorValue(color: string): string {
     white: '#ffffff',
     black: '#000000',
   }
-  
+
   return semanticColors[color] || color
 }
-</script> 
+</script>

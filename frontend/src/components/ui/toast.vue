@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
-    <div class="fixed top-4 right-4 z-50 flex flex-col gap-2 w-96">
-      <transition-group 
+    <div class="fixed right-4 top-4 z-50 flex w-96 flex-col gap-2">
+      <transition-group
         name="toast"
         tag="div"
         class="flex flex-col gap-2"
@@ -19,30 +19,30 @@
           <div class="shrink-0">
             <component
               :is="iconComponent(item.type)"
-              class="h-5 w-5"
+              class="size-5"
             />
           </div>
-          <div class="flex-1 min-w-0">
-            <div v-if="item.title" class="font-medium leading-none mb-1">
+          <div class="min-w-0 flex-1">
+            <div v-if="item.title" class="mb-1 font-medium leading-none">
               {{ item.title }}
             </div>
             <div class="text-sm opacity-90">
               {{ item.message }}
             </div>
           </div>
-          <div class="shrink-0 flex gap-2">
+          <div class="flex shrink-0 gap-2">
             <button
               v-if="item.action"
-              @click="item.action.onClick"
               class="text-sm font-medium underline hover:no-underline"
+              @click="item.action.onClick"
             >
               {{ item.action.label }}
             </button>
             <button
-              @click="toast.dismiss(item.id)"
               class="text-muted-foreground hover:text-foreground"
+              @click="toast.dismiss(item.id)"
             >
-              <X class="h-4 w-4" />
+              <X class="size-4" />
             </button>
           </div>
         </div>
@@ -55,12 +55,12 @@
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/composables/useToast'
-import { 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle, 
-  Info, 
-  X 
+import {
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Info,
+  X,
 } from 'lucide-vue-next'
 
 const toast = useToast()
@@ -105,4 +105,4 @@ const iconComponent = (type: string) => {
 .toast-move {
   transition: transform 0.3s ease;
 }
-</style> 
+</style>

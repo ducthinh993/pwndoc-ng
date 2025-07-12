@@ -1,24 +1,24 @@
 <template>
   <div class="container mx-auto p-4">
     <!-- No Languages/Audit Types Messages -->
-    <div v-if="languages.length === 0" class="max-w-md mx-auto mt-8">
+    <div v-if="languages.length === 0" class="mx-auto mt-8 max-w-md">
       <Alert class="border-yellow-200 bg-yellow-50">
-        <AlertCircle class="h-4 w-4" />
+        <AlertCircle class="size-4" />
         <AlertDescription>
           {{ $t('noLanguage') }}
-          <a href="/data/custom" class="text-blue-600 hover:text-blue-800 underline">
+          <a href="/data/custom" class="text-blue-600 underline hover:text-blue-800">
             {{ $t('nav.data') }} -> {{ $t('customData') }} -> {{ $t('language') }}
           </a>
         </AlertDescription>
       </Alert>
     </div>
 
-    <div v-if="auditTypes.length === 0" class="max-w-md mx-auto mt-8">
+    <div v-if="auditTypes.length === 0" class="mx-auto mt-8 max-w-md">
       <Alert class="border-yellow-200 bg-yellow-50">
-        <AlertCircle class="h-4 w-4" />
+        <AlertCircle class="size-4" />
         <AlertDescription>
           {{ $t('noAudit') }}
-          <a href="/data/custom" class="text-blue-600 hover:text-blue-800 underline">
+          <a href="/data/custom" class="text-blue-600 underline hover:text-blue-800">
             {{ $t('nav.data') }} -> {{ $t('customData') }} -> {{ $t('auditTypes') }}
           </a>
         </AlertDescription>
@@ -26,12 +26,12 @@
     </div>
 
     <!-- Main Table Section -->
-    <div v-if="languages.length > 0 && auditTypes.length > 0" class="max-w-7xl mx-auto mt-8">
+    <div v-if="languages.length > 0 && auditTypes.length > 0" class="mx-auto mt-8 max-w-7xl">
       <Card>
         <CardHeader>
           <!-- Search and Filter Controls -->
-          <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 md:items-center">
-            <div class="flex-1 max-w-md">
+          <div class="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
+            <div class="max-w-md flex-1">
               <div class="relative">
                 <Input
                   v-model="search.finding"
@@ -43,43 +43,43 @@
                   <Button
                     variant="ghost"
                     size="sm"
+                    class="size-6 p-0"
                     @click="getAudits"
-                    class="h-6 w-6 p-0"
                   >
-                    <Search class="h-4 w-4" />
+                    <Search class="size-4" />
                   </Button>
                   <Button
                     v-if="search.finding"
                     variant="ghost"
                     size="sm"
+                    class="ml-1 size-6 p-0"
                     @click="search.finding = ''; getAudits()"
-                    class="h-6 w-6 p-0 ml-1"
                   >
-                    <X class="h-4 w-4" />
+                    <X class="size-4" />
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-4 items-center">
+            <div class="flex flex-wrap items-center gap-4">
               <div class="flex items-center space-x-2">
-                <Switch v-model:checked="myAudits" id="my-audits" />
+                <Switch id="my-audits" v-model:checked="myAudits" />
                 <Label for="my-audits">{{ $t('myAudits') }}</Label>
               </div>
-              
+
               <div v-if="UserService.isAllowed('audits:users-connected')" class="flex items-center space-x-2">
-                <Switch v-model:checked="displayConnected" id="display-connected" />
+                <Switch id="display-connected" v-model:checked="displayConnected" />
                 <Label for="display-connected">{{ $t('usersConnected') }}</Label>
               </div>
-              
+
               <div v-if="$settings.reviews.enabled && (UserService.isAllowed('audits:review') || UserService.isAllowed('audits:review-all'))" class="flex items-center space-x-2">
-                <Switch v-model:checked="displayReadyForReview" id="display-ready-review" />
+                <Switch id="display-ready-review" v-model:checked="displayReadyForReview" />
                 <Label for="display-ready-review">{{ $t('awaitingMyReview') }}</Label>
               </div>
-              
+
               <Button
-                @click="cleanCurrentAudit(); showCreateModal = true"
                 class="bg-secondary hover:bg-secondary/80"
+                @click="cleanCurrentAudit(); showCreateModal = true"
               >
                 {{ $t('newAudit') }}
               </Button>
@@ -87,7 +87,7 @@
           </div>
 
           <!-- Filter Row -->
-          <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4">
+          <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-6">
             <div>
               <Input
                 v-model="search.name"
@@ -101,7 +101,9 @@
                   <SelectValue :placeholder="$t('search') + ' ' + $t('company')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{{ $t('all') }}</SelectItem>
+                  <SelectItem value="">
+                    {{ $t('all') }}
+                  </SelectItem>
                   <SelectItem
                     v-for="company in companies"
                     :key="company._id"
@@ -118,7 +120,9 @@
                   <SelectValue :placeholder="$t('search') + ' ' + $t('language')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{{ $t('all') }}</SelectItem>
+                  <SelectItem value="">
+                    {{ $t('all') }}
+                  </SelectItem>
                   <SelectItem
                     v-for="language in languages"
                     :key="language.locale"
@@ -143,14 +147,14 @@
                 size="sm"
               />
             </div>
-            <div></div>
+            <div />
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <!-- Loading State -->
-          <div v-if="loading" class="flex justify-center items-center py-8">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div v-if="loading" class="flex items-center justify-center py-8">
+            <div class="size-8 animate-spin rounded-full border-b-2 border-primary" />
           </div>
 
           <!-- Data Table -->
@@ -158,7 +162,7 @@
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead 
+                  <TableHead
                     v-for="column in visibleColumns"
                     :key="column"
                     class="cursor-pointer hover:bg-muted/50"
@@ -167,15 +171,15 @@
                     <div class="flex items-center space-x-2">
                       <span>{{ getColumnLabel(column) }}</span>
                       <div class="flex flex-col">
-                        <ChevronUp 
+                        <ChevronUp
                           :class="[
-                            'h-3 w-3 text-muted-foreground',
+                            'size-3 text-muted-foreground',
                             pagination.sortBy === column && !pagination.descending ? 'text-primary' : ''
                           ]"
                         />
-                        <ChevronDown 
+                        <ChevronDown
                           :class="[
-                            'h-3 w-3 text-muted-foreground -mt-1',
+                            '-mt-1 size-3 text-muted-foreground',
                             pagination.sortBy === column && pagination.descending ? 'text-primary' : ''
                           ]"
                         />
@@ -188,7 +192,7 @@
                 <TableRow
                   v-for="audit in paginatedAudits"
                   :key="audit._id"
-                  class="hover:bg-muted/50 cursor-pointer"
+                  class="cursor-pointer hover:bg-muted/50"
                   @dblclick="dblClick(audit)"
                 >
                   <TableCell v-if="visibleColumns.includes('name')">
@@ -229,22 +233,22 @@
                         size="sm"
                         @click="$router.push(`/audits/${audit._id}/general`)"
                       >
-                        <Edit class="h-4 w-4" />
+                        <Edit class="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         @click="generateReport(audit._id)"
                       >
-                        <Download class="h-4 w-4" />
+                        <Download class="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        @click="confirmDeleteAudit(audit)"
                         class="text-destructive hover:text-destructive"
+                        @click="confirmDeleteAudit(audit)"
                       >
-                        <Trash2 class="h-4 w-4" />
+                        <Trash2 class="size-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -259,7 +263,7 @@
               <span v-if="audits.length === 1">1 {{ $t('auditNum1') }}</span>
               <span v-else>{{ audits.length }} {{ $t('auditNums') }}</span>
             </div>
-            
+
             <div class="flex items-center space-x-2">
               <span class="text-sm text-muted-foreground">{{ $t('resultsPerPage') }}</span>
               <Select v-model="pagination.rowsPerPage">
@@ -276,39 +280,39 @@
                   </SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <div class="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  @click="pagination.page--"
                   :disabled="pagination.page <= 1"
+                  @click="pagination.page--"
                 >
-                  <ChevronLeft class="h-4 w-4" />
+                  <ChevronLeft class="size-4" />
                 </Button>
-                
+
                 <div class="flex items-center space-x-1">
                   <Button
                     v-for="page in paginationPages"
                     :key="page"
                     variant="outline"
                     size="sm"
-                    @click="pagination.page = page"
                     :class="[
                       pagination.page === page ? 'bg-primary text-primary-foreground' : ''
                     ]"
+                    @click="pagination.page = page"
                   >
                     {{ page }}
                   </Button>
                 </div>
-                
+
                 <Button
                   variant="outline"
                   size="sm"
-                  @click="pagination.page++"
                   :disabled="pagination.page >= totalPages"
+                  @click="pagination.page++"
                 >
-                  <ChevronRight class="h-4 w-4" />
+                  <ChevronRight class="size-4" />
                 </Button>
               </div>
             </div>
@@ -323,7 +327,7 @@
         <DialogHeader>
           <DialogTitle>{{ $t('newAudit') }}</DialogTitle>
         </DialogHeader>
-        
+
         <div class="space-y-4">
           <div class="space-y-2">
             <Label for="audit-name">{{ $t('name') }}</Label>
@@ -332,7 +336,9 @@
               v-model="currentAudit.name"
               :class="{ 'border-destructive': errors.name }"
             />
-            <p v-if="errors.name" class="text-sm text-destructive">{{ errors.name }}</p>
+            <p v-if="errors.name" class="text-sm text-destructive">
+              {{ errors.name }}
+            </p>
           </div>
 
           <div class="space-y-2">
@@ -351,7 +357,9 @@
                 </SelectItem>
               </SelectContent>
             </Select>
-            <p v-if="errors.language" class="text-sm text-destructive">{{ errors.language }}</p>
+            <p v-if="errors.language" class="text-sm text-destructive">
+              {{ errors.language }}
+            </p>
           </div>
 
           <div class="space-y-2">
@@ -370,7 +378,9 @@
                 </SelectItem>
               </SelectContent>
             </Select>
-            <p v-if="errors.auditType" class="text-sm text-destructive">{{ errors.auditType }}</p>
+            <p v-if="errors.auditType" class="text-sm text-destructive">
+              {{ errors.auditType }}
+            </p>
           </div>
         </div>
 
@@ -394,7 +404,7 @@
             {{ $t('auditDeleteConfirm', { name: auditToDelete?.name || '' }) }}
           </DialogDescription>
         </DialogHeader>
-        
+
         <DialogFooter>
           <Button variant="outline" @click="showDeleteDialog = false">
             {{ $t('cancel') }}
@@ -462,7 +472,7 @@ const dtHeaders = ref([
   { name: 'date', label: $t('date'), sortable: true },
   { name: 'connected', label: $t('usersConnected'), sortable: false },
   { name: 'reviews', label: $t('reviews'), sortable: false },
-  { name: 'action', label: '', sortable: false }
+  { name: 'action', label: '', sortable: false },
 ])
 
 const visibleColumns = ref(['name', 'company', 'language', 'users', 'date', 'action'])
@@ -472,14 +482,14 @@ const pagination = ref({
   page: 1,
   rowsPerPage: 25,
   sortBy: 'date',
-  descending: true
+  descending: true,
 })
 
 const rowsPerPageOptions = ref([
   { label: '25', value: 25 },
   { label: '50', value: 50 },
   { label: '100', value: 100 },
-  { label: 'All', value: 0 }
+  { label: 'All', value: 0 },
 ])
 
 // Search and filters
@@ -489,7 +499,7 @@ const search = ref({
   language: '',
   company: '',
   users: '',
-  date: ''
+  date: '',
 })
 
 const myAudits = ref(false)
@@ -500,13 +510,13 @@ const displayReadyForReview = ref(false)
 const currentAudit = ref({
   name: '',
   language: '',
-  auditType: ''
+  auditType: '',
 })
 
 const errors = ref({
   name: '',
   language: '',
-  auditType: ''
+  auditType: '',
 })
 
 // Computed properties
@@ -515,20 +525,20 @@ const filteredAudits = computed(() => {
 
   // Apply search filters
   if (search.value.name) {
-    filtered = filtered.filter(audit => 
-      audit.name.toLowerCase().includes(search.value.name.toLowerCase())
+    filtered = filtered.filter(audit =>
+      audit.name.toLowerCase().includes(search.value.name.toLowerCase()),
     )
   }
 
   if (search.value.company) {
-    filtered = filtered.filter(audit => 
-      audit.company?.name === search.value.company
+    filtered = filtered.filter(audit =>
+      audit.company?.name === search.value.company,
     )
   }
 
   if (search.value.language) {
-    filtered = filtered.filter(audit => 
-      audit.language === search.value.language
+    filtered = filtered.filter(audit =>
+      audit.language === search.value.language,
     )
   }
 
@@ -549,8 +559,8 @@ const filteredAudits = computed(() => {
   // Apply toggle filters
   if (myAudits.value) {
     const currentUserId = UserService.getUserId()
-    filtered = filtered.filter(audit => 
-      audit.users?.some(user => user._id === currentUserId)
+    filtered = filtered.filter(audit =>
+      audit.users?.some(user => user._id === currentUserId),
     )
   }
 
@@ -574,25 +584,25 @@ const sortedAudits = computed(() => {
       let aVal, bVal
 
       switch (sortBy) {
-        case 'name':
-          aVal = a.name || ''
-          bVal = b.name || ''
-          break
-        case 'company':
-          aVal = a.company?.name || ''
-          bVal = b.company?.name || ''
-          break
-        case 'language':
-          aVal = a.language || ''
-          bVal = b.language || ''
-          break
-        case 'date':
-          aVal = new Date(a.createdAt || 0)
-          bVal = new Date(b.createdAt || 0)
-          break
-        default:
-          aVal = a[sortBy] || ''
-          bVal = b[sortBy] || ''
+      case 'name':
+        aVal = a.name || ''
+        bVal = b.name || ''
+        break
+      case 'company':
+        aVal = a.company?.name || ''
+        bVal = b.company?.name || ''
+        break
+      case 'language':
+        aVal = a.language || ''
+        bVal = b.language || ''
+        break
+      case 'date':
+        aVal = new Date(a.createdAt || 0)
+        bVal = new Date(b.createdAt || 0)
+        break
+      default:
+        aVal = a[sortBy] || ''
+        bVal = b[sortBy] || ''
       }
 
       if (aVal < bVal) return descending ? 1 : -1
@@ -606,12 +616,12 @@ const sortedAudits = computed(() => {
 
 const paginatedAudits = computed(() => {
   const { page, rowsPerPage } = pagination.value
-  
+
   if (rowsPerPage === 0) return sortedAudits.value
-  
+
   const start = (page - 1) * rowsPerPage
   const end = start + rowsPerPage
-  
+
   return sortedAudits.value.slice(start, end)
 })
 
@@ -625,20 +635,20 @@ const paginationPages = computed(() => {
   const current = pagination.value.page
   const total = totalPages.value
   const pages = []
-  
+
   // Show first page
   if (current > 3) pages.push(1)
   if (current > 4) pages.push('...')
-  
+
   // Show pages around current
   for (let i = Math.max(1, current - 2); i <= Math.min(total, current + 2); i++) {
     pages.push(i)
   }
-  
+
   // Show last page
   if (current < total - 3) pages.push('...')
   if (current < total - 2) pages.push(total)
-  
+
   return pages.filter(page => page !== '...' || pages.indexOf(page) === pages.lastIndexOf(page))
 })
 
@@ -673,8 +683,8 @@ const getCompanies = async () => {
 const getAudits = async () => {
   loading.value = true
   try {
-    const response = await AuditService.getAudits({ 
-      findingTitle: search.value.finding 
+    const response = await AuditService.getAudits({
+      findingTitle: search.value.finding,
     })
     audits.value = response.data.datas
   } catch (error) {
@@ -697,7 +707,7 @@ const convertLocale = (locale) => {
 
 const convertParticipants = (audit) => {
   if (!audit.users || audit.users.length === 0) return '-'
-  return audit.users.map(user => user.firstname + ' ' + user.lastname).join(', ')
+  return audit.users.map(user => `${user.firstname  } ${  user.lastname}`).join(', ')
 }
 
 const getColumnLabel = (column) => {
@@ -725,7 +735,7 @@ const cleanCurrentAudit = () => {
   currentAudit.value = {
     name: '',
     language: '',
-    auditType: ''
+    auditType: '',
   }
   cleanErrors()
 }
@@ -734,13 +744,13 @@ const cleanErrors = () => {
   errors.value = {
     name: '',
     language: '',
-    auditType: ''
+    auditType: '',
   }
 }
 
 const createAudit = async () => {
   cleanErrors()
-  
+
   if (!currentAudit.value.name) {
     errors.value.name = $t('nameRequired')
   }
@@ -758,9 +768,9 @@ const createAudit = async () => {
   try {
     const auditData = {
       ...currentAudit.value,
-      auditType: currentAudit.value.auditType.name
+      auditType: currentAudit.value.auditType.name,
     }
-    
+
     const response = await AuditService.createAudit(auditData)
     showCreateModal.value = false
     await getAudits()
@@ -769,7 +779,7 @@ const createAudit = async () => {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('createAuditError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -787,17 +797,17 @@ const deleteAudit = async () => {
     showDeleteDialog.value = false
     auditToDelete.value = null
     await getAudits()
-    
+
     toast({
       title: $t('success'),
       description: $t('auditDeletedSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('deleteAuditError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -809,13 +819,13 @@ const generateReport = async (auditId) => {
     toast({
       title: $t('success'),
       description: $t('reportGeneratedSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('generateReportError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -843,7 +853,7 @@ watch(
   (newFinding) => {
     search.value.finding = newFinding || ''
   },
-  { immediate: true }
+  { immediate: true },
 )
 </script>
 

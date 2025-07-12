@@ -1,28 +1,36 @@
 <template>
-  <div v-if="!loading" class="container mx-auto px-4 py-6 max-w-4xl">
+  <div v-if="!loading" class="container mx-auto max-w-4xl px-4 py-6">
     <!-- General Settings -->
     <Card class="mb-6">
-      <CardHeader class="bg-slate-500 text-white rounded-t-lg">
-        <CardTitle class="text-xl">{{ $t('generalSettings') }}</CardTitle>
+      <CardHeader class="rounded-t-lg bg-slate-500 text-white">
+        <CardTitle class="text-xl">
+          {{ $t('generalSettings') }}
+        </CardTitle>
       </CardHeader>
-      <CardContent class="p-6 space-y-6">
+      <CardContent class="space-y-6 p-6">
         <!-- Language Selector -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('changeDisplayLanguage') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('changeDisplayLanguageInfo') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('changeDisplayLanguage') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('changeDisplayLanguageInfo') }}
+          </p>
           <div class="w-64">
             <LanguageSelector />
           </div>
         </div>
-        
+
         <!-- CVSS Extension -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('extendCvssTemporalEnvironment') }}</h3>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('extendCvssTemporalEnvironment') }}
+          </h3>
           <div class="flex items-center space-x-3">
-            <Switch 
+            <Switch
               :checked="settings.report.public.extendCvssTemporalEnvironment"
-              @update:checked="(value) => settings.report.public.extendCvssTemporalEnvironment = value"
               :label="$t('btn.enable')"
+              @update:checked="(value) => settings.report.public.extendCvssTemporalEnvironment = value"
             />
           </div>
         </div>
@@ -31,28 +39,34 @@
 
     <!-- Danger Settings -->
     <Card v-if="UserService.isAllowed('settings:read')" class="mb-6">
-      <CardHeader class="bg-destructive text-destructive-foreground rounded-t-lg">
+      <CardHeader class="rounded-t-lg bg-destructive text-destructive-foreground">
         <div class="flex items-center justify-between">
-          <CardTitle class="text-xl">{{ $t('dangerSettings') }}</CardTitle>
-          <Switch 
+          <CardTitle class="text-xl">
+            {{ $t('dangerSettings') }}
+          </CardTitle>
+          <Switch
             :checked="settings.danger.enabled"
-            @update:checked="(value) => settings.danger.enabled = value"
             :disabled="!canEdit"
             class="bg-white"
+            @update:checked="(value) => settings.danger.enabled = value"
           />
         </div>
       </CardHeader>
       <CardContent class="p-6">
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('autoDeleteReport') }}</h3>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('autoDeleteReport') }}
+          </h3>
           <div class="w-64">
             <Input
-              type="number"
               v-model.number="settings.danger.public.nbdaydelete"
+              type="number"
               :disabled="!canEdit || !settings.danger.enabled"
               :placeholder="$t('numberDayBeforeDelete')"
             />
-            <p class="text-xs text-muted-foreground mt-1">{{ $t('numberDayBeforeDelete') }}</p>
+            <p class="mt-1 text-xs text-muted-foreground">
+              {{ $t('numberDayBeforeDelete') }}
+            </p>
           </div>
         </div>
       </CardContent>
@@ -60,26 +74,32 @@
 
     <!-- Reports Settings -->
     <Card v-if="UserService.isAllowed('settings:read')" class="mb-6">
-      <CardHeader class="bg-slate-500 text-white rounded-t-lg">
-        <CardTitle class="text-xl">{{ $t('reports') }}</CardTitle>
+      <CardHeader class="rounded-t-lg bg-slate-500 text-white">
+        <CardTitle class="text-xl">
+          {{ $t('reports') }}
+        </CardTitle>
       </CardHeader>
-      <CardContent v-if="UserService.isAllowed('settings:update')" class="p-6 space-y-6">
+      <CardContent v-if="UserService.isAllowed('settings:update')" class="space-y-6 p-6">
         <!-- Image Border -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('reportsImagesBorder') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('addBorderToImages') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('reportsImagesBorder') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('addBorderToImages') }}
+          </p>
           <div class="flex items-center space-x-4">
-            <Switch 
+            <Switch
               :checked="settings.report.private.imageBorder"
-              @update:checked="(value) => settings.report.private.imageBorder = value"
               :label="$t('btn.enable')"
+              @update:checked="(value) => settings.report.private.imageBorder = value"
             />
             <input
+              v-model="settings.report.private.imageBorderColor"
               type="color"
               :disabled="!settings.report.private.imageBorder"
-              v-model="settings.report.private.imageBorderColor"
-              class="w-12 h-8 rounded border border-input"
-            />
+              class="h-8 w-12 rounded border border-input"
+            >
             <span class="text-sm">
               {{ $t('currentColor') }}: {{ settings.report.private.imageBorderColor }}
             </span>
@@ -90,22 +110,30 @@
 
         <!-- CVSS Colors -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('cvssColors') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('changeCvssColorsDescription') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('cvssColors') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('changeCvssColorsDescription') }}
+          </p>
           <div class="space-y-3">
-            <div v-for="(colorKey, severity) in {
-              criticalColor: 'critical',
-              highColor: 'high', 
-              mediumColor: 'medium',
-              lowColor: 'low',
-              noneColor: 'informational'
-            }" :key="severity" class="flex items-center space-x-4">
+            <div
+              v-for="(colorKey, severity) in {
+                criticalColor: 'critical',
+                highColor: 'high',
+                mediumColor: 'medium',
+                lowColor: 'low',
+                noneColor: 'informational'
+              }"
+              :key="severity"
+              class="flex items-center space-x-4"
+            >
               <label class="w-32 text-sm font-medium">{{ $t(severity) }}:</label>
               <input
-                type="color"
                 v-model="settings.report.public.cvssColors[colorKey]"
-                class="w-12 h-8 rounded border border-input"
-              />
+                type="color"
+                class="h-8 w-12 rounded border border-input"
+              >
               <span class="text-sm">
                 {{ $t('currentColor') }}: {{ settings.report.public.cvssColors[colorKey] }}
               </span>
@@ -117,20 +145,28 @@
 
         <!-- Remediation Complexity Colors -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('remediationColorsComplexity') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('changeRemediationColorsDescriptionComplexity') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('remediationColorsComplexity') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('changeRemediationColorsDescriptionComplexity') }}
+          </p>
           <div class="space-y-3">
-            <div v-for="(colorKey, complexity) in {
-              highColor: 'complex',
-              mediumColor: 'medium', 
-              lowColor: 'easy'
-            }" :key="complexity" class="flex items-center space-x-4">
+            <div
+              v-for="(colorKey, complexity) in {
+                highColor: 'complex',
+                mediumColor: 'medium',
+                lowColor: 'easy'
+              }"
+              :key="complexity"
+              class="flex items-center space-x-4"
+            >
               <label class="w-32 text-sm font-medium">{{ $t(complexity) }}:</label>
               <input
-                type="color"
                 v-model="settings.report.public.remediationColorsComplexity[colorKey]"
-                class="w-12 h-8 rounded border border-input"
-              />
+                type="color"
+                class="h-8 w-12 rounded border border-input"
+              >
               <span class="text-sm">
                 {{ $t('currentColor') }}: {{ settings.report.public.remediationColorsComplexity[colorKey] }}
               </span>
@@ -142,21 +178,29 @@
 
         <!-- Remediation Priority Colors -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('remediationColorsPriority') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('changeRemediationColorsDescriptionPriority') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('remediationColorsPriority') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('changeRemediationColorsDescriptionPriority') }}
+          </p>
           <div class="space-y-3">
-            <div v-for="(colorKey, priority) in {
-              urgentColor: 'urgent',
-              highColor: 'high',
-              mediumColor: 'medium', 
-              lowColor: 'low'
-            }" :key="priority" class="flex items-center space-x-4">
+            <div
+              v-for="(colorKey, priority) in {
+                urgentColor: 'urgent',
+                highColor: 'high',
+                mediumColor: 'medium',
+                lowColor: 'low'
+              }"
+              :key="priority"
+              class="flex items-center space-x-4"
+            >
               <label class="w-32 text-sm font-medium">{{ $t(priority) }}:</label>
               <input
-                type="color"
                 v-model="settings.report.public.remediationColorsPriority[colorKey]"
-                class="w-12 h-8 rounded border border-input"
-              />
+                type="color"
+                class="h-8 w-12 rounded border border-input"
+              >
               <span class="text-sm">
                 {{ $t('currentColor') }}: {{ settings.report.public.remediationColorsPriority[colorKey] }}
               </span>
@@ -168,15 +212,19 @@
 
         <!-- Captions -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('captions') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('captionsDescription') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('captions') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('captionsDescription') }}
+          </p>
           <div class="max-w-md">
             <Select
               multiple
               :model-value="settings.report.public.captions"
-              @update:model-value="(value) => settings.report.public.captions = value"
               placeholder="Caption Labels"
               allow-create
+              @update:model-value="(value) => settings.report.public.captions = value"
             />
           </div>
         </div>
@@ -185,22 +233,28 @@
 
     <!-- Reviews Settings -->
     <Card v-if="UserService.isAllowed('settings:read')" class="mb-6">
-      <CardHeader class="bg-slate-500 text-white rounded-t-lg">
+      <CardHeader class="rounded-t-lg bg-slate-500 text-white">
         <div class="flex items-center justify-between">
-          <CardTitle class="text-xl">{{ $t('reviews') }}</CardTitle>
-          <Switch 
+          <CardTitle class="text-xl">
+            {{ $t('reviews') }}
+          </CardTitle>
+          <Switch
             :checked="settings.reviews.enabled"
-            @update:checked="(value) => settings.reviews.enabled = value"
             :disabled="!canEdit"
             class="bg-white"
+            @update:checked="(value) => settings.reviews.enabled = value"
           />
         </div>
       </CardHeader>
-      <CardContent class="p-6 space-y-6">
+      <CardContent class="space-y-6 p-6">
         <!-- Approval Behavior -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('auditUpdateAfterApproval') }}</h3>
-          <p class="text-muted-foreground text-sm mb-4">{{ $t('changeApproveBehaviorIfAuditUpdated') }}</p>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('auditUpdateAfterApproval') }}
+          </h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            {{ $t('changeApproveBehaviorIfAuditUpdated') }}
+          </p>
           <ToggleGroup
             v-model="settings.reviews.private.removeApprovalsUponUpdate"
             :disabled="!canEdit || !settings.reviews.enabled"
@@ -216,25 +270,29 @@
 
         <!-- Mandatory Review -->
         <div>
-          <h3 class="font-semibold mb-2">{{ $t('mandatoryReview') }}</h3>
-          <div class="text-muted-foreground text-sm mb-4" v-html="$t('mandatoryReviewInfo')"></div>
+          <h3 class="mb-2 font-semibold">
+            {{ $t('mandatoryReview') }}
+          </h3>
+          <div class="mb-4 text-sm text-muted-foreground" v-html="$t('mandatoryReviewInfo')" />
           <div class="flex items-center space-x-4">
-            <Switch 
+            <Switch
               :checked="settings.reviews.public.mandatoryReview"
-              @update:checked="(value) => settings.reviews.public.mandatoryReview = value"
               :disabled="!canEdit || !settings.reviews.enabled"
               :label="$t('btn.enable')"
+              @update:checked="(value) => settings.reviews.public.mandatoryReview = value"
             />
             <div class="w-32">
               <Input
-                type="number"
                 v-model.number="settings.reviews.public.minReviewers"
+                type="number"
                 :disabled="!canEdit || !settings.reviews.enabled"
                 :min="1"
                 :max="99"
                 :placeholder="$t('minimalNumberOfReviewers')"
               />
-              <p class="text-xs text-muted-foreground mt-1">{{ $t('minimalNumberOfReviewers') }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">
+                {{ $t('minimalNumberOfReviewers') }}
+              </p>
             </div>
           </div>
         </div>
@@ -244,18 +302,18 @@
     <!-- Action Buttons -->
     <Card v-if="canEdit" class="mb-6">
       <CardContent class="p-6">
-        <div class="flex flex-wrap gap-4 justify-center">
+        <div class="flex flex-wrap justify-center gap-4">
           <Button
             variant="default"
-            @click="updateSettings"
             class="min-w-[120px]"
+            @click="updateSettings"
           >
             {{ $t('saveSettings') }}
           </Button>
           <Button
             variant="destructive"
-            @click="revertToDefaults"
             class="min-w-[120px]"
+            @click="revertToDefaults"
           >
             {{ $t('revertSettingsToDefaults') }}
           </Button>
@@ -265,21 +323,21 @@
             accept=".json"
             class="hidden"
             @change="importSettings($event.target.files)"
-          />
+          >
           <Button
             variant="outline"
-            @click="$refs.importSettingsRef.click()"
             class="min-w-[120px]"
+            @click="$refs.importSettingsRef.click()"
           >
-            <Upload class="w-4 h-4 mr-2" />
+            <Upload class="mr-2 size-4" />
             {{ $t('importSettings') }}
           </Button>
           <Button
             variant="outline"
-            @click="exportSettings"
             class="min-w-[120px]"
+            @click="exportSettings"
           >
-            <Download class="w-4 h-4 mr-2" />
+            <Download class="mr-2 size-4" />
             {{ $t('exportSettings') }}
           </Button>
         </div>
@@ -308,7 +366,7 @@ import { $t } from '@/boot/i18n'
 
 export default defineComponent({
   name: 'SettingsPage',
-  
+
   components: {
     Card,
     CardContent,
@@ -325,30 +383,30 @@ export default defineComponent({
     Download,
   },
 
-  data() {
-    return {
-      loading: true,
-      UserService: UserService,
-      settings: {
-        danger: { enabled: false, public: { nbdaydelete: 0 } },
-        reviews: { enabled: false }
-      },
-      settingsOrig: {
-        danger: { enabled: false },
-        reviews: { enabled: false }
-      },
-      canEdit: false
-    }
-  },
-
   beforeRouteLeave(to, from, next) {
     if (this.unsavedChanges()) {
       // TODO: Replace with dialog component
-      if (confirm($t('msg.thereAreUnsavedChanges') + '\n' + $t('msg.doYouWantToLeave'))) {
+      if (confirm(`${$t('msg.thereAreUnsavedChanges')  }\n${  $t('msg.doYouWantToLeave')}`)) {
         next()
       }
     } else {
       next()
+    }
+  },
+
+  data() {
+    return {
+      loading: true,
+      UserService,
+      settings: {
+        danger: { enabled: false, public: { nbdaydelete: 0 } },
+        reviews: { enabled: false },
+      },
+      settingsOrig: {
+        danger: { enabled: false },
+        reviews: { enabled: false },
+      },
+      canEdit: false,
     }
   },
 
@@ -368,7 +426,7 @@ export default defineComponent({
 
   methods: {
     _listener(e) {
-      if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
+      if ((window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
         e.preventDefault()
         this.updateSettings()
       }
@@ -380,11 +438,11 @@ export default defineComponent({
           this.settings = this.$_.merge(
             {
               danger: { enabled: false, public: { nbdaydelete: 0 } },
-              reviews: { enabled: false, public: { minReviewers: 1 } }
+              reviews: { enabled: false, public: { minReviewers: 1 } },
             },
-            data.data.datas
+            data.data.datas,
           )
-          
+
           this.settingsOrig = this.$_.cloneDeep(this.settings)
           this.loading = false
         })
@@ -400,12 +458,12 @@ export default defineComponent({
       if (this.settings.reviews.public.minReviewers < min || this.settings.reviews.public.minReviewers > max) {
         this.settings.reviews.public.minReviewers = this.settings.reviews.public.minReviewers < min ? min : max
       }
-      
+
       SettingsService.updateSettings(this.settings)
         .then((data) => {
           this.settingsOrig = this.$_.cloneDeep(this.settings)
           this.$settings.refresh()
-          
+
           const { success } = useToast()
           success($t('msg.settingsUpdatedOk'))
         })
@@ -416,12 +474,12 @@ export default defineComponent({
     },
 
     revertToDefaults() {
-      if (confirm($t('msg.revertingSettings') + '\n' + $t('msg.revertingSettingsConfirm'))) {
+      if (confirm(`${$t('msg.revertingSettings')  }\n${  $t('msg.revertingSettingsConfirm')}`)) {
         SettingsService.revertDefaults()
           .then(() => {
             this.$settings.refresh()
             this.getSettings()
-            
+
             const { success } = useToast()
             success($t('settingsUpdatedOk'))
           })
@@ -434,13 +492,13 @@ export default defineComponent({
 
     importSettings(files) {
       if (!files || files.length === 0) return
-      
+
       const fileReader = new FileReader()
       fileReader.onloadend = (e) => {
         try {
           const settings = JSON.parse(fileReader.result)
           if (typeof settings === 'object') {
-            if (confirm($t('msg.importingSettings') + '\n' + $t('msg.importingSettingsConfirm'))) {
+            if (confirm(`${$t('msg.importingSettings')  }\n${  $t('msg.importingSettingsConfirm')}`)) {
               SettingsService.updateSettings(settings)
                 .then(() => {
                   this.getSettings()
@@ -462,7 +520,7 @@ export default defineComponent({
           error(errMsg, $t('error'))
         }
       }
-      
+
       const fileContent = new Blob([files[0]], { type: 'application/json' })
       fileReader.readAsText(fileContent)
     },
@@ -470,7 +528,7 @@ export default defineComponent({
     async exportSettings() {
       try {
         const response = await SettingsService.exportSettings()
-        const blob = new Blob([JSON.stringify(response.data)], { type: "application/json" })
+        const blob = new Blob([JSON.stringify(response.data)], { type: 'application/json' })
         const link = document.createElement('a')
         link.href = window.URL.createObjectURL(blob)
         link.download = decodeURIComponent(response.headers['content-disposition'].split('"')[1])
@@ -485,8 +543,8 @@ export default defineComponent({
 
     unsavedChanges() {
       return JSON.stringify(this.settingsOrig) !== JSON.stringify(this.settings)
-    }
-  }
+    },
+  },
 })
 </script>
 

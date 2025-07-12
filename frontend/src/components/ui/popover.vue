@@ -52,7 +52,7 @@
 
         <!-- Popover Content -->
         <div :class="cn('relative z-10', contentClass)">
-          <slot :close="close" :isOpen="isOpen">
+          <slot :close="close" :is-open="isOpen">
             <!-- Default Edit Form -->
             <div v-if="editable" class="space-y-3 p-3">
               <div class="space-y-2">
@@ -77,9 +77,9 @@
                     inputClass
                   )"
                   @keydown="handleInputKeydown"
-                />
+                >
               </div>
-              
+
               <div class="flex items-center justify-end space-x-2">
                 <button
                   :class="cn(
@@ -187,15 +187,15 @@ const arrowStyle = ref<Record<string, string>>({})
 // Methods
 const open = async () => {
   if (props.disabled) return
-  
+
   isOpen.value = true
   editValue.value = props.value
   emit('update:modelValue', true)
   emit('open')
-  
+
   await nextTick()
   updatePosition()
-  
+
   // Focus input if editable
   if (props.editable && editInputRef.value) {
     editInputRef.value.focus()
@@ -219,19 +219,19 @@ const toggle = () => {
 
 const updatePosition = () => {
   if (!triggerRef.value || !popoverRef.value) return
-  
+
   const triggerRect = triggerRef.value.getBoundingClientRect()
   const popoverRect = popoverRef.value.getBoundingClientRect()
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
-  
+
   const positions = calculatePosition(triggerRect, popoverRect, viewportWidth, viewportHeight)
-  
+
   popoverStyle.value = {
     left: `${positions.popover.x}px`,
     top: `${positions.popover.y}px`,
   }
-  
+
   if (props.showArrow) {
     arrowStyle.value = {
       left: `${positions.arrow.x}px`,
@@ -244,55 +244,55 @@ const calculatePosition = (
   triggerRect: DOMRect,
   popoverRect: DOMRect,
   viewportWidth: number,
-  viewportHeight: number
+  viewportHeight: number,
 ) => {
   const arrowSize = 8
   const offset = props.offset
-  
+
   let popoverX = 0
   let popoverY = 0
   let arrowX = 0
   let arrowY = 0
-  
+
   // Calculate base positions
   switch (props.placement) {
-    case 'top':
-    case 'top-start':
-    case 'top-end':
-      popoverX = triggerRect.left + (triggerRect.width / 2) - (popoverRect.width / 2)
-      popoverY = triggerRect.top - popoverRect.height - offset
-      arrowX = popoverRect.width / 2 - arrowSize / 2
-      arrowY = popoverRect.height
-      break
-      
-    case 'bottom':
-    case 'bottom-start':
-    case 'bottom-end':
-      popoverX = triggerRect.left + (triggerRect.width / 2) - (popoverRect.width / 2)
-      popoverY = triggerRect.bottom + offset
-      arrowX = popoverRect.width / 2 - arrowSize / 2
-      arrowY = -arrowSize / 2
-      break
-      
-    case 'left':
-    case 'left-start':
-    case 'left-end':
-      popoverX = triggerRect.left - popoverRect.width - offset
-      popoverY = triggerRect.top + (triggerRect.height / 2) - (popoverRect.height / 2)
-      arrowX = popoverRect.width
-      arrowY = popoverRect.height / 2 - arrowSize / 2
-      break
-      
-    case 'right':
-    case 'right-start':
-    case 'right-end':
-      popoverX = triggerRect.right + offset
-      popoverY = triggerRect.top + (triggerRect.height / 2) - (popoverRect.height / 2)
-      arrowX = -arrowSize / 2
-      arrowY = popoverRect.height / 2 - arrowSize / 2
-      break
+  case 'top':
+  case 'top-start':
+  case 'top-end':
+    popoverX = triggerRect.left + (triggerRect.width / 2) - (popoverRect.width / 2)
+    popoverY = triggerRect.top - popoverRect.height - offset
+    arrowX = popoverRect.width / 2 - arrowSize / 2
+    arrowY = popoverRect.height
+    break
+
+  case 'bottom':
+  case 'bottom-start':
+  case 'bottom-end':
+    popoverX = triggerRect.left + (triggerRect.width / 2) - (popoverRect.width / 2)
+    popoverY = triggerRect.bottom + offset
+    arrowX = popoverRect.width / 2 - arrowSize / 2
+    arrowY = -arrowSize / 2
+    break
+
+  case 'left':
+  case 'left-start':
+  case 'left-end':
+    popoverX = triggerRect.left - popoverRect.width - offset
+    popoverY = triggerRect.top + (triggerRect.height / 2) - (popoverRect.height / 2)
+    arrowX = popoverRect.width
+    arrowY = popoverRect.height / 2 - arrowSize / 2
+    break
+
+  case 'right':
+  case 'right-start':
+  case 'right-end':
+    popoverX = triggerRect.right + offset
+    popoverY = triggerRect.top + (triggerRect.height / 2) - (popoverRect.height / 2)
+    arrowX = -arrowSize / 2
+    arrowY = popoverRect.height / 2 - arrowSize / 2
+    break
   }
-  
+
   // Adjust for start/end variants
   if (props.placement.includes('start')) {
     if (props.placement.includes('top') || props.placement.includes('bottom')) {
@@ -311,13 +311,13 @@ const calculatePosition = (
       arrowY = popoverRect.height - (triggerRect.height / 2) - arrowSize / 2
     }
   }
-  
+
   // Viewport boundary checks
   if (popoverX < 8) popoverX = 8
   if (popoverX + popoverRect.width > viewportWidth - 8) popoverX = viewportWidth - popoverRect.width - 8
   if (popoverY < 8) popoverY = 8
   if (popoverY + popoverRect.height > viewportHeight - 8) popoverY = viewportHeight - popoverRect.height - 8
-  
+
   return {
     popover: { x: popoverX, y: popoverY },
     arrow: { x: arrowX, y: arrowY },
@@ -503,13 +503,13 @@ input:focus-visible {
   .w-72 {
     width: 16rem;
   }
-  
+
   .w-80 {
     width: 18rem;
   }
-  
+
   .w-96 {
     width: 20rem;
   }
 }
-</style> 
+</style>

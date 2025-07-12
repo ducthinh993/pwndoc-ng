@@ -1,11 +1,13 @@
 <template>
   <div class="flex flex-col gap-6 p-6">
     <!-- Header with Add Button -->
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">{{ $t('clients') }}</h1>
-      <Button 
-        @click="openCreateModal"
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">
+        {{ $t('clients') }}
+      </h1>
+      <Button
         class="bg-secondary hover:bg-secondary/90"
+        @click="openCreateModal"
       >
         {{ $t('addClient') }}
       </Button>
@@ -17,7 +19,7 @@
         <CardTitle>{{ $t('search') }}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div class="space-y-2">
             <Label for="search-firstname">{{ $t('firstname') }}</Label>
             <Input
@@ -47,7 +49,7 @@
           </div>
           <div class="space-y-2">
             <Label for="search-company">{{ $t('company') }}</Label>
-            <Select 
+            <Select
               v-model="search['company.name']"
               :placeholder="$t('search')"
             >
@@ -55,10 +57,12 @@
                 <SelectValue :placeholder="$t('search')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{{ $t('all') }}</SelectItem>
-                <SelectItem 
-                  v-for="company in companies" 
-                  :key="company.name" 
+                <SelectItem value="">
+                  {{ $t('all') }}
+                </SelectItem>
+                <SelectItem
+                  v-for="company in companies"
+                  :key="company.name"
                   :value="company.name"
                 >
                   {{ company.name }}
@@ -77,34 +81,36 @@
           <table class="w-full">
             <thead>
               <tr class="border-b">
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('firstname')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('firstname')">
                   {{ $t('firstname') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'firstname' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'firstname' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'firstname' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'firstname' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('lastname')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('lastname')">
                   {{ $t('lastname') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'lastname' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'lastname' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'lastname' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'lastname' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('email')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('email')">
                   {{ $t('email') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'email' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'email' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'email' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'email' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('company')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('company')">
                   {{ $t('company') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'company' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'company' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'company' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'company' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium w-24">{{ $t('actions') }}</th>
+                <th class="w-24 p-4 text-left font-medium">
+                  {{ $t('actions') }}
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="loading" class="text-center">
                 <td colspan="5" class="p-8">
-                  <div class="flex justify-center items-center">
-                    <LoadingSpinner class="w-6 h-6 mr-2" />
+                  <div class="flex items-center justify-center">
+                    <LoadingSpinner class="mr-2 size-6" />
                     {{ $t('loading') }}
                   </div>
                 </td>
@@ -114,17 +120,25 @@
                   {{ $t('noDataAvailable') }}
                 </td>
               </tr>
-              <tr 
+              <tr
+                v-for="client in paginatedClients"
                 v-else
-                v-for="client in paginatedClients" 
                 :key="client._id"
-                class="border-b hover:bg-muted/50 cursor-pointer"
+                class="cursor-pointer border-b hover:bg-muted/50"
                 @dblclick="editClient(client)"
               >
-                <td class="p-4">{{ client.firstname }}</td>
-                <td class="p-4">{{ client.lastname }}</td>
-                <td class="p-4">{{ client.email }}</td>
-                <td class="p-4">{{ client.company?.name || '-' }}</td>
+                <td class="p-4">
+                  {{ client.firstname }}
+                </td>
+                <td class="p-4">
+                  {{ client.lastname }}
+                </td>
+                <td class="p-4">
+                  {{ client.email }}
+                </td>
+                <td class="p-4">
+                  {{ client.company?.name || '-' }}
+                </td>
                 <td class="p-4">
                   <div class="flex gap-2">
                     <Button
@@ -132,14 +146,14 @@
                       variant="ghost"
                       @click="editClient(client)"
                     >
-                      <PencilIcon class="w-4 h-4" />
+                      <PencilIcon class="size-4" />
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       @click="confirmDeleteClient(client)"
                     >
-                      <TrashIcon class="w-4 h-4 text-destructive" />
+                      <TrashIcon class="size-4 text-destructive" />
                     </Button>
                   </div>
                 </td>
@@ -148,7 +162,7 @@
           </table>
         </div>
       </CardContent>
-      
+
       <!-- Pagination -->
       <CardContent class="pt-4">
         <div class="flex items-center justify-between">
@@ -160,47 +174,55 @@
               {{ filteredClients.length }} {{ $t('quantifier') }}{{ $t('clients') }}
             </span>
           </div>
-          
+
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <Label for="rows-per-page">{{ $t('resultsPerPage') }}</Label>
-              <Select 
-                v-model="pagination.rowsPerPage" 
+              <Select
+                v-model="pagination.rowsPerPage"
                 @update:model-value="pagination.page = 1"
               >
                 <SelectTrigger id="rows-per-page" class="w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="0">{{ $t('all') }}</SelectItem>
+                  <SelectItem value="25">
+                    25
+                  </SelectItem>
+                  <SelectItem value="50">
+                    50
+                  </SelectItem>
+                  <SelectItem value="100">
+                    100
+                  </SelectItem>
+                  <SelectItem value="0">
+                    {{ $t('all') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div class="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                @click="pagination.page = Math.max(1, pagination.page - 1)"
                 :disabled="pagination.page === 1"
+                @click="pagination.page = Math.max(1, pagination.page - 1)"
               >
-                <ChevronLeftIcon class="w-4 h-4" />
+                <ChevronLeftIcon class="size-4" />
               </Button>
-              
+
               <span class="text-sm">
                 {{ pagination.page }} / {{ totalPages }}
               </span>
-              
+
               <Button
                 variant="outline"
                 size="sm"
-                @click="pagination.page = Math.min(totalPages, pagination.page + 1)"
                 :disabled="pagination.page === totalPages"
+                @click="pagination.page = Math.min(totalPages, pagination.page + 1)"
               >
-                <ChevronRightIcon class="w-4 h-4" />
+                <ChevronRightIcon class="size-4" />
               </Button>
             </div>
           </div>
@@ -214,8 +236,8 @@
         <DialogHeader>
           <DialogTitle>{{ $t('addClient') }}</DialogTitle>
         </DialogHeader>
-        
-        <form @submit.prevent="createClient" class="space-y-4">
+
+        <form class="space-y-4" @submit.prevent="createClient">
           <div class="space-y-2">
             <Label for="create-company">{{ $t('company') }}</Label>
             <Select v-model="currentClient.company">
@@ -223,10 +245,12 @@
                 <SelectValue :placeholder="$t('selectCompany')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{{ $t('noCompany') }}</SelectItem>
-                <SelectItem 
-                  v-for="company in companies" 
-                  :key="company.name" 
+                <SelectItem value="">
+                  {{ $t('noCompany') }}
+                </SelectItem>
+                <SelectItem
+                  v-for="company in companies"
+                  :key="company.name"
                   :value="company"
                 >
                   {{ company.name }}
@@ -234,7 +258,7 @@
               </SelectContent>
             </Select>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-firstname">{{ $t('firstname') }} *</Label>
             <Input
@@ -249,7 +273,7 @@
               {{ errors.firstname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-lastname">{{ $t('lastname') }} *</Label>
             <Input
@@ -263,7 +287,7 @@
               {{ errors.lastname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-email">{{ $t('email') }} *</Label>
             <Input
@@ -278,7 +302,7 @@
               {{ errors.email }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-title">{{ $t('function') }}</Label>
             <Input
@@ -287,7 +311,7 @@
               @keyup.enter="createClient"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-phone">{{ $t('phone') }}</Label>
             <Input
@@ -296,7 +320,7 @@
               @keyup.enter="createClient"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-cell">{{ $t('cell') }}</Label>
             <Input
@@ -306,7 +330,7 @@
             />
           </div>
         </form>
-        
+
         <DialogFooter>
           <Button
             type="button"
@@ -317,11 +341,11 @@
           </Button>
           <Button
             type="submit"
-            @click="createClient"
             :disabled="creatingClient"
             class="bg-secondary hover:bg-secondary/90"
+            @click="createClient"
           >
-            <LoadingSpinner v-if="creatingClient" class="w-4 h-4 mr-2" />
+            <LoadingSpinner v-if="creatingClient" class="mr-2 size-4" />
             {{ $t('btn.create') }}
           </Button>
         </DialogFooter>
@@ -334,8 +358,8 @@
         <DialogHeader>
           <DialogTitle>{{ $t('editClient') }}</DialogTitle>
         </DialogHeader>
-        
-        <form @submit.prevent="updateClient" class="space-y-4">
+
+        <form class="space-y-4" @submit.prevent="updateClient">
           <div class="space-y-2">
             <Label for="edit-company">{{ $t('company') }}</Label>
             <Select v-model="currentClient.company">
@@ -343,10 +367,12 @@
                 <SelectValue :placeholder="$t('selectCompany')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{{ $t('noCompany') }}</SelectItem>
-                <SelectItem 
-                  v-for="company in companies" 
-                  :key="company.name" 
+                <SelectItem value="">
+                  {{ $t('noCompany') }}
+                </SelectItem>
+                <SelectItem
+                  v-for="company in companies"
+                  :key="company.name"
                   :value="company"
                 >
                   {{ company.name }}
@@ -354,7 +380,7 @@
               </SelectContent>
             </Select>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-firstname">{{ $t('firstname') }} *</Label>
             <Input
@@ -368,7 +394,7 @@
               {{ errors.firstname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-lastname">{{ $t('lastname') }} *</Label>
             <Input
@@ -382,7 +408,7 @@
               {{ errors.lastname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-email">{{ $t('email') }} *</Label>
             <Input
@@ -397,7 +423,7 @@
               {{ errors.email }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-title">{{ $t('function') }}</Label>
             <Input
@@ -406,7 +432,7 @@
               @keyup.enter="updateClient"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-phone">{{ $t('phone') }}</Label>
             <Input
@@ -415,7 +441,7 @@
               @keyup.enter="updateClient"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-cell">{{ $t('cell') }}</Label>
             <Input
@@ -425,7 +451,7 @@
             />
           </div>
         </form>
-        
+
         <DialogFooter>
           <Button
             type="button"
@@ -436,11 +462,11 @@
           </Button>
           <Button
             type="submit"
-            @click="updateClient"
             :disabled="updatingClient"
             class="bg-secondary hover:bg-secondary/90"
+            @click="updateClient"
           >
-            <LoadingSpinner v-if="updatingClient" class="w-4 h-4 mr-2" />
+            <LoadingSpinner v-if="updatingClient" class="mr-2 size-4" />
             {{ $t('btn.update') }}
           </Button>
         </DialogFooter>
@@ -456,7 +482,7 @@
             {{ $t('client') }} «{{ clientToDelete?.firstname }} {{ clientToDelete?.lastname }}» {{ $t('msg.deleteNotice') }}
           </DialogDescription>
         </DialogHeader>
-        
+
         <DialogFooter>
           <Button
             type="button"
@@ -468,10 +494,10 @@
           <Button
             type="button"
             variant="destructive"
-            @click="deleteClient"
             :disabled="deletingClient"
+            @click="deleteClient"
           >
-            <LoadingSpinner v-if="deletingClient" class="w-4 h-4 mr-2" />
+            <LoadingSpinner v-if="deletingClient" class="mr-2 size-4" />
             {{ $t('btn.confirm') }}
           </Button>
         </DialogFooter>
@@ -490,13 +516,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingSpinner } from '@/components/ui/loading'
-import { 
-  ChevronLeftIcon, 
-  ChevronRightIcon, 
-  ChevronUpIcon, 
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
   ChevronDownIcon,
   PencilIcon,
-  TrashIcon
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
 
 import ClientService from '@/services/client'
@@ -530,11 +556,11 @@ export default {
     ChevronUpIcon,
     ChevronDownIcon,
     PencilIcon,
-    TrashIcon
+    TrashIcon,
   },
   setup() {
     const toast = useToast()
-    
+
     // Reactive data
     const clients = ref([])
     const companies = ref([])
@@ -542,28 +568,28 @@ export default {
     const creatingClient = ref(false)
     const updatingClient = ref(false)
     const deletingClient = ref(false)
-    
+
     // Modal state
     const showCreateModal = ref(false)
     const showEditModal = ref(false)
     const showDeleteModal = ref(false)
-    
+
     // Search filters
     const search = ref({
       firstname: '',
       lastname: '',
       email: '',
-      'company.name': ''
+      'company.name': '',
     })
-    
+
     // Pagination
     const pagination = ref({
       page: 1,
       rowsPerPage: 25,
       sortBy: 'firstname',
-      descending: false
+      descending: false,
     })
-    
+
     // Current client for forms
     const currentClient = ref({
       firstname: '',
@@ -572,74 +598,74 @@ export default {
       phone: '',
       cell: '',
       title: '',
-      company: null
+      company: null,
     })
-    
+
     // Client to delete
     const clientToDelete = ref(null)
-    
+
     // Form errors
     const errors = ref({
       firstname: '',
       lastname: '',
-      email: ''
+      email: '',
     })
-    
+
     // ID for updating
     const idUpdate = ref('')
-    
+
     // Computed properties
     const filteredClients = computed(() => {
       return Utils.customFilter(clients.value, search.value)
     })
-    
+
     const sortedClients = computed(() => {
       const sorted = [...filteredClients.value].sort((a, b) => {
         let aVal, bVal
-        
+
         switch (pagination.value.sortBy) {
-          case 'firstname':
-            aVal = a.firstname || ''
-            bVal = b.firstname || ''
-            break
-          case 'lastname':
-            aVal = a.lastname || ''
-            bVal = b.lastname || ''
-            break
-          case 'email':
-            aVal = a.email || ''
-            bVal = b.email || ''
-            break
-          case 'company':
-            aVal = a.company?.name || ''
-            bVal = b.company?.name || ''
-            break
-          default:
-            aVal = a.firstname || ''
-            bVal = b.firstname || ''
+        case 'firstname':
+          aVal = a.firstname || ''
+          bVal = b.firstname || ''
+          break
+        case 'lastname':
+          aVal = a.lastname || ''
+          bVal = b.lastname || ''
+          break
+        case 'email':
+          aVal = a.email || ''
+          bVal = b.email || ''
+          break
+        case 'company':
+          aVal = a.company?.name || ''
+          bVal = b.company?.name || ''
+          break
+        default:
+          aVal = a.firstname || ''
+          bVal = b.firstname || ''
         }
-        
+
         const result = aVal.localeCompare(bVal)
         return pagination.value.descending ? -result : result
       })
-      
+
       return sorted
     })
-    
+
     const paginatedClients = computed(() => {
       const start = (pagination.value.page - 1) * pagination.value.rowsPerPage
-      const end = pagination.value.rowsPerPage === 0 ? 
-        sortedClients.value.length : 
+      const end = pagination.value.rowsPerPage === 0 ?
+        sortedClients.value.length :
         start + pagination.value.rowsPerPage
-      
+
       return sortedClients.value.slice(start, end)
     })
-    
+
     const totalPages = computed(() => {
       if (pagination.value.rowsPerPage === 0) return 1
       return Math.ceil(filteredClients.value.length / pagination.value.rowsPerPage)
     })
-    
+
     // Methods
     const getClients = async () => {
       loading.value = true
@@ -653,7 +679,7 @@ export default {
         loading.value = false
       }
     }
-    
+
     const getCompanies = async () => {
       try {
         const response = await CompanyService.getCompanies()
@@ -662,16 +688,16 @@ export default {
         console.error('Error fetching companies:', error)
       }
     }
-    
+
     const openCreateModal = () => {
       cleanCurrentClient()
       cleanErrors()
       showCreateModal.value = true
     }
-    
+
     const createClient = async () => {
       cleanErrors()
-      
+
       if (!currentClient.value.firstname) {
         errors.value.firstname = $t('msg.firstnameRequired')
       }
@@ -681,11 +707,11 @@ export default {
       if (!currentClient.value.email) {
         errors.value.email = $t('msg.emailRequired')
       }
-      
+
       if (errors.value.firstname || errors.value.lastname || errors.value.email) {
         return
       }
-      
+
       creatingClient.value = true
       try {
         await ClientService.createClients([currentClient.value])
@@ -699,17 +725,17 @@ export default {
         creatingClient.value = false
       }
     }
-    
+
     const editClient = (client) => {
       currentClient.value = { ...client }
       idUpdate.value = client._id
       cleanErrors()
       showEditModal.value = true
     }
-    
+
     const updateClient = async () => {
       cleanErrors()
-      
+
       if (!currentClient.value.firstname) {
         errors.value.firstname = $t('msg.firstnameRequired')
       }
@@ -719,11 +745,11 @@ export default {
       if (!currentClient.value.email) {
         errors.value.email = $t('msg.emailRequired')
       }
-      
+
       if (errors.value.firstname || errors.value.lastname || errors.value.email) {
         return
       }
-      
+
       updatingClient.value = true
       try {
         await ClientService.updateClient(idUpdate.value, currentClient.value)
@@ -737,15 +763,15 @@ export default {
         updatingClient.value = false
       }
     }
-    
+
     const confirmDeleteClient = (client) => {
       clientToDelete.value = client
       showDeleteModal.value = true
     }
-    
+
     const deleteClient = async () => {
       if (!clientToDelete.value) return
-      
+
       deletingClient.value = true
       try {
         await ClientService.deleteClient(clientToDelete.value._id)
@@ -760,7 +786,7 @@ export default {
         clientToDelete.value = null
       }
     }
-    
+
     const sortBy = (field) => {
       if (pagination.value.sortBy === field) {
         pagination.value.descending = !pagination.value.descending
@@ -770,7 +796,7 @@ export default {
       }
       pagination.value.page = 1
     }
-    
+
     const cleanCurrentClient = () => {
       currentClient.value = {
         firstname: '',
@@ -779,24 +805,24 @@ export default {
         phone: '',
         cell: '',
         title: '',
-        company: null
+        company: null,
       }
     }
-    
+
     const cleanErrors = () => {
       errors.value = {
         firstname: '',
         lastname: '',
-        email: ''
+        email: '',
       }
     }
-    
+
     // Lifecycle
     onMounted(() => {
       getClients()
       getCompanies()
     })
-    
+
     return {
       // Data
       clients,
@@ -805,27 +831,27 @@ export default {
       creatingClient,
       updatingClient,
       deletingClient,
-      
+
       // Modal state
       showCreateModal,
       showEditModal,
       showDeleteModal,
-      
+
       // Search and pagination
       search,
       pagination,
-      
+
       // Form data
       currentClient,
       clientToDelete,
       errors,
       idUpdate,
-      
+
       // Computed
       filteredClients,
       paginatedClients,
       totalPages,
-      
+
       // Methods
       getClients,
       getCompanies,
@@ -837,9 +863,9 @@ export default {
       deleteClient,
       sortBy,
       cleanCurrentClient,
-      cleanErrors
+      cleanErrors,
     }
-  }
+  },
 }
 </script>
 

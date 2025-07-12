@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     :class="cn(
       'flex items-center justify-between w-full',
       {
@@ -47,4 +47,4 @@ const props = withDefaults(defineProps<Props>(), {
     padding-right: 1rem;
   }
 }
-</style> 
+</style>

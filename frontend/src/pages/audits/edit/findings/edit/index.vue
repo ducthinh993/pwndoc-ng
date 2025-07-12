@@ -12,60 +12,66 @@
           class="mr-2"
           @click="backupFinding"
         >
-          <Archive class="h-4 w-4 mr-2" />
+          <Archive class="mr-2 size-4" />
           {{ $t('btn.backupFinding') }}
         </Button>
-        
+
         <Button
           v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
           variant="destructive"
           class="mr-2"
           @click="deleteFinding"
         >
-          <Trash2 class="h-4 w-4 mr-2" />
+          <Trash2 class="mr-2 size-4" />
           {{ $t('btn.delete') }}
         </Button>
-        
+
         <Button
           v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
           :disabled="!readyToSave"
           @click="updateFinding"
         >
-          <Save class="h-4 w-4 mr-2" />
+          <Save class="mr-2 size-4" />
           {{ $t('btn.save') }} (Ctrl+S)
         </Button>
       </template>
     </Breadcrumb>
 
-    <div class="max-w-6xl mx-auto mt-8">
+    <div class="mx-auto mt-8 max-w-6xl">
       <!-- Tab Navigation -->
-      <div class="bg-card border border-border rounded-lg">
-        <div class="flex items-center justify-between p-4 border-b border-border">
+      <div class="rounded-lg border border-border bg-card">
+        <div class="flex items-center justify-between border-b border-border p-4">
           <Tabs v-model="selectedTab" class="flex-1">
             <TabsList class="grid w-full grid-cols-3">
-              <TabsTrigger value="definition">{{ $t('definition') }}</TabsTrigger>
-              <TabsTrigger value="proofs">{{ $t('proofs') }}</TabsTrigger>
-              <TabsTrigger value="details">{{ $t('details') }}</TabsTrigger>
+              <TabsTrigger value="definition">
+                {{ $t('definition') }}
+              </TabsTrigger>
+              <TabsTrigger value="proofs">
+                {{ $t('proofs') }}
+              </TabsTrigger>
+              <TabsTrigger value="details">
+                {{ $t('details') }}
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
           <!-- Status Toggle -->
-          <div v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT" class="flex items-center space-x-2 ml-4">
+          <div v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT" class="ml-4 flex items-center space-x-2">
             <Switch
               v-model:checked="isCompleted"
               @update:checked="updateFindingStatus"
             />
             <Label class="text-sm font-medium">{{ $t('completed') }}</Label>
-            <Check v-if="isCompleted" class="h-4 w-4 text-green-600" />
+            <Check v-if="isCompleted" class="size-4 text-green-600" />
           </div>
         </div>
 
         <!-- Tab Content -->
-        <TabsContent value="definition" class="p-6 space-y-6">
+        <TabsContent value="definition" class="space-y-6 p-6">
           <!-- Definition Tab -->
           <Card>
             <CardContent class="pt-6">
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                 <!-- Title -->
                 <div class="md:col-span-3">
                   <Label for="finding-title">{{ $t('title') }} *</Label>
@@ -102,15 +108,15 @@
                 <!-- Description -->
                 <div class="md:col-span-4">
                   <Label class="text-sm font-medium">{{ $t('description') }}</Label>
-                  <div class="mt-1 border border-border rounded-md">
+                  <div class="mt-1 rounded-md border border-border">
                     <BasicEditor
                       ref="basiceditor_description"
                       v-model="finding.description"
                       :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                      @editor-change="markAsChanged"
-                      @ready="readyToSave = true"
                       id-unique="basiceditor_description"
                       no-sync
+                      @editor-change="markAsChanged"
+                      @ready="readyToSave = true"
                     />
                   </div>
                 </div>
@@ -118,14 +124,14 @@
                 <!-- Observation -->
                 <div class="md:col-span-4">
                   <Label class="text-sm font-medium">{{ $t('observation') }}</Label>
-                  <div class="mt-1 border border-border rounded-md">
+                  <div class="mt-1 rounded-md border border-border">
                     <BasicEditor
                       ref="basiceditor_observation"
                       v-model="finding.observation"
                       :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                      @editor-change="markAsChanged"
                       id-unique="basiceditor_observation"
                       no-sync
+                      @editor-change="markAsChanged"
                     />
                   </div>
                 </div>
@@ -146,9 +152,11 @@
             <div v-if="finding.customFields && finding.customFields.length > 0">
               <Separator />
               <Collapsible default-open>
-                <CollapsibleTrigger class="flex items-center justify-between w-full p-4 hover:bg-muted/50">
-                  <h3 class="text-lg font-semibold">{{ $t('customFields') }}</h3>
-                  <ChevronDown class="h-4 w-4 transition-transform" />
+                <CollapsibleTrigger class="flex w-full items-center justify-between p-4 hover:bg-muted/50">
+                  <h3 class="text-lg font-semibold">
+                    {{ $t('customFields') }}
+                  </h3>
+                  <ChevronDown class="size-4 transition-transform" />
                 </CollapsibleTrigger>
                 <CollapsibleContent class="px-4 pb-4">
                   <CustomFields
@@ -173,23 +181,23 @@
               <CardDescription>{{ $t('proofOfConceptDescription') }}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div class="border border-border rounded-md">
+              <div class="rounded-md border border-border">
                 <BasicEditor
                   ref="basiceditor_poc"
                   v-model="finding.poc"
                   :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                  @editor-change="markAsChanged"
                   id-unique="basiceditor_poc"
                   no-sync
+                  @editor-change="markAsChanged"
                 />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="details" class="p-6 space-y-6">
+        <TabsContent value="details" class="space-y-6 p-6">
           <!-- Details Tab -->
-          
+
           <!-- Affected Assets -->
           <Card>
             <CardHeader>
@@ -197,12 +205,12 @@
               <CardDescription>{{ $t('affectedAssetsDescription') }}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div class="border border-border rounded-md">
+              <div class="rounded-md border border-border">
                 <BasicEditor
                   v-model="finding.scope"
                   :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                  @editor-change="markAsChanged"
                   id-unique="basiceditor_scope"
+                  @editor-change="markAsChanged"
                 />
               </div>
             </CardContent>
@@ -212,7 +220,7 @@
           <Card class="bg-muted/30">
             <CardHeader>
               <CardTitle class="flex items-center space-x-2">
-                <Calculator class="h-5 w-5" />
+                <Calculator class="size-5" />
                 <span>{{ $t('cvssCalculator') }}</span>
               </CardTitle>
               <CardDescription>{{ $t('cvssCalculatorDescription') }}</CardDescription>
@@ -232,7 +240,7 @@
               <CardDescription>{{ $t('remediationDescription') }}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <!-- Remediation Complexity -->
                 <div>
                   <Label for="remediation-complexity">{{ $t('remediationComplexity') }}</Label>
@@ -244,9 +252,15 @@
                       <SelectValue :placeholder="$t('selectComplexity')" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">{{ $t('low') }}</SelectItem>
-                      <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                      <SelectItem value="3">{{ $t('high') }}</SelectItem>
+                      <SelectItem value="1">
+                        {{ $t('low') }}
+                      </SelectItem>
+                      <SelectItem value="2">
+                        {{ $t('medium') }}
+                      </SelectItem>
+                      <SelectItem value="3">
+                        {{ $t('high') }}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -262,10 +276,18 @@
                       <SelectValue :placeholder="$t('selectPriority')" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">{{ $t('low') }}</SelectItem>
-                      <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                      <SelectItem value="3">{{ $t('high') }}</SelectItem>
-                      <SelectItem value="4">{{ $t('critical') }}</SelectItem>
+                      <SelectItem value="1">
+                        {{ $t('low') }}
+                      </SelectItem>
+                      <SelectItem value="2">
+                        {{ $t('medium') }}
+                      </SelectItem>
+                      <SelectItem value="3">
+                        {{ $t('high') }}
+                      </SelectItem>
+                      <SelectItem value="4">
+                        {{ $t('critical') }}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -273,12 +295,12 @@
                 <!-- Remediation Details -->
                 <div class="md:col-span-2">
                   <Label class="text-sm font-medium">{{ $t('remediationDetails') }}</Label>
-                  <div class="mt-1 border border-border rounded-md">
+                  <div class="mt-1 rounded-md border border-border">
                     <BasicEditor
                       v-model="finding.remediation"
                       :editable="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
-                      @editor-change="markAsChanged"
                       id-unique="basiceditor_remediation"
+                      @editor-change="markAsChanged"
                     />
                   </div>
                 </div>
@@ -352,7 +374,7 @@ const props = defineProps({
   audit: Object,
   frontEndAuditState: Number,
   parentState: String,
-  parentApprovals: Array
+  parentApprovals: Array,
 })
 
 const route = useRoute()
@@ -373,7 +395,7 @@ const finding = ref({
   cvssv3: '',
   remediationComplexity: null,
   priority: null,
-  remediation: ''
+  remediation: '',
 })
 
 const localAudit = ref({ language: '' })
@@ -400,7 +422,7 @@ const isCompleted = computed({
   get: () => finding.value.status === 0,
   set: (value) => {
     finding.value.status = value ? 0 : 1
-  }
+  },
 })
 
 // Methods
@@ -445,7 +467,7 @@ const getVulnTypes = async () => {
 const initCustomFieldsForFinding = () => {
   const categoryForFilter = finding.value.category || 'default'
   const languageForFilter = (props.audit && props.audit.language) || 'en'
-  
+
   if (!finding.value.customFields || finding.value.customFields.length === 0) {
     const findingCustomField = _.cloneDeep(
       Utils.filterCustomFields(
@@ -453,10 +475,10 @@ const initCustomFieldsForFinding = () => {
         categoryForFilter,
         customFields.value,
         [],
-        languageForFilter
-      )
+        languageForFilter,
+      ),
     )
-    
+
     const existingKeys = new Set(findingCustomField.map(field => field.key))
     const vulnerabilityCustomField = _.cloneDeep(
       Utils.filterCustomFields(
@@ -464,10 +486,10 @@ const initCustomFieldsForFinding = () => {
         categoryForFilter,
         customFields.value,
         [],
-        languageForFilter
-      )
+        languageForFilter,
+      ),
     ).filter(field => !existingKeys.has(field.key))
-    
+
     finding.value.customFields = [...findingCustomField, ...vulnerabilityCustomField]
   }
 }
@@ -476,7 +498,7 @@ const getFinding = async () => {
   try {
     const response = await AuditService.getFinding(route.params.auditId, route.params.findingId)
     finding.value = response.data.datas
-    
+
     initCustomFieldsForFinding()
     updateOrig()
   } catch (error) {
@@ -487,22 +509,22 @@ const getFinding = async () => {
 const updateFinding = async () => {
   try {
     syncEditors()
-    
+
     await AuditService.updateFinding(route.params.auditId, route.params.findingId, finding.value)
-    
+
     updateOrig()
     needSave.value = false
-    
+
     toast({
       title: $t('success'),
       description: $t('findingUpdatedSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('updateFindingError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -510,19 +532,19 @@ const updateFinding = async () => {
 const deleteFinding = async () => {
   try {
     await AuditService.deleteFinding(route.params.auditId, route.params.findingId)
-    
+
     toast({
       title: $t('success'),
       description: $t('findingDeletedSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
-    
+
     router.push(`/audits/${route.params.auditId}/general`)
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('deleteFindingError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -530,28 +552,28 @@ const deleteFinding = async () => {
 const backupFinding = async () => {
   try {
     await AuditService.backupFinding(route.params.auditId, route.params.findingId)
-    
+
     toast({
       title: $t('success'),
       description: $t('findingBackedUpSuccessfully'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || $t('backupFindingError'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
 
 const syncEditors = () => {
-  Utils.syncEditors({ 
+  Utils.syncEditors({
     basiceditor_description: { $refs: { basiceditor_description: null } },
     basiceditor_observation: { $refs: { basiceditor_observation: null } },
     basiceditor_poc: { $refs: { basiceditor_poc: null } },
     basiceditor_scope: { $refs: { basiceditor_scope: null } },
-    basiceditor_remediation: { $refs: { basiceditor_remediation: null } }
+    basiceditor_remediation: { $refs: { basiceditor_remediation: null } },
   })
 }
 
@@ -607,13 +629,13 @@ onBeforeRouteUpdate((to, from, next) => {
 // Watch for tab changes
 watch(selectedTab, (newTab) => {
   syncEditors()
-  
+
   if (newTab === 'proofs') {
     proofsTabVisited.value = true
   } else if (newTab === 'details') {
     detailsTabVisited.value = true
   }
-  
+
   nextTick(() => {
     updateOrig()
   })
@@ -631,7 +653,7 @@ onMounted(async () => {
     window.$socket.emit('menu', {
       menu: 'editFinding',
       finding: route.params.findingId,
-      room: route.params.auditId
+      room: route.params.auditId,
     })
   }
 

@@ -23,4 +23,4 @@ const props = withDefaults(defineProps<Props>(), {
   orientation: 'horizontal',
   decorative: true,
 })
-</script> 
+</script>

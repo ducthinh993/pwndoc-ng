@@ -5,8 +5,12 @@
       <div class="container mx-auto px-4 py-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-foreground">{{ $t('vulnerabilities') }}</h1>
-            <p class="text-muted-foreground mt-2">{{ $t('manageVulnerabilities') }}</p>
+            <h1 class="text-3xl font-bold text-foreground">
+              {{ $t('vulnerabilities') }}
+            </h1>
+            <p class="mt-2 text-muted-foreground">
+              {{ $t('manageVulnerabilities') }}
+            </p>
           </div>
         </div>
       </div>
@@ -15,11 +19,11 @@
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
       <!-- No Languages Message -->
-      <div v-if="languages.length === 0" class="text-center py-12">
-        <Card class="max-w-md mx-auto">
+      <div v-if="languages.length === 0" class="py-12 text-center">
+        <Card class="mx-auto max-w-md">
           <CardContent class="pt-6">
             <Alert>
-              <AlertCircle class="h-4 w-4" />
+              <AlertCircle class="size-4" />
               <AlertTitle>{{ $t('noLanguage') }}</AlertTitle>
               <AlertDescription>
                 {{ $t('pleaseCreateLanguage') }}
@@ -55,7 +59,7 @@
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <!-- Status Toggles -->
                 <div class="flex items-center space-x-4">
                   <div class="flex items-center space-x-2">
@@ -91,16 +95,16 @@
                   variant="outline"
                   @click="openMergeModal"
                 >
-                  <Merge class="w-4 h-4 mr-2" />
+                  <Merge class="mr-2 size-4" />
                   {{ $t('mergeVulnerabilities') }}
                 </Button>
-                
+
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
                     <Button v-if="UserService.isAllowed('vulnerabilities:create')">
-                      <Plus class="w-4 h-4 mr-2" />
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.create') }}
-                      <ChevronDown class="w-4 h-4 ml-2" />
+                      <ChevronDown class="ml-2 size-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -126,7 +130,7 @@
 
           <CardContent>
             <!-- Search Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
               <div>
                 <Input
                   v-model="search.title"
@@ -140,7 +144,9 @@
                     <SelectValue :placeholder="$t('searchCategory')" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{{ $t('allCategories') }}</SelectItem>
+                    <SelectItem value="">
+                      {{ $t('allCategories') }}
+                    </SelectItem>
                     <SelectItem
                       v-for="category in vulnCategoriesOptions"
                       :key="category"
@@ -157,7 +163,9 @@
                     <SelectValue :placeholder="$t('searchType')" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{{ $t('allTypes') }}</SelectItem>
+                    <SelectItem value="">
+                      {{ $t('allTypes') }}
+                    </SelectItem>
                     <SelectItem
                       v-for="type in vulnTypeOptions"
                       :key="type"
@@ -178,58 +186,60 @@
             </div>
 
             <!-- Data Table -->
-            <div class="border rounded-md">
+            <div class="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead class="w-[45%]">
                       <Button
                         variant="ghost"
+                        class="h-auto justify-start p-0 text-left font-semibold"
                         @click="updateSort('title')"
-                        class="h-auto p-0 font-semibold text-left justify-start"
                       >
                         {{ $t('title') }}
-                        <ArrowUpDown class="ml-2 h-4 w-4" />
+                        <ArrowUpDown class="ml-2 size-4" />
                       </Button>
                     </TableHead>
                     <TableHead class="w-[15%]">
                       <Button
                         variant="ghost"
+                        class="h-auto justify-start p-0 text-left font-semibold"
                         @click="updateSort('category')"
-                        class="h-auto p-0 font-semibold text-left justify-start"
                       >
                         {{ $t('category') }}
-                        <ArrowUpDown class="ml-2 h-4 w-4" />
+                        <ArrowUpDown class="ml-2 size-4" />
                       </Button>
                     </TableHead>
                     <TableHead class="w-[15%]">
                       <Button
                         variant="ghost"
+                        class="h-auto justify-start p-0 text-left font-semibold"
                         @click="updateSort('type')"
-                        class="h-auto p-0 font-semibold text-left justify-start"
                       >
                         {{ $t('type') }}
-                        <ArrowUpDown class="ml-2 h-4 w-4" />
+                        <ArrowUpDown class="ml-2 size-4" />
                       </Button>
                     </TableHead>
                     <TableHead class="w-[15%]">
                       <Button
                         variant="ghost"
+                        class="h-auto justify-start p-0 text-left font-semibold"
                         @click="updateSort('updatedAt')"
-                        class="h-auto p-0 font-semibold text-left justify-start"
                       >
                         {{ $t('lastUpdated') }}
-                        <ArrowUpDown class="ml-2 h-4 w-4" />
+                        <ArrowUpDown class="ml-2 size-4" />
                       </Button>
                     </TableHead>
-                    <TableHead class="w-[10%]">{{ $t('actions') }}</TableHead>
+                    <TableHead class="w-[10%]">
+                      {{ $t('actions') }}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow v-if="loading">
-                    <TableCell :colspan="5" class="text-center py-12">
+                    <TableCell :colspan="5" class="py-12 text-center">
                       <div class="flex items-center justify-center">
-                        <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 class="mr-2 size-4 animate-spin" />
                         {{ $t('loading') }}
                       </div>
                     </TableCell>
@@ -237,13 +247,13 @@
                   <TableRow
                     v-else-if="paginatedVulnerabilities.length === 0"
                   >
-                    <TableCell :colspan="5" class="text-center py-12">
+                    <TableCell :colspan="5" class="py-12 text-center">
                       {{ $t('noVulnerabilitiesFound') }}
                     </TableCell>
                   </TableRow>
                   <TableRow
-                    v-else
                     v-for="vulnerability in paginatedVulnerabilities"
+                    v-else
                     :key="vulnerability._id"
                     class="cursor-pointer hover:bg-muted/50"
                     @dblclick="dblClick(vulnerability)"
@@ -278,7 +288,7 @@
                           size="sm"
                           @click.stop="editVulnerability(vulnerability)"
                         >
-                          <Edit class="h-4 w-4" />
+                          <Edit class="size-4" />
                         </Button>
                         <Button
                           v-else
@@ -286,14 +296,14 @@
                           size="sm"
                           @click.stop="viewVulnerability(vulnerability)"
                         >
-                          <Eye class="h-4 w-4" />
+                          <Eye class="size-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           @click.stop="goToAudits(vulnerability)"
                         >
-                          <Search class="h-4 w-4" />
+                          <Search class="size-4" />
                         </Button>
                         <Button
                           v-if="UserService.isAllowed('vulnerabilities:delete')"
@@ -301,7 +311,7 @@
                           size="sm"
                           @click.stop="confirmDeleteVulnerability(vulnerability)"
                         >
-                          <Trash2 class="h-4 w-4 text-destructive" />
+                          <Trash2 class="size-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
@@ -311,9 +321,9 @@
             </div>
 
             <!-- Pagination -->
-            <div class="flex items-center justify-between mt-4">
+            <div class="mt-4 flex items-center justify-between">
               <div class="text-sm text-muted-foreground">
-                {{ $t('showingResults', { 
+                {{ $t('showingResults', {
                   start: ((currentPage - 1) * pageSize) + 1,
                   end: Math.min(currentPage * pageSize, filteredVulnerabilities.length),
                   total: filteredVulnerabilities.length
@@ -326,47 +336,55 @@
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                    <SelectItem value="0">{{ $t('all') }}</SelectItem>
+                    <SelectItem value="25">
+                      25
+                    </SelectItem>
+                    <SelectItem value="50">
+                      50
+                    </SelectItem>
+                    <SelectItem value="100">
+                      100
+                    </SelectItem>
+                    <SelectItem value="0">
+                      {{ $t('all') }}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <div class="flex items-center space-x-1">
                   <Button
                     variant="outline"
                     size="sm"
-                    @click="currentPage = 1"
                     :disabled="currentPage === 1"
+                    @click="currentPage = 1"
                   >
-                    <ChevronsLeft class="h-4 w-4" />
+                    <ChevronsLeft class="size-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    @click="currentPage--"
                     :disabled="currentPage === 1"
+                    @click="currentPage--"
                   >
-                    <ChevronLeft class="h-4 w-4" />
+                    <ChevronLeft class="size-4" />
                   </Button>
-                  <span class="text-sm px-2">
+                  <span class="px-2 text-sm">
                     {{ $t('pageOfPages', { current: currentPage, total: totalPages }) }}
                   </span>
                   <Button
                     variant="outline"
                     size="sm"
-                    @click="currentPage++"
                     :disabled="currentPage === totalPages"
+                    @click="currentPage++"
                   >
-                    <ChevronRight class="h-4 w-4" />
+                    <ChevronRight class="size-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    @click="currentPage = totalPages"
                     :disabled="currentPage === totalPages"
+                    @click="currentPage = totalPages"
                   >
-                    <ChevronsRight class="h-4 w-4" />
+                    <ChevronsRight class="size-4" />
                   </Button>
                 </div>
               </div>
@@ -378,7 +396,7 @@
 
     <!-- Create Vulnerability Modal -->
     <Dialog :open="showCreateModal" @update:open="showCreateModal = $event">
-      <DialogContent class="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent class="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             <span v-if="currentCategory">{{ $t('addVulnerability') }} ({{ currentCategory.name }})</span>
@@ -388,7 +406,7 @@
 
         <div class="space-y-6">
           <!-- Basic Information -->
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-12">
             <div class="md:col-span-8">
               <Label for="create-title">{{ $t('title') }} *</Label>
               <Input
@@ -398,7 +416,9 @@
                 :class="{ 'border-destructive': errors.title }"
                 @keyup.enter="createVulnerability"
               />
-              <p v-if="errors.title" class="text-sm text-destructive mt-1">{{ errors.title }}</p>
+              <p v-if="errors.title" class="mt-1 text-sm text-destructive">
+                {{ errors.title }}
+              </p>
             </div>
             <div class="md:col-span-2">
               <Label for="create-type">{{ $t('type') }}</Label>
@@ -439,12 +459,12 @@
           <!-- Description -->
           <div>
             <Label>{{ $t('description') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
+                :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].description"
                 :collab="false"
                 :id-unique="currentVulnerability._id + '-description'"
-                v-model="currentVulnerability.details[currentDetailsIndex].description"
-                :key="currentDetailsIndex"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -454,12 +474,12 @@
           <!-- Observation -->
           <div>
             <Label>{{ $t('observation') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
+                :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].observation"
                 :collab="false"
                 :id-unique="currentVulnerability._id + '-observation'"
-                v-model="currentVulnerability.details[currentDetailsIndex].observation"
-                :key="currentDetailsIndex"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -469,7 +489,7 @@
           <!-- CVSS Calculator -->
           <div>
             <Label>{{ $t('cvssScore') }}</Label>
-            <div class="border rounded-md p-4">
+            <div class="rounded-md border p-4">
               <CvssCalculator
                 v-model="currentVulnerability.cvssv3"
                 @cvss-score-change="currentVulnerability.cvssScore = $event"
@@ -480,12 +500,12 @@
           <!-- Remediation -->
           <div>
             <Label>{{ $t('remediation') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
+                :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].remediation"
                 :collab="false"
                 :id-unique="currentVulnerability._id + '-remediation'"
-                v-model="currentVulnerability.details[currentDetailsIndex].remediation"
-                :key="currentDetailsIndex"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -493,7 +513,7 @@
           </div>
 
           <!-- Priority and Complexity -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <Label for="create-priority">{{ $t('remediationPriority') }}</Label>
               <Select v-model="currentVulnerability.priority">
@@ -501,10 +521,18 @@
                   <SelectValue :placeholder="$t('selectPriority')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">{{ $t('low') }}</SelectItem>
-                  <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                  <SelectItem value="3">{{ $t('high') }}</SelectItem>
-                  <SelectItem value="4">{{ $t('urgent') }}</SelectItem>
+                  <SelectItem value="1">
+                    {{ $t('low') }}
+                  </SelectItem>
+                  <SelectItem value="2">
+                    {{ $t('medium') }}
+                  </SelectItem>
+                  <SelectItem value="3">
+                    {{ $t('high') }}
+                  </SelectItem>
+                  <SelectItem value="4">
+                    {{ $t('urgent') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -515,9 +543,15 @@
                   <SelectValue :placeholder="$t('selectComplexity')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">{{ $t('easy') }}</SelectItem>
-                  <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                  <SelectItem value="3">{{ $t('complex') }}</SelectItem>
+                  <SelectItem value="1">
+                    {{ $t('easy') }}
+                  </SelectItem>
+                  <SelectItem value="2">
+                    {{ $t('medium') }}
+                  </SelectItem>
+                  <SelectItem value="3">
+                    {{ $t('complex') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -526,9 +560,9 @@
           <!-- References -->
           <div>
             <Label>{{ $t('references') }}</Label>
-            <TextareaArray 
-              v-model="currentVulnerability.details[currentDetailsIndex].references"
+            <TextareaArray
               :key="currentDetailsIndex"
+              v-model="currentVulnerability.details[currentDetailsIndex].references"
               :disabled="lenCurrentTitle === 0"
               :readonly="lenCurrentTitle === 0"
             />
@@ -539,15 +573,15 @@
             <CollapsibleTrigger as-child>
               <Button variant="outline" class="w-full justify-between">
                 {{ $t('customFields') }}
-                <ChevronDown class="h-4 w-4" />
+                <ChevronDown class="size-4" />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent class="space-y-4">
               <CustomFields
                 ref="customfields"
-                :collab="false"
-                v-model="currentVulnerability.details[currentDetailsIndex].customFields"
                 :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].customFields"
+                :collab="false"
                 :disabled="lenCurrentTitle === 0"
                 :readonly="lenCurrentTitle === 0"
                 :category="currentVulnerability.category"
@@ -572,7 +606,7 @@
 
     <!-- Edit Vulnerability Modal -->
     <Dialog :open="showEditModal" @update:open="showEditModal = $event">
-      <DialogContent class="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent class="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <div class="flex items-center justify-between">
             <DialogTitle>
@@ -584,7 +618,7 @@
                 <DropdownMenuTrigger as-child>
                   <Button variant="outline" size="sm">
                     {{ $t('changeCategory') }}
-                    <ChevronDown class="w-4 h-4 ml-2" />
+                    <ChevronDown class="ml-2 size-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -610,7 +644,7 @@
 
         <div class="space-y-6">
           <!-- Basic Information -->
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-12">
             <div class="md:col-span-8">
               <Label for="edit-title">{{ $t('title') }} *</Label>
               <Input
@@ -620,11 +654,13 @@
                 :class="{ 'border-destructive': errors.title }"
                 @keyup.enter="updateVulnerability"
               />
-              <p v-if="errors.title" class="text-sm text-destructive mt-1">{{ errors.title }}</p>
+              <p v-if="errors.title" class="mt-1 text-sm text-destructive">
+                {{ errors.title }}
+              </p>
             </div>
             <div class="md:col-span-2">
               <Label for="edit-type">{{ $t('type') }}</Label>
-              <Select 
+              <Select
                 v-model="currentVulnerability.details[currentDetailsIndex].vulnType"
                 :disabled="lenCurrentTitle === 0"
               >
@@ -664,11 +700,11 @@
           <!-- Description -->
           <div>
             <Label>{{ $t('description') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
-                :id-unique="currentVulnerability._id + '-description'"
-                v-model="currentVulnerability.details[currentDetailsIndex].description"
                 :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].description"
+                :id-unique="currentVulnerability._id + '-description'"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -678,11 +714,11 @@
           <!-- Observation -->
           <div>
             <Label>{{ $t('observation') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
-                :id-unique="currentVulnerability._id + '-observation'"
-                v-model="currentVulnerability.details[currentDetailsIndex].observation"
                 :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].observation"
+                :id-unique="currentVulnerability._id + '-observation'"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -692,7 +728,7 @@
           <!-- CVSS Calculator -->
           <div>
             <Label>{{ $t('cvssScore') }}</Label>
-            <div class="border rounded-md p-4">
+            <div class="rounded-md border p-4">
               <CvssCalculator
                 v-model="currentVulnerability.cvssv3"
                 @cvss-score-change="currentVulnerability.cvssScore = $event"
@@ -703,11 +739,11 @@
           <!-- Remediation -->
           <div>
             <Label>{{ $t('remediation') }}</Label>
-            <div class="border rounded-md p-4 min-h-[200px] bg-background">
+            <div class="min-h-[200px] rounded-md border bg-background p-4">
               <BasicEditor
-                :id-unique="currentVulnerability._id + '-remediation'"
-                v-model="currentVulnerability.details[currentDetailsIndex].remediation"
                 :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].remediation"
+                :id-unique="currentVulnerability._id + '-remediation'"
                 :disabled="lenCurrentTitle === 0"
                 :editable="lenCurrentTitle > 0"
               />
@@ -715,7 +751,7 @@
           </div>
 
           <!-- Priority and Complexity -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <Label for="edit-priority">{{ $t('remediationPriority') }}</Label>
               <Select v-model="currentVulnerability.priority">
@@ -723,10 +759,18 @@
                   <SelectValue :placeholder="$t('selectPriority')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">{{ $t('low') }}</SelectItem>
-                  <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                  <SelectItem value="3">{{ $t('high') }}</SelectItem>
-                  <SelectItem value="4">{{ $t('urgent') }}</SelectItem>
+                  <SelectItem value="1">
+                    {{ $t('low') }}
+                  </SelectItem>
+                  <SelectItem value="2">
+                    {{ $t('medium') }}
+                  </SelectItem>
+                  <SelectItem value="3">
+                    {{ $t('high') }}
+                  </SelectItem>
+                  <SelectItem value="4">
+                    {{ $t('urgent') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -737,9 +781,15 @@
                   <SelectValue :placeholder="$t('selectComplexity')" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">{{ $t('easy') }}</SelectItem>
-                  <SelectItem value="2">{{ $t('medium') }}</SelectItem>
-                  <SelectItem value="3">{{ $t('complex') }}</SelectItem>
+                  <SelectItem value="1">
+                    {{ $t('easy') }}
+                  </SelectItem>
+                  <SelectItem value="2">
+                    {{ $t('medium') }}
+                  </SelectItem>
+                  <SelectItem value="3">
+                    {{ $t('complex') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -748,9 +798,9 @@
           <!-- References -->
           <div>
             <Label>{{ $t('references') }}</Label>
-            <TextareaArray 
-              v-model="currentVulnerability.details[currentDetailsIndex].references"
+            <TextareaArray
               :key="currentDetailsIndex"
+              v-model="currentVulnerability.details[currentDetailsIndex].references"
               :disabled="lenCurrentTitle === 0"
               :readonly="lenCurrentTitle === 0"
             />
@@ -761,14 +811,14 @@
             <CollapsibleTrigger as-child>
               <Button variant="outline" class="w-full justify-between">
                 {{ $t('customFields') }}
-                <ChevronDown class="h-4 w-4" />
+                <ChevronDown class="size-4" />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent class="space-y-4">
               <CustomFields
                 ref="customfields"
-                v-model="currentVulnerability.details[currentDetailsIndex].customFields"
                 :key="currentDetailsIndex"
+                v-model="currentVulnerability.details[currentDetailsIndex].customFields"
                 :id-unique="currentDetailsIndex + currentVulnerability._id"
                 :disabled="lenCurrentTitle === 0"
                 :readonly="lenCurrentTitle === 0"
@@ -782,10 +832,10 @@
           <Button variant="outline" @click="showEditModal = false">
             {{ $t('btn.cancel') }}
           </Button>
-          <Button 
+          <Button
             v-if="currentVulnerability.status === 1"
-            @click="updateVulnerability"
             class="bg-blue-600 hover:bg-blue-700"
+            @click="updateVulnerability"
           >
             {{ $t('approve') }}
           </Button>
@@ -798,21 +848,23 @@
 
     <!-- Updates Comparison Modal -->
     <Dialog :open="showUpdatesModal" @update:open="showUpdatesModal = $event">
-      <DialogContent class="max-w-7xl max-h-[95vh] overflow-hidden">
+      <DialogContent class="max-h-[95vh] max-w-7xl overflow-hidden">
         <DialogHeader>
           <DialogTitle>{{ $t('updateVulnerability') }}</DialogTitle>
         </DialogHeader>
 
         <div class="flex h-[80vh] space-x-4">
           <!-- Current Version -->
-          <div class="flex-1 border rounded-lg overflow-hidden">
-            <div class="bg-muted px-4 py-2 border-b">
-              <h3 class="font-semibold">{{ $t('current') }}</h3>
+          <div class="flex-1 overflow-hidden rounded-lg border">
+            <div class="border-b bg-muted px-4 py-2">
+              <h3 class="font-semibold">
+                {{ $t('current') }}
+              </h3>
             </div>
-            <div class="p-4 overflow-y-auto h-full space-y-4">
+            <div class="h-full space-y-4 overflow-y-auto p-4">
               <!-- Current vulnerability content... Similar structure to edit modal -->
               <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-12">
                   <div class="md:col-span-8">
                     <Label>{{ $t('title') }} *</Label>
                     <Input
@@ -827,14 +879,16 @@
           </div>
 
           <!-- Updates Version -->
-          <div class="flex-1 border rounded-lg overflow-hidden">
-            <div class="bg-muted px-4 py-2 border-b">
-              <h3 class="font-semibold">{{ $t('updates') }}</h3>
+          <div class="flex-1 overflow-hidden rounded-lg border">
+            <div class="border-b bg-muted px-4 py-2">
+              <h3 class="font-semibold">
+                {{ $t('updates') }}
+              </h3>
             </div>
-            <div class="p-4 overflow-y-auto h-full">
+            <div class="h-full overflow-y-auto p-4">
               <Tabs v-model="currentUpdate" class="w-full">
                 <TabsList class="grid w-full grid-cols-1" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))">
-                  <TabsTrigger 
+                  <TabsTrigger
                     v-for="update in vulnUpdates"
                     :key="update._id"
                     :value="update._id"
@@ -842,7 +896,7 @@
                     {{ getLanguageByLocale(update.locale) }}
                   </TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent
                   v-for="update in vulnUpdates"
                   :key="update._id"
@@ -851,7 +905,7 @@
                 >
                   <!-- Update content with diff highlighting -->
                   <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-12">
                       <div class="md:col-span-8">
                         <Label>{{ $t('title') }}</Label>
                         <Input
@@ -873,7 +927,7 @@
           <Button variant="outline" @click="showUpdatesModal = false">
             {{ $t('btn.cancel') }}
           </Button>
-          <Button @click="updateVulnerability" class="bg-orange-600 hover:bg-orange-700">
+          <Button class="bg-orange-600 hover:bg-orange-700" @click="updateVulnerability">
             {{ $t('btn.update') }}
           </Button>
         </DialogFooter>
@@ -889,8 +943,8 @@
 
         <div v-if="languages.length < 2" class="py-8">
           <Alert>
-            <AlertCircle class="h-4 w-4" />
-            <AlertDescription v-html="$t('mergeVulnerabilitiesInfo')"></AlertDescription>
+            <AlertCircle class="size-4" />
+            <AlertDescription v-html="$t('mergeVulnerabilitiesInfo')" />
           </Alert>
         </div>
 
@@ -914,8 +968,8 @@
                 </SelectContent>
               </Select>
             </div>
-            
-            <div class="border rounded-lg h-64 overflow-y-auto">
+
+            <div class="h-64 overflow-y-auto rounded-lg border">
               <RadioGroup v-model="mergeVulnLeft" class="p-4">
                 <div
                   v-for="vuln in filteredVulnerabilitiesLeft"
@@ -950,8 +1004,8 @@
                 </SelectContent>
               </Select>
             </div>
-            
-            <div class="border rounded-lg h-64 overflow-y-auto">
+
+            <div class="h-64 overflow-y-auto rounded-lg border">
               <RadioGroup v-model="mergeVulnRight" class="p-4">
                 <div
                   v-for="vuln in filteredVulnerabilitiesRight"
@@ -970,8 +1024,8 @@
 
         <DialogFooter>
           <Button
-            @click="mergeVulnerabilities"
             :disabled="!mergeVulnLeft || !mergeVulnRight"
+            @click="mergeVulnerabilities"
           >
             {{ $t('merge') }}
           </Button>
@@ -989,7 +1043,7 @@ import { _ } from 'lodash'
 import {
   Plus, Edit, Eye, Search, Trash2, ChevronDown, ArrowUpDown,
   Loader2, AlertCircle, Merge, ChevronsLeft, ChevronLeft,
-  ChevronRight, ChevronsRight
+  ChevronRight, ChevronsRight,
 } from 'lucide-vue-next'
 
 // Shadcn Components
@@ -1046,7 +1100,7 @@ const currentVulnerability = reactive({
   cvssv3: '',
   priority: '',
   remediationComplexity: '',
-  details: []
+  details: [],
 })
 const currentDetailsIndex = ref(0)
 const currentLanguage = ref('')
@@ -1072,7 +1126,7 @@ const search = reactive({
   updatedAt: '',
   valid: 0,
   new: 1,
-  updates: 2
+  updates: 2,
 })
 
 // Pagination
@@ -1085,7 +1139,7 @@ const sortDescending = ref(false)
 
 // Errors
 const errors = reactive({
-  title: ''
+  title: '',
 })
 
 // Computed Properties
@@ -1103,25 +1157,25 @@ const vulnTypesLang = computed(() => {
 const computedVulnerabilities = computed(() => {
   if (!dtLanguage.value) return []
   return vulnerabilities.value.filter(vuln =>
-    vuln.details.some(detail => detail.locale === dtLanguage.value && detail.title)
+    vuln.details.some(detail => detail.locale === dtLanguage.value && detail.title),
   )
 })
 
 const filteredVulnerabilities = computed(() => {
   return computedVulnerabilities.value.filter(vuln => {
-    const title = getDtTitle(vuln).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    const title = getDtTitle(vuln).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     const category = (vuln.category || $t('noCategory')).toLowerCase()
     const type = getDtType(vuln).toLowerCase()
     const updatedAt = getDtUpdatedAt(vuln)
-    
-    const termTitle = (search.title || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    const termCategory = (search.category || "").toLowerCase()
-    const termVulnType = (search.type || "").toLowerCase()
-    const termUpdatedAt = (search.updatedAt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
-    return title.indexOf(termTitle) > -1 && 
-      type.indexOf(termVulnType || "") > -1 &&
-      category.indexOf(termCategory || "") > -1 &&
+    const termTitle = (search.title || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    const termCategory = (search.category || '').toLowerCase()
+    const termVulnType = (search.type || '').toLowerCase()
+    const termUpdatedAt = (search.updatedAt || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+    return title.indexOf(termTitle) > -1 &&
+      type.indexOf(termVulnType || '') > -1 &&
+      category.indexOf(termCategory || '') > -1 &&
       updatedAt.indexOf(termUpdatedAt) > -1 &&
       (vuln.status === search.valid || vuln.status === search.new || vuln.status === search.updates)
   })
@@ -1129,41 +1183,41 @@ const filteredVulnerabilities = computed(() => {
 
 const sortedVulnerabilities = computed(() => {
   const data = [...filteredVulnerabilities.value]
-  
+
   data.sort((a, b) => {
     let aVal, bVal
-    
+
     switch (sortBy.value) {
-      case 'title':
-        aVal = getDtTitle(a) || ''
-        bVal = getDtTitle(b) || ''
-        break
-      case 'category':
-        aVal = a.category || $t('noCategory')
-        bVal = b.category || $t('noCategory')
-        break
-      case 'type':
-        aVal = getDtType(a) || ''
-        bVal = getDtType(b) || ''
-        break
-      case 'updatedAt':
-        aVal = getDtUpdatedAt(a) || ''
-        bVal = getDtUpdatedAt(b) || ''
-        break
-      default:
-        return 0
+    case 'title':
+      aVal = getDtTitle(a) || ''
+      bVal = getDtTitle(b) || ''
+      break
+    case 'category':
+      aVal = a.category || $t('noCategory')
+      bVal = b.category || $t('noCategory')
+      break
+    case 'type':
+      aVal = getDtType(a) || ''
+      bVal = getDtType(b) || ''
+      break
+    case 'updatedAt':
+      aVal = getDtUpdatedAt(a) || ''
+      bVal = getDtUpdatedAt(b) || ''
+      break
+    default:
+      return 0
     }
-    
+
     const comparison = aVal.localeCompare(bVal)
     return sortDescending.value ? -comparison : comparison
   })
-  
+
   return data
 })
 
 const paginatedVulnerabilities = computed(() => {
   if (pageSize.value === 0) return sortedVulnerabilities.value
-  
+
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
   return sortedVulnerabilities.value.slice(start, end)
@@ -1189,14 +1243,14 @@ const vulnTypeOptions = computed(() => {
 const filteredVulnerabilitiesLeft = computed(() => {
   if (!mergeLanguageLeft.value) return []
   return vulnerabilities.value.filter(
-    vuln => vuln && vuln.details && getVulnTitleLocale(vuln, mergeLanguageLeft.value) !== 'undefined'
+    vuln => vuln && vuln.details && getVulnTitleLocale(vuln, mergeLanguageLeft.value) !== 'undefined',
   )
 })
 
 const filteredVulnerabilitiesRight = computed(() => {
   if (!mergeLanguageRight.value) return []
   return vulnerabilities.value.filter(
-    vuln => vuln && vuln.details && getVulnTitleLocale(vuln, mergeLanguageRight.value) !== 'undefined'
+    vuln => vuln && vuln.details && getVulnTitleLocale(vuln, mergeLanguageRight.value) !== 'undefined',
   )
 })
 
@@ -1256,7 +1310,7 @@ const getVulnerabilities = async () => {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   } finally {
     loading.value = false
@@ -1277,13 +1331,13 @@ const createVulnerability = async () => {
     showCreateModal.value = false
     toast({
       title: $t('success'),
-      description: $t('msg.vulnerabilityCreatedOk')
+      description: $t('msg.vulnerabilityCreatedOk'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1303,13 +1357,13 @@ const updateVulnerability = async () => {
     showUpdatesModal.value = false
     toast({
       title: $t('success'),
-      description: $t('msg.vulnerabilityUpdatedOk')
+      description: $t('msg.vulnerabilityUpdatedOk'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1320,13 +1374,13 @@ const deleteVulnerability = async (vulnerabilityId) => {
     await getVulnerabilities()
     toast({
       title: $t('success'),
-      description: $t('msg.vulnerabilityDeletedOk')
+      description: $t('msg.vulnerabilityDeletedOk'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1385,19 +1439,19 @@ const cleanCurrentVulnerability = () => {
   currentVulnerability.remediationComplexity = ''
   currentVulnerability.details = []
   currentLanguage.value = dtLanguage.value
-  
+
   if (currentCategory.value && currentCategory.value.name) {
     currentVulnerability.category = currentCategory.value.name
   } else {
     currentVulnerability.category = null
   }
-  
+
   setCurrentDetails()
 }
 
 const setCurrentDetails = () => {
   let index = currentVulnerability.details.findIndex(obj => obj.locale === currentLanguage.value)
-  
+
   if (index < 0) {
     const details = {
       locale: currentLanguage.value,
@@ -1408,16 +1462,16 @@ const setCurrentDetails = () => {
       observation: '',
       remediation: '',
       references: [],
-      customFields: []
+      customFields: [],
     }
-    
+
     details.customFields = _.cloneDeep(Utils.filterCustomFields('vulnerability', currentVulnerability.category, customFields.value, [], currentLanguage.value))
     currentVulnerability.details.push(details)
     index = currentVulnerability.details.length - 1
   } else {
     currentVulnerability.details[index].customFields = _.cloneDeep(Utils.filterCustomFields('vulnerability', currentVulnerability.category, customFields.value, currentVulnerability.details[index].customFields, currentLanguage.value))
   }
-  
+
   currentDetailsIndex.value = index
 }
 
@@ -1432,33 +1486,33 @@ const getDtTitle = (row) => {
 const getDtType = (row) => {
   const index = row.details.findIndex(obj => obj.locale === dtLanguage.value)
   if (index < 0 || !row.details[index].vulnType) {
-    return "Undefined"
+    return 'Undefined'
   }
   return row.details[index].vulnType
 }
 
 const getDtUpdatedAt = (row) => {
   if (!row.updatedAt) {
-    return "Undefined"
+    return 'Undefined'
   }
   return new Date(row.updatedAt).toLocaleDateString('es-CL')
 }
 
 const getStatusVariant = (status) => {
   switch (status) {
-    case 0: return 'default'
-    case 1: return 'secondary'
-    case 2: return 'destructive'
-    default: return 'outline'
+  case 0: return 'default'
+  case 1: return 'secondary'
+  case 2: return 'destructive'
+  default: return 'outline'
   }
 }
 
 const getStatusLabel = (status) => {
   switch (status) {
-    case 0: return $t('valid')
-    case 1: return $t('new')
-    case 2: return $t('updates')
-    default: return $t('unknown')
+  case 0: return $t('valid')
+  case 1: return $t('new')
+  case 2: return $t('updates')
+  default: return $t('unknown')
   }
 }
 
@@ -1478,16 +1532,16 @@ const goToAudits = (row) => {
 
 const getVulnTitleLocale = (vuln, locale) => {
   if (!vuln || !Array.isArray(vuln.details)) {
-    return "undefined"
+    return 'undefined'
   }
-  
+
   for (let i = 0; i < vuln.details.length; i++) {
     if (vuln.details[i].locale === locale && vuln.details[i].title) {
       return vuln.details[i].title
     }
   }
-  
-  return "undefined"
+
+  return 'undefined'
 }
 
 const getLanguageByLocale = (locale) => {
@@ -1502,13 +1556,13 @@ const mergeVulnerabilities = async () => {
     showMergeModal.value = false
     toast({
       title: $t('success'),
-      description: $t('msg.vulnerabilityMergeOk')
+      description: $t('msg.vulnerabilityMergeOk'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }

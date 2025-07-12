@@ -1,16 +1,18 @@
 <template>
   <div class="flex h-screen bg-background">
     <!-- Left Sidebar -->
-    <div class="w-96 border-r border-border flex flex-col">
+    <div class="flex w-96 flex-col border-r border-border">
       <!-- Splitter Component -->
-      <div class="flex-1 flex flex-col">
+      <div class="flex flex-1 flex-col">
         <!-- Top Section (Sections Navigation) -->
-        <div :style="{ height: `${splitterRatio}%` }" class="flex flex-col min-h-0">
+        <div :style="{ height: `${splitterRatio}%` }" class="flex min-h-0 flex-col">
           <!-- Header with action buttons -->
-          <div class="p-4 border-b border-border">
+          <div class="border-b border-border p-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold">{{ $t('sections') }}</h3>
-              
+              <h3 class="text-lg font-semibold">
+                {{ $t('sections') }}
+              </h3>
+
               <div class="flex items-center space-x-2">
                 <!-- Review/Approval buttons -->
                 <template v-if="$settings.reviews.enabled">
@@ -22,7 +24,7 @@
                   >
                     {{ $t('btn.topButtonSection.submitReview') }}
                   </Button>
-                  
+
                   <Button
                     v-if="[AUDIT_VIEW_STATE.REVIEW_EDITOR, AUDIT_VIEW_STATE.REVIEW_ADMIN, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED].includes(frontEndAuditState)"
                     size="sm"
@@ -31,7 +33,7 @@
                   >
                     {{ $t('btn.topButtonSection.cancelReview') }}
                   </Button>
-                  
+
                   <Button
                     v-if="[AUDIT_VIEW_STATE.REVIEW, AUDIT_VIEW_STATE.REVIEW_ADMIN].includes(frontEndAuditState)"
                     size="sm"
@@ -40,7 +42,7 @@
                   >
                     {{ $t('btn.topButtonSection.approve') }}
                   </Button>
-                  
+
                   <Button
                     v-if="[AUDIT_VIEW_STATE.REVIEW_APPROVED, AUDIT_VIEW_STATE.REVIEW_ADMIN_APPROVED, AUDIT_VIEW_STATE.APPROVED_APPROVED].includes(frontEndAuditState)"
                     size="sm"
@@ -50,14 +52,14 @@
                     {{ $t('btn.topButtonSection.removeApproval') }}
                   </Button>
                 </template>
-                
+
                 <!-- Download report button -->
                 <Button
                   variant="ghost"
                   size="sm"
                   @click="generateReport"
                 >
-                  <Download class="h-4 w-4" />
+                  <Download class="size-4" />
                 </Button>
               </div>
             </div>
@@ -66,62 +68,62 @@
           <!-- Navigation Items -->
           <div class="flex-1 overflow-y-auto p-2">
             <!-- General Information -->
-            <div 
-              class="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+            <div
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
               :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/general') }"
               @click="$router.push(`/audits/${auditId}/general`)"
             >
-              <Settings class="h-5 w-5" />
+              <Settings class="size-5" />
               <span>{{ $t('generalInformation') }}</span>
             </div>
-            
+
             <!-- User activity indicator for general -->
-            <div v-if="generalUsers.length > 0" class="flex h-1 mb-2 mx-3">
+            <div v-if="generalUsers.length > 0" class="mx-3 mb-2 flex h-1">
               <div
                 v-for="(user, idx) in generalUsers"
                 :key="idx"
-                class="flex-1 h-full"
+                class="h-full flex-1"
                 :style="{ backgroundColor: user.color }"
               />
             </div>
 
             <!-- Network Scan -->
-            <div 
+            <div
               v-if="!currentAuditType || !currentAuditType.hidden.includes('network')"
-              class="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
               :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/network') }"
               @click="$router.push(`/audits/${auditId}/network`)"
             >
-              <Globe class="h-5 w-5" />
+              <Globe class="size-5" />
               <span>{{ $t('networkScan') }}</span>
             </div>
-            
+
             <!-- User activity indicator for network -->
-            <div v-if="networkUsers.length > 0" class="flex h-1 mb-2 mx-3">
+            <div v-if="networkUsers.length > 0" class="mx-3 mb-2 flex h-1">
               <div
                 v-for="(user, idx) in networkUsers"
                 :key="idx"
-                class="flex-1 h-full"
+                class="h-full flex-1"
                 :style="{ backgroundColor: user.color }"
               />
             </div>
 
             <!-- Charts -->
-            <div 
-              class="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+            <div
+              class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
               :class="{ 'bg-primary text-primary-foreground': $route.path.includes('/charts') }"
               @click="$router.push(`/audits/${auditId}/charts`)"
             >
-              <PieChart class="h-5 w-5" />
+              <PieChart class="size-5" />
               <span>{{ $t('charts') }}</span>
             </div>
-            
+
             <!-- User activity indicator for charts -->
-            <div v-if="chartUsers.length > 0" class="flex h-1 mb-2 mx-3">
+            <div v-if="chartUsers.length > 0" class="mx-3 mb-2 flex h-1">
               <div
                 v-for="(user, idx) in chartUsers"
                 :key="idx"
-                class="flex-1 h-full"
+                class="h-full flex-1"
                 :style="{ backgroundColor: user.color }"
               />
             </div>
@@ -129,34 +131,36 @@
             <!-- Findings Section -->
             <div v-if="!currentAuditType || !currentAuditType.hidden.includes('findings')">
               <Separator class="my-4" />
-              
+
               <!-- Findings Header -->
               <div class="flex items-center justify-between p-3">
                 <div class="flex items-center space-x-3">
-                  <List class="h-5 w-5" />
+                  <List class="size-5" />
                   <span>{{ $t('findings') }} ({{ audit.findings.length || 0 }})</span>
                 </div>
-                
+
                 <Button
                   v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
                   size="sm"
                   variant="secondary"
                   @click="$router.push(`/audits/${auditId}/findings/add`)"
                 >
-                  <Plus class="h-4 w-4" />
+                  <Plus class="size-4" />
                 </Button>
               </div>
 
               <!-- Findings by Category -->
               <div v-for="categoryFindings in findingList" :key="categoryFindings.category" class="mb-4">
-                <div class="flex items-center justify-between p-2 bg-muted rounded-lg">
-                  <h4 class="font-medium">{{ categoryFindings.category }}</h4>
-                  
+                <div class="flex items-center justify-between rounded-lg bg-muted p-2">
+                  <h4 class="font-medium">
+                    {{ categoryFindings.category }}
+                  </h4>
+
                   <!-- Sort options -->
                   <DropdownMenu v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT">
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger as-child>
                       <Button variant="ghost" size="sm">
-                        <ArrowUpDown class="h-4 w-4" />
+                        <ArrowUpDown class="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="w-72">
@@ -177,10 +181,10 @@
                         @click="categoryFindings.sortOption.sortValue = option.value; updateSortFindings()"
                       >
                         <div class="flex items-center space-x-2">
-                          <div class="w-4 h-4 rounded-full border-2 border-primary flex items-center justify-center">
+                          <div class="flex size-4 items-center justify-center rounded-full border-2 border-primary">
                             <div
                               v-if="categoryFindings.sortOption.sortValue === option.value"
-                              class="w-2 h-2 rounded-full bg-primary"
+                              class="size-2 rounded-full bg-primary"
                             />
                           </div>
                           <span>{{ option.label }}</span>
@@ -190,13 +194,13 @@
                       <DropdownMenuItem
                         @click="categoryFindings.sortOption.sortOrder = 'asc'; updateSortFindings()"
                       >
-                        <ArrowUp class="h-4 w-4 mr-2" />
+                        <ArrowUp class="mr-2 size-4" />
                         {{ $t('ascending') }}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         @click="categoryFindings.sortOption.sortOrder = 'desc'; updateSortFindings()"
                       >
-                        <ArrowDown class="h-4 w-4 mr-2" />
+                        <ArrowDown class="mr-2 size-4" />
                         {{ $t('descending') }}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -207,15 +211,15 @@
                 <div class="ml-2">
                   <draggable
                     v-model="categoryFindings.findings"
-                    @end="moveFindingPosition($event, categoryFindings.category)"
                     handle=".drag-handle"
                     ghost-class="opacity-50"
                     item-key="_id"
                     class="space-y-1"
+                    @end="moveFindingPosition($event, categoryFindings.category)"
                   >
                     <template #item="{ element: finding }">
                       <div
-                        class="flex items-center space-x-2 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                        class="flex cursor-pointer items-center space-x-2 rounded-lg p-2 transition-colors hover:bg-muted"
                         :class="{ 'bg-primary text-primary-foreground': $route.params.findingId === finding._id }"
                         @click="$router.push(`/audits/${auditId}/findings/${finding._id}`)"
                       >
@@ -224,34 +228,36 @@
                           v-if="!categoryFindings.sortOption.sortAuto && frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
                           class="drag-handle cursor-move"
                         >
-                          <GripVertical class="h-4 w-4 text-muted-foreground" />
+                          <GripVertical class="size-4 text-muted-foreground" />
                         </div>
-                        
+
                         <!-- Severity badge -->
-                        <div 
-                          class="w-8 h-8 rounded flex items-center justify-center text-white text-sm font-bold"
+                        <div
+                          class="flex size-8 items-center justify-center rounded text-sm font-bold text-white"
                           :style="{ backgroundColor: getFindingColor(finding) }"
                         >
                           {{ getFindingSeverity(finding).substring(0, 1) }}
                         </div>
-                        
+
                         <!-- Finding title -->
-                        <div class="flex-1 min-w-0">
-                          <p class="truncate">{{ finding.title }}</p>
+                        <div class="min-w-0 flex-1">
+                          <p class="truncate">
+                            {{ finding.title }}
+                          </p>
                         </div>
-                        
+
                         <!-- Status indicator -->
-                        <div v-if="finding.status === 0" class="flex-shrink-0">
-                          <Check class="h-4 w-4 text-green-600" />
+                        <div v-if="finding.status === 0" class="shrink-0">
+                          <Check class="size-4 text-green-600" />
                         </div>
                       </div>
-                      
+
                       <!-- User activity indicator -->
-                      <div v-if="filteredFindingUsers(finding._id).length > 0" class="flex h-1 ml-10">
+                      <div v-if="filteredFindingUsers(finding._id).length > 0" class="ml-10 flex h-1">
                         <div
                           v-for="user in filteredFindingUsers(finding._id)"
                           :key="user._id"
-                          class="flex-1 h-full"
+                          class="h-full flex-1"
                           :style="{ backgroundColor: user.color }"
                         />
                       </div>
@@ -259,27 +265,27 @@
                   </draggable>
                 </div>
               </div>
-              
+
               <Separator class="my-4" />
             </div>
 
             <!-- Custom Sections -->
             <div v-for="section in audit.sections" :key="section._id" class="mb-2">
-              <div 
-                class="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+              <div
+                class="flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
                 :class="{ 'bg-primary text-primary-foreground': $route.params.sectionId === section._id }"
                 @click="$router.push(`/audits/${auditId}/sections/${section._id}`)"
               >
-                <component :is="getSectionIcon(section)" class="h-5 w-5" />
+                <component :is="getSectionIcon(section)" class="size-5" />
                 <span>{{ section.name }}</span>
               </div>
-              
+
               <!-- User activity indicator for section -->
-              <div v-if="filteredSectionUsers(section._id).length > 0" class="flex h-1 mb-2 mx-3">
+              <div v-if="filteredSectionUsers(section._id).length > 0" class="mx-3 mb-2 flex h-1">
                 <div
                   v-for="(user, idx) in filteredSectionUsers(section._id)"
                   :key="user._id || idx"
-                  class="flex-1 h-full"
+                  class="h-full flex-1"
                   :style="{ backgroundColor: user.color }"
                 />
               </div>
@@ -288,23 +294,23 @@
         </div>
 
         <!-- Splitter Handle -->
-        <div class="flex justify-center py-1 bg-muted hover:bg-muted/80 cursor-row-resize" @mousedown="startSplitterDrag">
-          <div class="w-8 h-1 bg-border rounded-full"></div>
+        <div class="flex cursor-row-resize justify-center bg-muted py-1 hover:bg-muted/80" @mousedown="startSplitterDrag">
+          <div class="h-1 w-8 rounded-full bg-border" />
         </div>
 
         <!-- Bottom Section (Connected Users) -->
-        <div :style="{ height: `${100 - splitterRatio}%` }" class="flex flex-col min-h-0">
-          <div class="p-4 border-b border-border">
+        <div :style="{ height: `${100 - splitterRatio}%` }" class="flex min-h-0 flex-col">
+          <div class="border-b border-border p-4">
             <div class="flex items-center space-x-3">
-              <Users class="h-5 w-5" />
+              <Users class="size-5" />
               <span class="font-medium">{{ $t('usersConnected') }}</span>
             </div>
           </div>
-          
+
           <div class="flex-1 overflow-y-auto p-2">
-            <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 p-2 rounded-lg">
-              <div 
-                class="w-4 h-4 rounded"
+            <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 rounded-lg p-2">
+              <div
+                class="size-4 rounded"
                 :style="{ backgroundColor: user.color }"
               />
               <span class="text-sm">
@@ -318,12 +324,12 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="flex-1 min-w-0">
-      <router-view 
+    <div class="min-w-0 flex-1">
+      <router-view
         :key="$route.fullPath"
-        :frontEndAuditState="frontEndAuditState"
-        :parentState="audit.state"
-        :parentApprovals="audit.approvals"
+        :front-end-audit-state="frontEndAuditState"
+        :parent-state="audit.state"
+        :parent-approvals="audit.approvals"
         :audit="audit"
       />
     </div>
@@ -342,30 +348,30 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
 // Icons
-import { 
-  Settings, 
-  Globe, 
-  PieChart, 
-  List, 
-  Plus, 
-  ArrowUpDown, 
-  ArrowUp, 
-  ArrowDown, 
-  GripVertical, 
-  Check, 
-  Download, 
+import {
+  Settings,
+  Globe,
+  PieChart,
+  List,
+  Plus,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  GripVertical,
+  Check,
+  Download,
   Users,
-  FileText
+  FileText,
 } from 'lucide-vue-next'
 
 // Services
@@ -411,18 +417,18 @@ const currentAuditType = computed(() => {
 // Methods
 const getFindingColor = (finding) => {
   const severity = getFindingSeverity(finding)
-  
+
   if (window.$settings?.report?.public?.cvssColors) {
     const severityColorName = `${severity.toLowerCase()}Color`
     const cvssColors = window.$settings.report.public.cvssColors
     return cvssColors[severityColorName] || cvssColors.noneColor
   } else {
-    switch(severity) {
-      case "Low": return "#22c55e"
-      case "Medium": return "#f97316"
-      case "High": return "#ef4444"
-      case "Critical": return "#1f2937"
-      default: return "#3b82f6"
+    switch (severity) {
+    case 'Low': return '#22c55e'
+    case 'Medium': return '#f97316'
+    case 'High': return '#ef4444'
+    case 'Critical': return '#1f2937'
+    default: return '#3b82f6'
     }
   }
 }
@@ -436,23 +442,23 @@ const filteredSectionUsers = (sectionId) => {
 }
 
 const getFindingSeverity = (finding) => {
-  let severity = "None"
-  let cvss = CVSS31.calculateCVSSFromVector(finding.cvssv3)
-  
+  let severity = 'None'
+  const cvss = CVSS31.calculateCVSSFromVector(finding.cvssv3)
+
   if (cvss.success) {
     const score = cvss.score
-    if (score >= 9.0) severity = "Critical"
-    else if (score >= 7.0) severity = "High"
-    else if (score >= 4.0) severity = "Medium"
-    else if (score >= 0.1) severity = "Low"
+    if (score >= 9.0) severity = 'Critical'
+    else if (score >= 7.0) severity = 'High'
+    else if (score >= 4.0) severity = 'Medium'
+    else if (score >= 0.1) severity = 'Low'
   }
-  
+
   return severity
 }
 
 const getSectionIcon = (section) => {
   const sectionData = sections.value.find(e => e.field === section.field)
-  
+
   // Map common icons to Lucide icons
   const iconMap = {
     'fa fa-cog': Settings,
@@ -460,9 +466,9 @@ const getSectionIcon = (section) => {
     'fa fa-chart-pie': PieChart,
     'fa fa-list': List,
     'fa fa-file-text': FileText,
-    'notes': FileText
+    'notes': FileText,
   }
-  
+
   const iconName = sectionData?.icon || 'notes'
   return iconMap[iconName] || FileText
 }
@@ -473,13 +479,13 @@ const getSortOptions = (category) => {
     { label: $t('cvssScore'), value: 'cvssScore' },
     { label: $t('title'), value: 'title' },
     { label: $t('severity'), value: 'severity' },
-    { label: $t('position'), value: 'position' }
+    { label: $t('position'), value: 'position' },
   ]
 }
 
 const getMenuSection = () => {
   const routeName = route.name
-  
+
   if (routeName === 'general') {
     return { menu: 'general', room: auditId.value }
   } else if (routeName === 'network') {
@@ -493,21 +499,21 @@ const getMenuSection = () => {
   } else if (routeName === 'editSection' && route.params.sectionId) {
     return { menu: 'editSection', section: route.params.sectionId, room: auditId.value }
   }
-  
+
   return { menu: 'undefined', room: auditId.value }
 }
 
 const handleSocket = () => {
   const socket = window.$socket
   if (!socket) return
-  
+
   socket.emit('join', { username: UserService.user.username, room: auditId.value })
-  
+
   socket.on('roomUsers', (socketUsers) => {
     let userIndex = 0
     users.value = socketUsers.map((user, index) => {
       if (user.username === UserService.user.username) {
-        user.color = "#77C84E"
+        user.color = '#77C84E'
         user.me = true
         userIndex = index
       }
@@ -515,15 +521,15 @@ const handleSocket = () => {
     })
     users.value.unshift(users.value.splice(userIndex, 1)[0])
   })
-  
+
   socket.on('updateUsers', () => {
     socket.emit('updateUsers', { room: auditId.value })
   })
-  
+
   socket.on('updateAudit', () => {
     getAudit()
   })
-  
+
   socket.on('disconnect', () => {
     socket.emit('join', { username: UserService.user.username, room: auditId.value })
     socket.emit('menu', getMenuSection())
@@ -535,7 +541,7 @@ const isUserAReviewer = () => {
   const isCollaborator = audit.value.collaborators.some(element => element._id === UserService.user.id)
   const isReviewer = audit.value.reviewers.some(element => element._id === UserService.user.id)
   const hasReviewAll = UserService.isAllowed('audits:review-all')
-  
+
   return !(isAuthor || isCollaborator) && (isReviewer || hasReviewAll)
 }
 
@@ -543,7 +549,7 @@ const isUserAnEditor = () => {
   const isAuthor = audit.value.creator._id === UserService.user.id
   const isCollaborator = audit.value.collaborators.some(element => element._id === UserService.user.id)
   const hasUpdateAll = UserService.isAllowed('audits:update-all')
-  
+
   return (isAuthor || isCollaborator || hasUpdateAll)
 }
 
@@ -552,9 +558,9 @@ const userHasAlreadyApproved = () => {
 }
 
 const getUIState = () => {
-  if (!window.$settings?.reviews?.enabled || audit.value.state === "EDIT") {
+  if (!window.$settings?.reviews?.enabled || audit.value.state === 'EDIT') {
     frontEndAuditState.value = isUserAnEditor() ? Utils.AUDIT_VIEW_STATE.EDIT : Utils.AUDIT_VIEW_STATE.EDIT_READONLY
-  } else if (audit.value.state === "REVIEW") {
+  } else if (audit.value.state === 'REVIEW') {
     if (!isUserAReviewer()) {
       frontEndAuditState.value = isUserAnEditor() ? Utils.AUDIT_VIEW_STATE.REVIEW_EDITOR : Utils.AUDIT_VIEW_STATE.REVIEW_READONLY
       return
@@ -564,7 +570,7 @@ const getUIState = () => {
       return
     }
     frontEndAuditState.value = userHasAlreadyApproved() ? Utils.AUDIT_VIEW_STATE.REVIEW_APPROVED : Utils.AUDIT_VIEW_STATE.REVIEW
-  } else if (audit.value.state === "APPROVED") {
+  } else if (audit.value.state === 'APPROVED') {
     if (!isUserAReviewer()) {
       frontEndAuditState.value = Utils.AUDIT_VIEW_STATE.APPROVED_READONLY
     } else {
@@ -578,18 +584,18 @@ const getAudit = async () => {
     // Get vulnerability categories first
     const vulnCategoriesResponse = await DataService.getVulnerabilityCategories()
     vulnCategories.value = vulnCategoriesResponse.data.datas
-    
+
     // Get audit data
     const auditResponse = await AuditService.getAudit(auditId.value)
     audit.value = auditResponse.data.datas
-    
+
     getUIState()
     await getSections()
-    
+
     if (loading.value) {
       handleSocket()
     }
-    
+
     loading.value = false
   } catch (error) {
     if (error.response.status === 403) {
@@ -647,22 +653,22 @@ const generateReport = async () => {
 
 const toggleAskReview = async () => {
   try {
-    const newState = audit.value.state === "EDIT" ? "REVIEW" : "EDIT"
+    const newState = audit.value.state === 'EDIT' ? 'REVIEW' : 'EDIT'
     await AuditService.updateReadyForReview(auditId.value, { state: newState })
-    
+
     audit.value.state = newState
     getUIState()
-    
+
     toast({
       title: $t('success'),
       description: $t('msg.auditReviewUpdateOk'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || error.message,
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -670,17 +676,17 @@ const toggleAskReview = async () => {
 const toggleApproval = async () => {
   try {
     await AuditService.toggleApproval(auditId.value)
-    
+
     toast({
       title: $t('success'),
       description: $t('msg.auditApprovalUpdateOk'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     toast({
       title: $t('error'),
       description: error.response?.data?.datas || error.message,
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -689,15 +695,15 @@ const moveFindingPosition = async (event, category) => {
   try {
     const { oldIndex, newIndex } = event
     if (oldIndex === newIndex) return
-    
+
     const categoryData = findingList.value.find(item => item.category === category)
     if (!categoryData) return
-    
+
     const finding = categoryData.findings[newIndex]
-    
+
     await AuditService.updateFindingPosition(auditId.value, finding._id, {
       position: newIndex,
-      category: category
+      category,
     })
   } catch (error) {
     console.error('Error updating finding position:', error)
@@ -707,11 +713,11 @@ const moveFindingPosition = async (event, category) => {
 const updateSortFindings = async () => {
   try {
     await AuditService.updateSortFindings(auditId.value, audit.value.sortFindings)
-    
+
     toast({
       title: $t('success'),
       description: $t('msg.sortFindingsUpdated'),
-      variant: 'default'
+      variant: 'default',
     })
   } catch (error) {
     console.error('Error updating sort findings:', error)
@@ -722,21 +728,21 @@ const updateSortFindings = async () => {
 const startSplitterDrag = (event) => {
   const startY = event.clientY
   const startRatio = splitterRatio.value
-  
+
   const handleMouseMove = (e) => {
     const deltaY = e.clientY - startY
     const containerHeight = e.target.closest('.flex-col').offsetHeight
     const deltaRatio = (deltaY / containerHeight) * 100
-    
+
     const newRatio = Math.max(20, Math.min(80, startRatio + deltaRatio))
     splitterRatio.value = newRatio
   }
-  
+
   const handleMouseUp = () => {
     document.removeEventListener('mousemove', handleMouseMove)
     document.removeEventListener('mouseup', handleMouseUp)
   }
-  
+
   document.addEventListener('mousemove', handleMouseMove)
   document.addEventListener('mouseup', handleMouseUp)
 }
@@ -746,14 +752,14 @@ watch(
   () => audit.value.findings,
   (newVal) => {
     if (!newVal) return
-    
+
     const result = _.chain(audit.value.findings)
-      .groupBy("category")
+      .groupBy('category')
       .map((value, key) => {
         if (key === 'undefined') key = 'No Category'
-        
+
         let sortOption = audit.value.sortFindings.find(option => option.category === key)
-        
+
         if (!sortOption) {
           sortOption = vulnCategories.value.find(e => e.name === key)
           if (sortOption) {
@@ -761,22 +767,22 @@ watch(
           } else {
             sortOption = { category: key, sortValue: 'cvssScore', sortOrder: 'desc', sortAuto: true }
           }
-          
+
           audit.value.sortFindings.push({
             category: sortOption.category,
             sortValue: sortOption.sortValue,
             sortOrder: sortOption.sortOrder,
-            sortAuto: sortOption.sortAuto
+            sortAuto: sortOption.sortAuto,
           })
         }
-        
-        return { category: key, findings: value, sortOption: sortOption }
+
+        return { category: key, findings: value, sortOption }
       })
       .value()
-    
+
     findingList.value = result
   },
-  { deep: true, immediate: true }
+  { deep: true, immediate: true },
 )
 
 // Initialize component
@@ -813,4 +819,3 @@ onUnmounted(() => {
   cursor: row-resize;
 }
 </style>
-  

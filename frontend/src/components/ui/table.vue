@@ -16,7 +16,7 @@
     <!-- Table Controls -->
     <div v-if="searchable || $slots.controls" :class="cn('flex items-center justify-between gap-4', controlsClass)">
       <!-- Search -->
-      <div v-if="searchable" class="relative flex-1 max-w-sm">
+      <div v-if="searchable" class="relative max-w-sm flex-1">
         <input
           v-model="searchQuery"
           type="text"
@@ -26,17 +26,22 @@
             'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
             searchInputClass
           )"
-        />
+        >
         <svg
-          class="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground"
+          class="absolute right-3 top-2.5 size-4 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
         </svg>
       </div>
-      
+
       <slot name="controls" />
     </div>
 
@@ -57,11 +62,11 @@
                 type="checkbox"
                 :checked="isAllSelected"
                 :indeterminate="isIndeterminate"
-                @change="toggleAllSelection"
                 :class="cn('h-4 w-4 rounded border-border', checkboxClass)"
-              />
+                @change="toggleAllSelection"
+              >
             </th>
-            
+
             <!-- Column Headers -->
             <th
               v-for="column in visibleColumns"
@@ -89,7 +94,12 @@
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 15l7-7 7 7"
+                    />
                   </svg>
                   <svg
                     :class="cn(
@@ -100,7 +110,12 @@
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -132,9 +147,9 @@
                 <input
                   type="checkbox"
                   :checked="selectedRows.includes(getRowKey(row, index))"
-                  @change="toggleRowSelection(row, index)"
                   :class="cn('h-4 w-4 rounded border-border', checkboxClass)"
-                />
+                  @change="toggleRowSelection(row, index)"
+                >
               </td>
 
               <!-- Data Cells -->
@@ -162,7 +177,7 @@
               </td>
             </tr>
           </template>
-          
+
           <!-- Empty State -->
           <tr v-else>
             <td
@@ -211,17 +226,17 @@
         <div class="flex items-center gap-1">
           <button
             :disabled="currentPage === 1"
-            @click="goToPage(currentPage - 1)"
             :class="cn(
               'px-3 py-1 text-sm border border-input rounded',
               'hover:bg-accent hover:text-accent-foreground',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               paginationButtonClass
             )"
+            @click="goToPage(currentPage - 1)"
           >
             Previous
           </button>
-          
+
           <!-- Page Numbers -->
           <template v-for="page in visiblePages" :key="page">
             <button
@@ -240,16 +255,16 @@
             </button>
             <span v-else class="px-2 text-muted-foreground">...</span>
           </template>
-          
+
           <button
             :disabled="currentPage === totalPages"
-            @click="goToPage(currentPage + 1)"
             :class="cn(
               'px-3 py-1 text-sm border border-input rounded',
               'hover:bg-accent hover:text-accent-foreground',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               paginationButtonClass
             )"
+            @click="goToPage(currentPage + 1)"
           >
             Next
           </button>
@@ -360,7 +375,7 @@ const visibleColumns = computed(() => {
 
 const filteredData = computed(() => {
   if (!searchQuery.value) return props.data
-  
+
   return props.data.filter(row => {
     return visibleColumns.value.some(column => {
       const value = getCellValue(row, column)
@@ -371,18 +386,18 @@ const filteredData = computed(() => {
 
 const sortedData = computed(() => {
   if (!internalSortBy.value) return filteredData.value
-  
+
   return [...filteredData.value].sort((a, b) => {
     const column = visibleColumns.value.find(col => col.name === internalSortBy.value)
     if (!column) return 0
-    
+
     const valueA = getCellValue(a, column)
     const valueB = getCellValue(b, column)
-    
+
     let comparison = 0
     if (valueA < valueB) comparison = -1
     else if (valueA > valueB) comparison = 1
-    
+
     return internalSortOrder.value === 'desc' ? -comparison : comparison
   })
 })
@@ -408,7 +423,7 @@ const visiblePages = computed(() => {
   const pages: (number | string)[] = []
   const total = totalPages.value
   const current = currentPage.value
-  
+
   if (total <= 7) {
     for (let i = 1; i <= total; i++) {
       pages.push(i)
@@ -422,7 +437,7 @@ const visiblePages = computed(() => {
       pages.push(1, '...', current - 1, current, current + 1, '...', total)
     }
   }
-  
+
   return pages
 })
 
@@ -466,7 +481,7 @@ const sort = (columnName: string) => {
     internalSortBy.value = columnName
     internalSortOrder.value = 'asc'
   }
-  
+
   emit('update:sortBy', internalSortBy.value)
   emit('update:sortOrder', internalSortOrder.value)
   emit('sort', internalSortBy.value, internalSortOrder.value)
@@ -487,7 +502,7 @@ const handleRowClick = (row: any, index: number) => {
 const toggleRowSelection = (row: any, index: number) => {
   const key = getRowKey(row, index)
   const selectedIndex = selectedRows.value.indexOf(key)
-  
+
   if (selectedIndex > -1) {
     selectedRows.value.splice(selectedIndex, 1)
   } else {
@@ -497,7 +512,7 @@ const toggleRowSelection = (row: any, index: number) => {
       selectedRows.value = [key]
     }
   }
-  
+
   emit('selection', selectedRows.value)
 }
 
@@ -507,7 +522,7 @@ const toggleAllSelection = () => {
   } else {
     selectedRows.value = paginatedData.value.map((row, index) => getRowKey(row, index))
   }
-  
+
   emit('selection', selectedRows.value)
 }
 
@@ -589,4 +604,4 @@ input[type="checkbox"]:indeterminate::after {
   background: white;
   border-radius: 1px;
 }
-</style> 
+</style>

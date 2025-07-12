@@ -1,27 +1,27 @@
 import { api } from '@/boot/axios'
 
 export default {
-  getClients: function() {
-    return  api.get(`clients`)
+  getClients() {
+    return  api.get('clients')
   },
 
-  exportClients: function() {
-    return  api.get(`clients/export`)
+  exportClients() {
+    return  api.get('clients/export')
   },
 
-  createClients: function(client) {
+  createClients(client) {
     return  api.post('clients', client)
   },
 
-  updateClient: function(clientId, client) {
+  updateClient(clientId, client) {
     return  api.put(`clients/${clientId}`, client)
   },
 
-  deleteClient: function(clientId) {
+  deleteClient(clientId) {
     return  api.delete(`clients/${clientId}`)
   },
 
-  deleteAllClients: function() {
-    return  api.delete(`clients`)
-  }
+  deleteAllClients() {
+    return  api.delete('clients')
+  },
 }

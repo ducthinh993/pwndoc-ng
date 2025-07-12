@@ -36,7 +36,7 @@ const langOptions = ref([
   { value: 'en-US', label: 'English' },
   { value: 'fr-FR', label: 'Français' },
   { value: 'zh-CN', label: '中文' },
-  { value: 'de-DE', label: 'Deutsch' }
+  { value: 'de-DE', label: 'Deutsch' },
 ])
 
 // Methods
@@ -45,7 +45,7 @@ const getLanguageFlag = (langCode) => {
     'en-US': '🇺🇸',
     'fr-FR': '🇫🇷',
     'zh-CN': '🇨🇳',
-    'de-DE': '🇩🇪'
+    'de-DE': '🇩🇪',
   }
   return flagMap[langCode] || '🌐'
 }

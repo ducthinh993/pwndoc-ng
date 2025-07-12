@@ -9,8 +9,8 @@
       )"
       :style="backgroundColor ? { backgroundColor } : {}"
     >
-      <div class="flex flex-col items-center gap-4 p-8 bg-background rounded-lg border shadow-lg">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div class="flex flex-col items-center gap-4 rounded-lg border bg-background p-8 shadow-lg">
+        <div class="size-12 animate-spin rounded-full border-b-2 border-primary" />
         <div
           v-if="loading.state.message"
           :class="cn(
@@ -18,8 +18,10 @@
             'max-w-md'
           )"
         >
-          <div v-if="loading.state.html" v-html="loading.state.message"></div>
-          <div v-else>{{ loading.state.message }}</div>
+          <div v-if="loading.state.html" v-html="loading.state.message" />
+          <div v-else>
+            {{ loading.state.message }}
+          </div>
         </div>
       </div>
     </div>
@@ -35,7 +37,7 @@ const loading = globalLoading
 
 const backgroundColor = computed(() => {
   if (!loading.state.backgroundColor) return undefined
-  
+
   const colorMap: Record<string, string> = {
     'blue-grey-8': 'hsl(var(--color-grey-8))',
     'red-10': 'hsl(var(--color-error-solid))',
@@ -46,7 +48,7 @@ const backgroundColor = computed(() => {
     'error': 'hsl(var(--color-destructive))',
     'info': 'hsl(var(--color-info))',
   }
-  
+
   return colorMap[loading.state.backgroundColor] || loading.state.backgroundColor
 })
-</script> 
+</script>

@@ -1,27 +1,27 @@
 import { api } from '@/boot/axios'
 
 export default {
-  getCompanies: function() {
-    return  api.get(`companies`)
+  getCompanies() {
+    return  api.get('companies')
   },
 
-  exportCompanies: function() {
-    return  api.get(`companies/export`)
+  exportCompanies() {
+    return  api.get('companies/export')
   },
 
-  createCompanies: function(company) {
+  createCompanies(company) {
     return  api.post('companies', company)
   },
 
-  updateCompany: function(companyId, company) {
+  updateCompany(companyId, company) {
     return  api.put(`companies/${companyId}`, company)
   },
 
-  deleteCompany: function(companyId) {
+  deleteCompany(companyId) {
     return  api.delete(`companies/${companyId}`)
   },
 
-  deleteAllCompanies: function() {
-    return  api.delete(`companies`)
-  }
+  deleteAllCompanies() {
+    return  api.delete('companies')
+  },
 }

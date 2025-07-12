@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import ThemeProvider from '@/components/ui/theme-provider.vue';
-import Loading from '@/components/ui/loading.vue';
-import Toast from '@/components/ui/toast.vue';
+import { defineComponent } from 'vue'
+import ThemeProvider from '@/components/ui/theme-provider.vue'
+import Loading from '@/components/ui/loading.vue'
+import Toast from '@/components/ui/toast.vue'
 
 export default defineComponent({
   name: 'App',
@@ -21,7 +21,7 @@ export default defineComponent({
     Loading,
     Toast,
   },
-});
+})
 </script>
 
 <style>

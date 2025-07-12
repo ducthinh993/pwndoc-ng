@@ -2,7 +2,7 @@ import { io } from 'socket.io-client'
 import { Loading } from '@/lib/utils'
 import { $t } from '@/boot/i18n'
 
-const socket = io(`${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`)
+const socket = io(`${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${  window.location.port}` : ''}`)
 
 export default ({ app }) => {
   socket.on('disconnect', () => {
@@ -10,7 +10,7 @@ export default ({ app }) => {
       message: `<i class='material-icons'>wifi_off</i><br /><p>${$t('msg.wrongContactingBackend')}</p>`,
       html: true,
       backgroundColor: 'rgba(220, 38, 38, 0.9)', // red-600 equivalent
-      delay: 5000
+      delay: 5000,
     })
   })
 

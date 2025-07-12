@@ -25,12 +25,12 @@
           radioClass
         )"
         :data-state="checked ? 'checked' : 'unchecked'"
+        v-bind="$attrs"
         @change="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
-        v-bind="$attrs"
-      />
-      
+      >
+
       <!-- Radio Dot -->
       <div
         :class="cn(
@@ -49,7 +49,7 @@
         />
       </div>
     </div>
-    
+
     <div v-if="label || $slots.default" class="grid gap-1.5 leading-none">
       <label
         :for="inputId"
@@ -65,7 +65,7 @@
       >
         <slot>{{ label }}</slot>
       </label>
-      
+
       <p
         v-if="description"
         :class="cn(
@@ -80,7 +80,7 @@
       </p>
     </div>
   </div>
-  
+
   <!-- Error Message -->
   <p
     v-if="error && errorMessage"
@@ -218,4 +218,4 @@ input[type="radio"]:focus-visible {
 .peer-data-\[state\=checked\]\:text-primary-foreground {
   color: hsl(var(--primary-foreground));
 }
-</style> 
+</style>

@@ -1,23 +1,25 @@
 <template>
   <div class="flex flex-col gap-6 p-6">
     <!-- Header with Toggle and Add Button -->
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <h1 class="text-2xl font-bold">{{ $t('collaborators') }}</h1>
+        <h1 class="text-2xl font-bold">
+          {{ $t('collaborators') }}
+        </h1>
         <div class="flex items-center gap-2">
-          <Switch 
-            v-model="search.enabled" 
+          <Switch
             id="enabled-toggle"
+            v-model="search.enabled"
           />
           <Label for="enabled-toggle">
             {{ search.enabled ? $t('btn.accountsEnabled') : $t('btn.accountsDisabled') }}
           </Label>
         </div>
       </div>
-      <Button 
+      <Button
         v-if="UserService.isAllowed('users:create')"
-        @click="openCreateModal"
         class="bg-secondary hover:bg-secondary/90"
+        @click="openCreateModal"
       >
         {{ $t('addCollaborator') }}
       </Button>
@@ -29,7 +31,7 @@
         <CardTitle>{{ $t('search') }}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
           <div class="space-y-2">
             <Label for="search-username">{{ $t('username') }}</Label>
             <Input
@@ -68,7 +70,7 @@
           </div>
           <div class="space-y-2">
             <Label for="search-role">{{ $t('role') }}</Label>
-            <Select 
+            <Select
               v-model="search.role"
               :placeholder="$t('search')"
             >
@@ -76,10 +78,12 @@
                 <SelectValue :placeholder="$t('search')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{{ $t('all') }}</SelectItem>
-                <SelectItem 
-                  v-for="role in roles" 
-                  :key="role" 
+                <SelectItem value="">
+                  {{ $t('all') }}
+                </SelectItem>
+                <SelectItem
+                  v-for="role in roles"
+                  :key="role"
                   :value="role"
                 >
                   {{ role }}
@@ -98,39 +102,41 @@
           <table class="w-full">
             <thead>
               <tr class="border-b">
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('username')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('username')">
                   {{ $t('username') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'username' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'username' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'username' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'username' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('firstname')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('firstname')">
                   {{ $t('firstname') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'firstname' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'firstname' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'firstname' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'firstname' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('lastname')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('lastname')">
                   {{ $t('lastname') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'lastname' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'lastname' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'lastname' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'lastname' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('email')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('email')">
                   {{ $t('email') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'email' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'email' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'email' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'email' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium cursor-pointer hover:bg-muted/50" @click="sortBy('role')">
+                <th class="cursor-pointer p-4 text-left font-medium hover:bg-muted/50" @click="sortBy('role')">
                   {{ $t('role') }}
-                  <ChevronUpIcon v-if="pagination.sortBy === 'role' && !pagination.descending" class="w-4 h-4 inline ml-1" />
-                  <ChevronDownIcon v-if="pagination.sortBy === 'role' && pagination.descending" class="w-4 h-4 inline ml-1" />
+                  <ChevronUpIcon v-if="pagination.sortBy === 'role' && !pagination.descending" class="ml-1 inline size-4" />
+                  <ChevronDownIcon v-if="pagination.sortBy === 'role' && pagination.descending" class="ml-1 inline size-4" />
                 </th>
-                <th class="text-left p-4 font-medium w-24">{{ $t('actions') }}</th>
+                <th class="w-24 p-4 text-left font-medium">
+                  {{ $t('actions') }}
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="loading" class="text-center">
                 <td colspan="6" class="p-8">
-                  <div class="flex justify-center items-center">
-                    <LoadingSpinner class="w-6 h-6 mr-2" />
+                  <div class="flex items-center justify-center">
+                    <LoadingSpinner class="mr-2 size-6" />
                     {{ $t('loading') }}
                   </div>
                 </td>
@@ -140,11 +146,11 @@
                   {{ $t('noDataAvailable') }}
                 </td>
               </tr>
-              <tr 
+              <tr
+                v-for="collab in paginatedCollaborators"
                 v-else
-                v-for="collab in paginatedCollaborators" 
                 :key="collab._id"
-                class="border-b hover:bg-muted/50 cursor-pointer"
+                class="cursor-pointer border-b hover:bg-muted/50"
                 @dblclick="editCollaborator(collab)"
               >
                 <td class="p-4">
@@ -155,11 +161,19 @@
                     </Badge>
                   </div>
                 </td>
-                <td class="p-4">{{ collab.firstname }}</td>
-                <td class="p-4">{{ collab.lastname }}</td>
-                <td class="p-4">{{ collab.email || '-' }}</td>
                 <td class="p-4">
-                  <Badge variant="outline">{{ collab.role }}</Badge>
+                  {{ collab.firstname }}
+                </td>
+                <td class="p-4">
+                  {{ collab.lastname }}
+                </td>
+                <td class="p-4">
+                  {{ collab.email || '-' }}
+                </td>
+                <td class="p-4">
+                  <Badge variant="outline">
+                    {{ collab.role }}
+                  </Badge>
                 </td>
                 <td class="p-4">
                   <div class="flex gap-2">
@@ -169,7 +183,7 @@
                       variant="ghost"
                       @click="editCollaborator(collab)"
                     >
-                      <PencilIcon class="w-4 h-4" />
+                      <PencilIcon class="size-4" />
                     </Button>
                   </div>
                 </td>
@@ -178,7 +192,7 @@
           </table>
         </div>
       </CardContent>
-      
+
       <!-- Pagination -->
       <CardContent class="pt-4">
         <div class="flex items-center justify-between">
@@ -190,47 +204,55 @@
               {{ filteredCollaborators.length }} {{ $t('quantifier') }}{{ $t('collaborators') }}
             </span>
           </div>
-          
+
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <Label for="rows-per-page">{{ $t('resultsPerPage') }}</Label>
-              <Select 
-                v-model="pagination.rowsPerPage" 
+              <Select
+                v-model="pagination.rowsPerPage"
                 @update:model-value="pagination.page = 1"
               >
                 <SelectTrigger id="rows-per-page" class="w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="0">{{ $t('all') }}</SelectItem>
+                  <SelectItem value="25">
+                    25
+                  </SelectItem>
+                  <SelectItem value="50">
+                    50
+                  </SelectItem>
+                  <SelectItem value="100">
+                    100
+                  </SelectItem>
+                  <SelectItem value="0">
+                    {{ $t('all') }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div class="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                @click="pagination.page = Math.max(1, pagination.page - 1)"
                 :disabled="pagination.page === 1"
+                @click="pagination.page = Math.max(1, pagination.page - 1)"
               >
-                <ChevronLeftIcon class="w-4 h-4" />
+                <ChevronLeftIcon class="size-4" />
               </Button>
-              
+
               <span class="text-sm">
                 {{ pagination.page }} / {{ totalPages }}
               </span>
-              
+
               <Button
                 variant="outline"
                 size="sm"
-                @click="pagination.page = Math.min(totalPages, pagination.page + 1)"
                 :disabled="pagination.page === totalPages"
+                @click="pagination.page = Math.min(totalPages, pagination.page + 1)"
               >
-                <ChevronRightIcon class="w-4 h-4" />
+                <ChevronRightIcon class="size-4" />
               </Button>
             </div>
           </div>
@@ -244,8 +266,8 @@
         <DialogHeader>
           <DialogTitle>{{ $t('addCollaborator') }}</DialogTitle>
         </DialogHeader>
-        
-        <form @submit.prevent="createCollaborator" class="space-y-4">
+
+        <form class="space-y-4" @submit.prevent="createCollaborator">
           <div class="space-y-2">
             <Label for="create-username">{{ $t('username') }} *</Label>
             <Input
@@ -260,7 +282,7 @@
               {{ errors.username }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-firstname">{{ $t('firstname') }} *</Label>
             <Input
@@ -274,7 +296,7 @@
               {{ errors.firstname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-lastname">{{ $t('lastname') }} *</Label>
             <Input
@@ -288,7 +310,7 @@
               {{ errors.lastname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-email">{{ $t('email') }}</Label>
             <Input
@@ -298,7 +320,7 @@
               @keyup.enter="createCollaborator"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-phone">{{ $t('phone') }}</Label>
             <Input
@@ -307,7 +329,7 @@
               @keyup.enter="createCollaborator"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-role">{{ $t('role') }} *</Label>
             <Select v-model="currentCollab.role" required>
@@ -315,9 +337,9 @@
                 <SelectValue :placeholder="$t('selectRole')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem 
-                  v-for="role in roles" 
-                  :key="role" 
+                <SelectItem
+                  v-for="role in roles"
+                  :key="role"
                   :value="role"
                 >
                   {{ role }}
@@ -325,7 +347,7 @@
               </SelectContent>
             </Select>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="create-password">{{ $t('password') }} *</Label>
             <Input
@@ -341,7 +363,7 @@
             </p>
           </div>
         </form>
-        
+
         <DialogFooter>
           <Button
             type="button"
@@ -352,11 +374,11 @@
           </Button>
           <Button
             type="submit"
-            @click="createCollaborator"
             :disabled="creatingCollaborator"
             class="bg-secondary hover:bg-secondary/90"
+            @click="createCollaborator"
           >
-            <LoadingSpinner v-if="creatingCollaborator" class="w-4 h-4 mr-2" />
+            <LoadingSpinner v-if="creatingCollaborator" class="mr-2 size-4" />
             {{ $t('btn.create') }}
           </Button>
         </DialogFooter>
@@ -369,8 +391,8 @@
         <DialogHeader>
           <DialogTitle>{{ $t('editCollaborator') }}</DialogTitle>
         </DialogHeader>
-        
-        <form @submit.prevent="updateCollaborator" class="space-y-4">
+
+        <form class="space-y-4" @submit.prevent="updateCollaborator">
           <div class="space-y-2">
             <Label for="edit-username">{{ $t('username') }} *</Label>
             <Input
@@ -384,7 +406,7 @@
               {{ errors.username }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-firstname">{{ $t('firstname') }} *</Label>
             <Input
@@ -398,7 +420,7 @@
               {{ errors.firstname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-lastname">{{ $t('lastname') }} *</Label>
             <Input
@@ -412,7 +434,7 @@
               {{ errors.lastname }}
             </p>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-email">{{ $t('email') }}</Label>
             <Input
@@ -422,7 +444,7 @@
               @keyup.enter="updateCollaborator"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-phone">{{ $t('phone') }}</Label>
             <Input
@@ -431,7 +453,7 @@
               @keyup.enter="updateCollaborator"
             />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-role">{{ $t('role') }} *</Label>
             <Select v-model="currentCollab.role" required>
@@ -439,9 +461,9 @@
                 <SelectValue :placeholder="$t('selectRole')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem 
-                  v-for="role in roles" 
-                  :key="role" 
+                <SelectItem
+                  v-for="role in roles"
+                  :key="role"
                   :value="role"
                 >
                   {{ role }}
@@ -449,7 +471,7 @@
               </SelectContent>
             </Select>
           </div>
-          
+
           <div class="space-y-2">
             <Label for="edit-password">{{ $t('password') }}</Label>
             <Input
@@ -463,20 +485,20 @@
               {{ errors.password }}
             </p>
           </div>
-          
+
           <div class="space-y-4">
-            <div class="p-4 bg-muted rounded-lg">
+            <div class="rounded-lg bg-muted p-4">
               <p class="text-sm">
-                <strong>2FA Status:</strong> 
+                <strong>2FA Status:</strong>
                 <span v-if="currentCollab.totpEnabled" class="text-green-600">{{ $t('enabled') }}</span>
                 <span v-else class="text-muted-foreground">{{ $t('disabled') }}</span>
               </p>
             </div>
-            
+
             <div class="flex items-center gap-2">
-              <Switch 
-                v-model="currentCollab.enabled" 
+              <Switch
                 id="edit-enabled"
+                v-model="currentCollab.enabled"
               />
               <Label for="edit-enabled">
                 {{ currentCollab.enabled ? $t('btn.accountEnabled') : $t('btn.accountDisabled') }}
@@ -484,7 +506,7 @@
             </div>
           </div>
         </form>
-        
+
         <DialogFooter>
           <Button
             type="button"
@@ -495,11 +517,11 @@
           </Button>
           <Button
             type="submit"
-            @click="updateCollaborator"
             :disabled="updatingCollaborator"
             class="bg-secondary hover:bg-secondary/90"
+            @click="updateCollaborator"
           >
-            <LoadingSpinner v-if="updatingCollaborator" class="w-4 h-4 mr-2" />
+            <LoadingSpinner v-if="updatingCollaborator" class="mr-2 size-4" />
             {{ $t('btn.update') }}
           </Button>
         </DialogFooter>
@@ -520,12 +542,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/ui/loading'
-import { 
-  ChevronLeftIcon, 
-  ChevronRightIcon, 
-  ChevronUpIcon, 
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
   ChevronDownIcon,
-  PencilIcon
+  PencilIcon,
 } from '@heroicons/vue/24/outline'
 
 import CollabService from '@/services/collaborator'
@@ -560,25 +582,25 @@ export default {
     ChevronRightIcon,
     ChevronUpIcon,
     ChevronDownIcon,
-    PencilIcon
+    PencilIcon,
   },
   setup() {
     const toast = useToast()
-    
+
     // Service
     const { isAllowed } = UserService
-    
+
     // Reactive data
     const collaborators = ref([])
     const roles = ref([])
     const loading = ref(true)
     const creatingCollaborator = ref(false)
     const updatingCollaborator = ref(false)
-    
+
     // Modal state
     const showCreateModal = ref(false)
     const showEditModal = ref(false)
-    
+
     // Search filters
     const search = ref({
       username: '',
@@ -586,17 +608,17 @@ export default {
       lastname: '',
       email: '',
       role: '',
-      enabled: true
+      enabled: true,
     })
-    
+
     // Pagination
     const pagination = ref({
       page: 1,
       rowsPerPage: 25,
       sortBy: 'username',
-      descending: false
+      descending: false,
     })
-    
+
     // Current collaborator for forms
     const currentCollab = ref({
       username: '',
@@ -607,76 +629,76 @@ export default {
       role: '',
       password: '',
       enabled: true,
-      totpEnabled: false
+      totpEnabled: false,
     })
-    
+
     // Form errors
     const errors = ref({
       username: '',
       firstname: '',
       lastname: '',
-      password: ''
+      password: '',
     })
-    
+
     // ID for updating
     const idUpdate = ref('')
-    
+
     // Computed properties
     const filteredCollaborators = computed(() => {
       return Utils.customFilter(collaborators.value, search.value)
     })
-    
+
     const sortedCollaborators = computed(() => {
       const sorted = [...filteredCollaborators.value].sort((a, b) => {
         let aVal, bVal
-        
+
         switch (pagination.value.sortBy) {
-          case 'username':
-            aVal = a.username || ''
-            bVal = b.username || ''
-            break
-          case 'firstname':
-            aVal = a.firstname || ''
-            bVal = b.firstname || ''
-            break
-          case 'lastname':
-            aVal = a.lastname || ''
-            bVal = b.lastname || ''
-            break
-          case 'email':
-            aVal = a.email || ''
-            bVal = b.email || ''
-            break
-          case 'role':
-            aVal = a.role || ''
-            bVal = b.role || ''
-            break
-          default:
-            aVal = a.username || ''
-            bVal = b.username || ''
+        case 'username':
+          aVal = a.username || ''
+          bVal = b.username || ''
+          break
+        case 'firstname':
+          aVal = a.firstname || ''
+          bVal = b.firstname || ''
+          break
+        case 'lastname':
+          aVal = a.lastname || ''
+          bVal = b.lastname || ''
+          break
+        case 'email':
+          aVal = a.email || ''
+          bVal = b.email || ''
+          break
+        case 'role':
+          aVal = a.role || ''
+          bVal = b.role || ''
+          break
+        default:
+          aVal = a.username || ''
+          bVal = b.username || ''
         }
-        
+
         const result = aVal.localeCompare(bVal)
         return pagination.value.descending ? -result : result
       })
-      
+
       return sorted
     })
-    
+
     const paginatedCollaborators = computed(() => {
       const start = (pagination.value.page - 1) * pagination.value.rowsPerPage
-      const end = pagination.value.rowsPerPage === 0 ? 
-        sortedCollaborators.value.length : 
+      const end = pagination.value.rowsPerPage === 0 ?
+        sortedCollaborators.value.length :
         start + pagination.value.rowsPerPage
-      
+
       return sortedCollaborators.value.slice(start, end)
     })
-    
+
     const totalPages = computed(() => {
       if (pagination.value.rowsPerPage === 0) return 1
       return Math.ceil(filteredCollaborators.value.length / pagination.value.rowsPerPage)
     })
-    
+
     // Methods
     const getCollaborators = async () => {
       loading.value = true
@@ -690,7 +712,7 @@ export default {
         loading.value = false
       }
     }
-    
+
     const getRoles = async () => {
       try {
         const response = await DataService.getRoles()
@@ -699,16 +721,16 @@ export default {
         console.error('Error fetching roles:', error)
       }
     }
-    
+
     const openCreateModal = () => {
       cleanCurrentCollab()
       cleanErrors()
       showCreateModal.value = true
     }
-    
+
     const createCollaborator = async () => {
       cleanErrors()
-      
+
       if (!currentCollab.value.username) {
         errors.value.username = $t('msg.usernameRequired')
       }
@@ -721,11 +743,11 @@ export default {
       if (!Utils.strongPassword(currentCollab.value.password)) {
         errors.value.password = $t('msg.passwordComplexity')
       }
-      
+
       if (errors.value.username || errors.value.firstname || errors.value.lastname || errors.value.password) {
         return
       }
-      
+
       creatingCollaborator.value = true
       try {
         await CollabService.createCollab([currentCollab.value])
@@ -739,19 +761,19 @@ export default {
         creatingCollaborator.value = false
       }
     }
-    
+
     const editCollaborator = (collab) => {
       if (!UserService.isAllowed('users:update')) return
-      
+
       currentCollab.value = { ...collab }
       idUpdate.value = collab._id
       cleanErrors()
       showEditModal.value = true
     }
-    
+
     const updateCollaborator = async () => {
       cleanErrors()
-      
+
       if (!currentCollab.value.username) {
         errors.value.username = $t('msg.usernameRequired')
       }
@@ -764,11 +786,11 @@ export default {
       if (currentCollab.value.password && !Utils.strongPassword(currentCollab.value.password)) {
         errors.value.password = $t('msg.passwordComplexity')
       }
-      
+
       if (errors.value.username || errors.value.firstname || errors.value.lastname || errors.value.password) {
         return
       }
-      
+
       updatingCollaborator.value = true
       try {
         await CollabService.updateCollab(idUpdate.value, currentCollab.value)
@@ -782,7 +804,7 @@ export default {
         updatingCollaborator.value = false
       }
     }
-    
+
     const sortBy = (field) => {
       if (pagination.value.sortBy === field) {
         pagination.value.descending = !pagination.value.descending
@@ -792,7 +814,7 @@ export default {
       }
       pagination.value.page = 1
     }
-    
+
     const cleanCurrentCollab = () => {
       currentCollab.value = {
         username: '',
@@ -803,54 +825,54 @@ export default {
         role: 'user',
         password: '',
         enabled: true,
-        totpEnabled: false
+        totpEnabled: false,
       }
     }
-    
+
     const cleanErrors = () => {
       errors.value = {
         username: '',
         firstname: '',
         lastname: '',
-        password: ''
+        password: '',
       }
     }
-    
+
     // Lifecycle
     onMounted(() => {
       getCollaborators()
       getRoles()
     })
-    
+
     return {
       // Services
       UserService: { isAllowed },
-      
+
       // Data
       collaborators,
       roles,
       loading,
       creatingCollaborator,
       updatingCollaborator,
-      
+
       // Modal state
       showCreateModal,
       showEditModal,
-      
+
       // Search and pagination
       search,
       pagination,
-      
+
       // Form data
       currentCollab,
       errors,
       idUpdate,
-      
+
       // Computed
       filteredCollaborators,
       paginatedCollaborators,
       totalPages,
-      
+
       // Methods
       getCollaborators,
       getRoles,
@@ -860,9 +882,9 @@ export default {
       updateCollaborator,
       sortBy,
       cleanCurrentCollab,
-      cleanErrors
+      cleanErrors,
     }
-  }
+  },
 }
 </script>
 

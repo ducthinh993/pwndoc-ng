@@ -1,6 +1,6 @@
 <template>
   <div class="chart-wrapper">
-    <canvas 
+    <canvas
       :id="chartId"
       ref="chartCanvas"
       :aria-label="$t('barChartAriaLabel')"
@@ -19,7 +19,7 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-  BarController
+  BarController,
 } from 'chart.js'
 
 // Register Chart.js components
@@ -30,7 +30,7 @@ ChartJS.register(
   BarElement,
   CategoryScale,
   LinearScale,
-  BarController
+  BarController,
 )
 
 export default defineComponent({
@@ -38,29 +38,30 @@ export default defineComponent({
   props: {
     chartData: {
       type: Object,
-      required: true
+      required: true,
     },
     chartOptions: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     chartId: {
       type: String,
-      required: true
+      required: true,
     },
     width: {
       type: Number,
-      default: 400
+      default: 400,
     },
     height: {
       type: Number,
-      default: 400
-    }
+      default: 400,
+    },
   },
+  emits: ['chart-created', 'chart-error'],
   setup(props, { emit }) {
     const chartCanvas = ref(null)
     const chartInstance = ref(null)
-    
+
     // Default chart options optimized for PwnDoc-ng
     const defaultOptions = {
       responsive: true,
@@ -71,11 +72,11 @@ export default defineComponent({
           labels: {
             padding: 20,
             font: {
-              size: 12
+              size: 12,
             },
             usePointStyle: true,
-            pointStyle: 'circle'
-          }
+            pointStyle: 'circle',
+          },
         },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -86,56 +87,56 @@ export default defineComponent({
           cornerRadius: 6,
           displayColors: true,
           callbacks: {
-            label: function(context) {
+            label(context) {
               const label = context.dataset.label || ''
               const value = context.parsed.y || 0
               return `${label}: ${value}`
-            }
-          }
-        }
+            },
+          },
+        },
       },
       scales: {
         x: {
           beginAtZero: true,
           grid: {
-            display: false
+            display: false,
           },
           ticks: {
             font: {
-              size: 11
+              size: 11,
             },
             maxRotation: 45,
-            minRotation: 0
-          }
+            minRotation: 0,
+          },
         },
         y: {
           beginAtZero: true,
           grid: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(0, 0, 0, 0.1)',
           },
           ticks: {
             font: {
-              size: 11
+              size: 11,
             },
-            stepSize: 1
-          }
-        }
+            stepSize: 1,
+          },
+        },
       },
       animation: {
         duration: 750,
-        easing: 'easeOutQuart'
+        easing: 'easeOutQuart',
       },
       // Better accessibility
       accessibility: {
-        enabled: true
-      }
+        enabled: true,
+      },
     }
 
     // Merge default options with provided options
     const mergedOptions = computed(() => {
       return {
         ...defaultOptions,
-        ...props.chartOptions
+        ...props.chartOptions,
       }
     })
 
@@ -148,7 +149,7 @@ export default defineComponent({
           chartInstance.value.update()
         }
       },
-      { deep: true }
+      { deep: true },
     )
 
     // Watch for option changes
@@ -160,7 +161,7 @@ export default defineComponent({
           chartInstance.value.update()
         }
       },
-      { deep: true }
+      { deep: true },
     )
 
     const renderChart = async () => {
@@ -185,7 +186,7 @@ export default defineComponent({
         chartInstance.value = new ChartJS(chartCanvas.value, {
           type: 'bar',
           data: props.chartData,
-          options: mergedOptions.value
+          options: mergedOptions.value,
         })
 
         // Emit chart instance for parent component access
@@ -210,10 +211,9 @@ export default defineComponent({
     return {
       chartCanvas,
       chartInstance,
-      renderChart
+      renderChart,
     }
   },
-  emits: ['chart-created', 'chart-error']
 })
 </script>
 
@@ -222,7 +222,7 @@ export default defineComponent({
   position: relative;
   width: 100%;
   height: 100%;
-  
+
   canvas {
     width: 100% !important;
     height: 100% !important;
@@ -246,4 +246,4 @@ export default defineComponent({
     }
   }
 }
-</style> 
+</style>

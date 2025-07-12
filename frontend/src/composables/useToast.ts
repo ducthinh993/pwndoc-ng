@@ -38,25 +38,25 @@ const addToast = (toast: Omit<ToastItem, 'id'>) => {
     duration: 5000,
     ...toast,
   }
-  
+
   state.items.push(item)
-  
+
   // Auto remove after duration
   if (item.duration && item.duration > 0) {
     setTimeout(() => {
       removeToast(id)
     }, item.duration)
   }
-  
+
   return id
 }
 
 export const useToast = () => {
   const toast = (options: Omit<ToastItem, 'id'> | string) => {
-    const toastOptions = typeof options === 'string' 
+    const toastOptions = typeof options === 'string'
       ? { message: options, type: 'info' as const }
       : options
-    
+
     return addToast(toastOptions)
   }
 
@@ -94,4 +94,4 @@ export const useToast = () => {
     clear,
     items: state.items,
   }
-} 
+}

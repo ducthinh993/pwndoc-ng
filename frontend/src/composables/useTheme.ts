@@ -12,11 +12,11 @@ interface ThemeConfig {
 
 export function useTheme(): ThemeConfig {
   const theme = inject<ThemeConfig>('theme')
-  
+
   if (!theme) {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
-  
+
   return theme
 }
 
@@ -33,4 +33,4 @@ export function getThemeClasses(lightClass: string, darkClass: string): string {
 }
 
 // Export types for use in components
-export type { Theme, ThemeConfig } 
+export type { Theme, ThemeConfig }

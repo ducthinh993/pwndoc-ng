@@ -122,4 +122,4 @@ export const baseFormFieldClasses = 'space-y-2'
  * Base separator classes - used for separator components
  * Includes proper styling and orientation
  */
-export const baseSeparatorClasses = 'shrink-0 bg-border' 
+export const baseSeparatorClasses = 'shrink-0 bg-border'

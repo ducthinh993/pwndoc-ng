@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Breadcrumb Navigation -->
-    <breadcrumb
+    <Breadcrumb
       :title="$t('auditCharts')"
       :state="parentState"
       :approvals="parentApprovals"
@@ -9,100 +9,113 @@
     >
       <template #buttons>
         <div class="flex items-center gap-2">
-          <toggle-group 
-            :value="selectedView" 
+          <ToggleGroup
+            :value="selectedView"
+            class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
             @update:value="changeView"
-            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
           >
-            <button 
+            <button
               :class="[
                 'px-4 py-2 text-sm font-medium transition-colors',
-                selectedView === 'all' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                selectedView === 'all'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
               ]"
               @click="changeView('all')"
             >
               {{ $t('allCharts') }}
             </button>
-            <button 
+            <button
               :class="[
-                'px-4 py-2 text-sm font-medium transition-colors border-l border-gray-200 dark:border-gray-700',
-                selectedView === 'severity' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                'border-l border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700',
+                selectedView === 'severity'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
               ]"
               @click="changeView('severity')"
             >
               {{ $t('severityCharts') }}
             </button>
-            <button 
+            <button
               :class="[
-                'px-4 py-2 text-sm font-medium transition-colors border-l border-gray-200 dark:border-gray-700',
-                selectedView === 'category' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                'border-l border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700',
+                selectedView === 'category'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
               ]"
               @click="changeView('category')"
             >
               {{ $t('categoryCharts') }}
             </button>
-          </toggle-group>
-          
-          <tooltip>
+          </ToggleGroup>
+
+          <Tooltip>
             <template #trigger>
-              <button 
+              <button
                 :class="[
-                  'p-2 rounded-full transition-colors',
-                  'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+                  'rounded-full p-2 transition-colors',
+                  'border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800',
                   'hover:bg-gray-50 dark:hover:bg-gray-700',
                   'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                  { 'opacity-50 cursor-not-allowed': isLoading }
+                  { 'cursor-not-allowed opacity-50': isLoading }
                 ]"
-                @click="refreshAllCharts"
                 :disabled="isLoading"
+                @click="refreshAllCharts"
               >
-                <svg 
-                  :class="['w-5 h-5 text-gray-600 dark:text-gray-400', { 'animate-spin': isLoading }]" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  :class="['size-5 text-gray-600 dark:text-gray-400', { 'animate-spin': isLoading }]"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
               </button>
             </template>
             <template #content>
               {{ $t('refreshAllCharts') }}
             </template>
-          </tooltip>
+          </Tooltip>
         </div>
       </template>
-    </breadcrumb>
+    </Breadcrumb>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-      <div class="max-w-5xl mx-auto">
-        
+    <div class="mx-auto max-w-7xl px-4 py-6">
+      <div class="mx-auto max-w-5xl">
         <!-- All Charts View -->
         <div v-if="showAllCharts" class="space-y-8">
-          
           <!-- CVSS Severity Charts Section -->
-          <card class="overflow-hidden">
+          <Card class="overflow-hidden">
             <template #header>
               <div class="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <svg
+                  class="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
                 </svg>
                 {{ $t('vulnerabilitySeverityDistribution') }}
               </div>
             </template>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <!-- Pie Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('severityDistributionPie') }}
@@ -112,83 +125,116 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
                             @click="exportChart('severity-pie')"
-                            :disabled="loading.severity"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('severity')"
-                            :disabled="loading.severity"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.severity }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
+                            @click="refreshChart('severity')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.severity }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading State -->
                 <div v-if="loading.severity" class="flex flex-col items-center justify-center py-16">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
-                
+
                 <!-- Error State -->
                 <div v-else-if="errors.severity" class="flex flex-col items-center justify-center py-16">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadSeverityData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
-                
+
                 <!-- Chart Content -->
                 <div v-else class="h-96">
-                  <pie-chart
+                  <PieChart
                     :chart-data="severityPieData"
                     :chart-options="getPieChartOptions()"
                     chart-id="severity-pie-chart"
                   />
                 </div>
-              </card>
-              
+              </Card>
+
               <!-- Bar Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('severityDistributionBar') }}
@@ -198,279 +244,398 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
                             @click="exportChart('severity-bar')"
-                            :disabled="loading.severity"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('severity')"
-                            :disabled="loading.severity"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.severity }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
+                            @click="refreshChart('severity')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.severity }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading State -->
                 <div v-if="loading.severity" class="flex flex-col items-center justify-center py-16">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
-                
+
                 <!-- Error State -->
                 <div v-else-if="errors.severity" class="flex flex-col items-center justify-center py-16">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadSeverityData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
-                
+
                 <!-- Chart Content -->
                 <div v-else class="h-96">
-                  <bar-chart
+                  <BarChart
                     :chart-data="severityBarData"
                     :chart-options="getBarChartOptions()"
                     chart-id="severity-bar-chart"
                   />
                 </div>
-              </card>
+              </Card>
             </div>
-          </card>
-          
+          </Card>
+
           <!-- Category Distribution Section -->
-          <card class="overflow-hidden">
+          <Card class="overflow-hidden">
             <template #header>
               <div class="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                <svg
+                  class="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
                 </svg>
                 {{ $t('categoryDistribution') }}
               </div>
             </template>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <!-- Category Pie Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('vulnerabilityCategories') }}
                       </h3>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.category"
                             @click="exportChart('category')"
-                            :disabled="loading.category"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('category')"
-                            :disabled="loading.category"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.category }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.category"
+                            @click="refreshChart('category')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.category }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading State -->
                 <div v-if="loading.category" class="flex flex-col items-center justify-center py-16">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
-                
+
                 <!-- Error State -->
                 <div v-else-if="errors.category" class="flex flex-col items-center justify-center py-16">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadCategoryData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
-                
+
                 <!-- Chart Content -->
                 <div v-else class="h-80">
-                  <pie-chart
+                  <PieChart
                     :chart-data="categoryChartData"
                     :chart-options="getPieChartOptions()"
                     chart-id="category-pie-chart"
                   />
                 </div>
-              </card>
-              
+              </Card>
+
               <!-- Type Bar Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('vulnerabilityTypes') }}
                       </h3>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.type"
                             @click="exportChart('type')"
-                            :disabled="loading.type"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('type')"
-                            :disabled="loading.type"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.type }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.type"
+                            @click="refreshChart('type')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.type }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading State -->
                 <div v-if="loading.type" class="flex flex-col items-center justify-center py-16">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
-                
+
                 <!-- Error State -->
                 <div v-else-if="errors.type" class="flex flex-col items-center justify-center py-16">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadTypeData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
-                
+
                 <!-- Chart Content -->
                 <div v-else class="h-80">
-                  <bar-chart
+                  <BarChart
                     :chart-data="typeChartData"
                     :chart-options="getBarChartOptions()"
                     chart-id="type-bar-chart"
                   />
                 </div>
-              </card>
+              </Card>
             </div>
-          </card>
+          </Card>
         </div>
-        
+
         <!-- Severity Only View -->
         <div v-else-if="showSeverityOnly">
-          <card class="overflow-hidden">
+          <Card class="overflow-hidden">
             <template #header>
               <div class="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <svg
+                  class="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
                 </svg>
                 {{ $t('vulnerabilitySeverityDistribution') }} - {{ $t('detailedView') }}
               </div>
             </template>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
               <!-- Detailed Pie Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('severityDistributionPie') }}
@@ -480,79 +645,112 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
                             @click="exportChart('severity-pie')"
-                            :disabled="loading.severity"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('severity')"
-                            :disabled="loading.severity"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.severity }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
+                            @click="refreshChart('severity')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.severity }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading/Error/Chart Content -->
                 <div v-if="loading.severity" class="flex flex-col items-center justify-center py-20">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
                 <div v-else-if="errors.severity" class="flex flex-col items-center justify-center py-20">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadSeverityData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
                 <div v-else class="h-[450px]">
-                  <pie-chart
+                  <PieChart
                     :chart-data="severityPieData"
                     :chart-options="getPieChartOptions()"
                     chart-id="severity-pie-detailed"
                   />
                 </div>
-              </card>
-              
+              </Card>
+
               <!-- Detailed Bar Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('severityDistributionBar') }}
@@ -562,95 +760,138 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
                             @click="exportChart('severity-bar')"
-                            :disabled="loading.severity"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('severity')"
-                            :disabled="loading.severity"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.severity }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.severity"
+                            @click="refreshChart('severity')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.severity }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading/Error/Chart Content -->
                 <div v-if="loading.severity" class="flex flex-col items-center justify-center py-20">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
                 <div v-else-if="errors.severity" class="flex flex-col items-center justify-center py-20">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadSeverityData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
                 <div v-else class="h-[450px]">
-                  <bar-chart
+                  <BarChart
                     :chart-data="severityBarData"
                     :chart-options="getBarChartOptions()"
                     chart-id="severity-bar-detailed"
                   />
                 </div>
-              </card>
+              </Card>
             </div>
-          </card>
+          </Card>
         </div>
-        
+
         <!-- Category Only View -->
         <div v-else-if="showCategoryOnly">
-          <card class="overflow-hidden">
+          <Card class="overflow-hidden">
             <template #header>
               <div class="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                <svg
+                  class="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
                 </svg>
                 {{ $t('categoryDistribution') }} - {{ $t('detailedView') }}
               </div>
             </template>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
               <!-- Detailed Category Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('vulnerabilityCategories') }}
@@ -660,79 +901,112 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.category"
                             @click="exportChart('category')"
-                            :disabled="loading.category"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('category')"
-                            :disabled="loading.category"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.category }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.category"
+                            @click="refreshChart('category')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.category }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading/Error/Chart Content -->
                 <div v-if="loading.category" class="flex flex-col items-center justify-center py-20">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
                 <div v-else-if="errors.category" class="flex flex-col items-center justify-center py-20">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadCategoryData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
                 <div v-else class="h-[450px]">
-                  <pie-chart
+                  <PieChart
                     :chart-data="categoryChartData"
                     :chart-options="getPieChartOptions()"
                     chart-id="category-pie-detailed"
                   />
                 </div>
-              </card>
-              
+              </Card>
+
               <!-- Detailed Type Chart -->
-              <card variant="outline" class="bg-white dark:bg-gray-800">
+              <Card variant="outline" class="bg-white dark:bg-gray-800">
                 <template #header>
-                  <div class="flex justify-between items-start">
+                  <div class="flex items-start justify-between">
                     <div>
                       <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
                         {{ $t('vulnerabilityTypes') }}
@@ -742,97 +1016,143 @@
                       </p>
                     </div>
                     <div class="flex gap-1">
-                      <tooltip>
+                      <Tooltip>
                         <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.type"
                             @click="exportChart('type')"
-                            :disabled="loading.type"
                           >
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </template>
-                        <template #content>{{ $t('exportChart') }}</template>
-                      </tooltip>
-                      <tooltip>
-                        <template #trigger>
-                          <button 
-                            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            @click="refreshChart('type')"
-                            :disabled="loading.type"
-                          >
-                            <svg 
-                              :class="['w-4 h-4 text-gray-500', { 'animate-spin': loading.type }]" 
-                              fill="none" 
-                              stroke="currentColor" 
+                            <svg
+                              class="size-4 text-gray-500"
+                              fill="none"
+                              stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
                             </svg>
                           </button>
                         </template>
-                        <template #content>{{ $t('refresh') }}</template>
-                      </tooltip>
+                        <template #content>
+                          {{ $t('exportChart') }}
+                        </template>
+                      </Tooltip>
+                      <Tooltip>
+                        <template #trigger>
+                          <button
+                            class="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                            :disabled="loading.type"
+                            @click="refreshChart('type')"
+                          >
+                            <svg
+                              :class="['size-4 text-gray-500', { 'animate-spin': loading.type }]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </button>
+                        </template>
+                        <template #content>
+                          {{ $t('refresh') }}
+                        </template>
+                      </Tooltip>
                     </div>
                   </div>
                 </template>
-                
+
                 <!-- Loading/Error/Chart Content -->
                 <div v-if="loading.type" class="flex flex-col items-center justify-center py-20">
-                  <loading size="lg" />
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">{{ $t('loadingChart') }}</p>
+                  <Loading size="lg" />
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('loadingChart') }}
+                  </p>
                 </div>
                 <div v-else-if="errors.type" class="flex flex-col items-center justify-center py-20">
-                  <alert variant="destructive" class="w-full max-w-md">
+                  <Alert variant="destructive" class="w-full max-w-md">
                     <template #icon>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                       </svg>
                     </template>
-                    <template #title>{{ $t('chartLoadError') }}</template>
+                    <template #title>
+                      {{ $t('chartLoadError') }}
+                    </template>
                     <template #description>
-                      <button 
-                        class="mt-2 px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                      <button
+                        class="mt-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground transition-colors hover:bg-destructive/90"
                         @click="loadTypeData"
                       >
                         {{ $t('retry') }}
                       </button>
                     </template>
-                  </alert>
+                  </Alert>
                 </div>
                 <div v-else class="h-[450px]">
-                  <bar-chart
+                  <BarChart
                     :chart-data="typeChartData"
                     :chart-options="getBarChartOptions()"
                     chart-id="type-bar-detailed"
                   />
                 </div>
-              </card>
+              </Card>
             </div>
-          </card>
+          </Card>
         </div>
-        
+
         <!-- Empty State -->
         <div v-if="!isLoading && !hasErrors && !chartData.severity && !chartData.category" class="flex justify-center">
-          <card class="w-full max-w-md">
-            <div class="flex flex-col items-center justify-center text-center py-12">
-              <svg class="w-20 h-20 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <Card class="w-full max-w-md">
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <svg
+                class="mb-4 size-20 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
               </svg>
-              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $t('noChartData') }}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ $t('noChartDataMessage') }}</p>
-              <button 
-                class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+              <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                {{ $t('noChartData') }}
+              </h3>
+              <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+                {{ $t('noChartDataMessage') }}
+              </p>
+              <button
+                class="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 @click="refreshAllCharts"
               >
                 {{ $t('refreshData') }}
               </button>
             </div>
-          </card>
+          </Card>
         </div>
-        
       </div>
     </div>
   </div>
@@ -856,7 +1176,7 @@ import UserService from '@/services/user'
 
 export default defineComponent({
   name: 'ChartsPage',
-  
+
   components: {
     Breadcrumb,
     PieChart,
@@ -865,38 +1185,38 @@ export default defineComponent({
     ToggleGroup,
     Tooltip,
     Loading,
-    Alert
+    Alert,
   },
 
   data() {
     return {
-      UserService: UserService,
+      UserService,
       auditId: null,
-      
+
       // Loading states
       loading: {
         severity: false,
         category: false,
         type: false,
-        status: false
+        status: false,
       },
-      
+
       // Error states
       errors: {
         severity: null,
         category: null,
         type: null,
-        status: null
+        status: null,
       },
-      
+
       // Chart data
       chartData: {
         severity: null,
         category: null,
         type: null,
-        status: null
+        status: null,
       },
-      
+
       // Chart display options
       chartOptions: {
         pie: {
@@ -904,53 +1224,53 @@ export default defineComponent({
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'bottom'
+              position: 'bottom',
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label(context) {
                   const dataset = context.dataset
                   const total = dataset.data.reduce((sum, value) => sum + value, 0)
                   const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0
                   return `${context.label}: ${context.raw} (${percentage}%)`
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         },
         bar: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              display: false
-            }
+              display: false,
+            },
           },
           scales: {
             y: {
               beginAtZero: true,
               ticks: {
-                stepSize: 1
-              }
-            }
-          }
-        }
+                stepSize: 1,
+              },
+            },
+          },
+        },
       },
-      
+
       // UI state
       selectedView: 'all', // 'all', 'severity', 'category'
-      
+
       // Breadcrumb props
       parentState: null,
       parentApprovals: null,
-      
+
       // Processed chart data to avoid circular references
       processedChartData: {
         severityPie: { labels: [], datasets: [] },
         severityBar: { labels: [], datasets: [] },
         category: { labels: [], datasets: [] },
-        type: { labels: [], datasets: [] }
-      }
+        type: { labels: [], datasets: [] },
+      },
     }
   },
 
@@ -959,40 +1279,52 @@ export default defineComponent({
     isLoading() {
       return Object.values(this.loading).some(state => state)
     },
-    
+
     hasErrors() {
       return Object.values(this.errors).some(error => error !== null)
     },
-    
+
     // Chart visibility
     showAllCharts() {
       return this.selectedView === 'all'
     },
-    
+
     showSeverityOnly() {
       return this.selectedView === 'severity'
     },
-    
+
     showCategoryOnly() {
       return this.selectedView === 'category'
     },
-    
+
     // Safe chart data getters
     severityPieData() {
       return this.processedChartData.severityPie
     },
-    
+
     severityBarData() {
       return this.processedChartData.severityBar
     },
-    
+
     categoryChartData() {
       return this.processedChartData.category
     },
-    
+
     typeChartData() {
       return this.processedChartData.type
-    }
+    },
+  },
+
+  watch: {
+    '$route.params.auditId': {
+      handler(newAuditId) {
+        if (newAuditId && newAuditId !== this.auditId) {
+          this.auditId = newAuditId
+          this.loadAllChartData()
+        }
+      },
+      immediate: true,
+    },
   },
 
   async mounted() {
@@ -1013,25 +1345,25 @@ export default defineComponent({
           severityPie: { labels: [], datasets: [] },
           severityBar: { labels: [], datasets: [] },
           category: { labels: [], datasets: [] },
-          type: { labels: [], datasets: [] }
+          type: { labels: [], datasets: [] },
         }
-        
+
         // Transform severity data
         if (this.chartData.severity) {
           newProcessedData.severityPie = ChartService.transformSeverityToPieChart(this.chartData.severity)
           newProcessedData.severityBar = ChartService.transformSeverityToBarChart(this.chartData.severity)
         }
-        
-        // Transform category data  
+
+        // Transform category data
         if (this.chartData.category) {
           newProcessedData.category = ChartService.transformCategoryToChart(this.chartData.category)
         }
-        
+
         // Transform type data
         if (this.chartData.type) {
           newProcessedData.type = ChartService.transformTypeToChart(this.chartData.type)
         }
-        
+
         // Replace the entire object to avoid reactivity issues
         this.processedChartData = newProcessedData
       } catch (error) {
@@ -1039,25 +1371,25 @@ export default defineComponent({
         this.showError(`Failed to transform chart data: ${error.message}`)
       }
     },
-    
+
     // Data loading methods
     async loadAllChartData() {
       const promises = [
         this.loadSeverityData(),
-        this.loadCategoryData(), 
-        this.loadTypeData()
+        this.loadCategoryData(),
+        this.loadTypeData(),
       ]
-      
+
       await Promise.allSettled(promises)
       this.transformChartData()
     },
 
     async loadSeverityData() {
       if (!this.auditId) return
-      
+
       this.loading.severity = true
       this.errors.severity = null
-      
+
       try {
         const data = await ChartService.getAuditSeverityData(this.auditId)
         this.chartData.severity = data
@@ -1072,10 +1404,10 @@ export default defineComponent({
 
     async loadCategoryData() {
       if (!this.auditId) return
-      
+
       this.loading.category = true
       this.errors.category = null
-      
+
       try {
         const data = await ChartService.getAuditCategoryData(this.auditId)
         this.chartData.category = data
@@ -1090,10 +1422,10 @@ export default defineComponent({
 
     async loadTypeData() {
       if (!this.auditId) return
-      
+
       this.loading.type = true
       this.errors.type = null
-      
+
       try {
         const data = await ChartService.getAuditTypeData(this.auditId)
         this.chartData.type = data
@@ -1109,17 +1441,17 @@ export default defineComponent({
     // Chart control methods
     async refreshChart(chartType) {
       switch (chartType) {
-        case 'severity':
-          await this.loadSeverityData()
-          break
-        case 'category':
-          await this.loadCategoryData()
-          break
-        case 'type':
-          await this.loadTypeData()
-          break
-        default:
-          await this.loadAllChartData()
+      case 'severity':
+        await this.loadSeverityData()
+        break
+      case 'category':
+        await this.loadCategoryData()
+        break
+      case 'type':
+        await this.loadTypeData()
+        break
+      default:
+        await this.loadAllChartData()
       }
       this.transformChartData()
     },
@@ -1143,8 +1475,8 @@ export default defineComponent({
       const { showToast } = useToast()
       showToast({
         type: 'error',
-        message: message,
-        duration: 5000
+        message,
+        duration: 5000,
       })
     },
 
@@ -1152,8 +1484,8 @@ export default defineComponent({
       const { showToast } = useToast()
       showToast({
         type: 'success',
-        message: message,
-        duration: 3000
+        message,
+        duration: 3000,
       })
     },
 
@@ -1163,19 +1495,7 @@ export default defineComponent({
 
     getBarChartOptions() {
       return this.chartOptions.bar
-    }
+    },
   },
-
-  watch: {
-    '$route.params.auditId': {
-      handler(newAuditId) {
-        if (newAuditId && newAuditId !== this.auditId) {
-          this.auditId = newAuditId
-          this.loadAllChartData()
-        }
-      },
-      immediate: true
-    }
-  }
 })
-</script> 
+</script>

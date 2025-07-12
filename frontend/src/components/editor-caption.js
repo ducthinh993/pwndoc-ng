@@ -1,62 +1,62 @@
-import { Node, NodeSelection } from "@tiptap/core";
+import { Node, NodeSelection } from '@tiptap/core'
 
 export default class Caption extends Node {
   get name() {
-    return "caption";
+    return 'caption'
   }
 
   get schema() {
     return {
       attrs: {
         label: {
-          default: "Figure",
+          default: 'Figure',
         },
         alt: {
-          default: "",
+          default: '',
         },
       },
-      group: "block",
+      group: 'block',
       draggable: true,
       parseDOM: [
         {
-          tag: "legend[alt]",
+          tag: 'legend[alt]',
           getAttrs: (dom) => ({
-            label: dom.getAttribute("label"),
-            alt: dom.getAttribute("alt"),
+            label: dom.getAttribute('label'),
+            alt: dom.getAttribute('alt'),
           }),
         },
       ],
-      toDOM: (node) => ["legend", node.attrs],
-    };
+      toDOM: (node) => ['legend', node.attrs],
+    }
   }
 
   commands({ type }) {
     return (attrs) => (state, dispatch) =>
-      dispatch(state.tr.replaceSelectionWith(type.create(attrs)));
+      dispatch(state.tr.replaceSelectionWith(type.create(attrs)))
   }
 
   get view() {
     return {
-      props: ["node", "updateAttrs"],
+      props: ['node', 'updateAttrs'],
       computed: {
         label: {
           get() {
-            return this.node.attrs.label;
+            return this.node.attrs.label
           },
           set(label) {
             this.updateAttrs({
               label,
-            });
+            })
           },
         },
         alt: {
           get() {
-            return this.node.attrs.alt;
+            return this.node.attrs.alt
           },
           set(alt) {
             this.updateAttrs({
               alt,
-            });
+            })
           },
         },
       },
@@ -87,8 +87,8 @@ export default class Caption extends Node {
       </div>
       `,
       components: {
-        'popup-edit': () => import('@/components/ui/popup-edit.vue')
-      }
-    };
+        'popup-edit': () => import('@/components/ui/popup-edit.vue'),
+      },
+    }
   }
 }

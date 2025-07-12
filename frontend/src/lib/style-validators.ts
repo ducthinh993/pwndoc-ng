@@ -72,4 +72,4 @@ export function getColorVariants(): readonly ColorVariant[] {
  */
 export function getStateVariants(): readonly StateVariant[] {
   return stateVariants
-} 
+}

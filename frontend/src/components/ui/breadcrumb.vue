@@ -19,19 +19,24 @@
           <slot name="separator" :index="index" :item="item">
             <!-- Custom separator -->
             <component
-              v-if="separatorIcon"
               :is="separatorIcon"
-              class="h-4 w-4"
+              v-if="separatorIcon"
+              class="size-4"
             />
             <!-- Default separator -->
             <svg
               v-else
-              class="h-4 w-4"
+              class="size-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </slot>
         </div>
@@ -46,7 +51,7 @@
               'hover:text-foreground cursor-pointer': isItemClickable(item, index),
               'text-foreground font-medium': index === items.length - 1,
               'text-muted-foreground': index !== items.length - 1,
-              
+
               // Size variants
               'text-xs': size === 'sm',
               'text-sm': size === 'default',
@@ -62,8 +67,8 @@
         >
           <!-- Item Icon -->
           <component
-            v-if="getItemIcon(item)"
             :is="getItemIcon(item)"
+            v-if="getItemIcon(item)"
             :class="cn('flex-shrink-0', {
               'h-3 w-3': size === 'sm',
               'h-4 w-4': size === 'default',
@@ -138,11 +143,11 @@ const displayItems = computed(() => {
   // Show first item, ellipsis, and last items
   const firstItem = props.items[0]
   const lastItems = props.items.slice(-(props.maxItems - 2))
-  
+
   return [
     firstItem,
     { label: '...', disabled: true, isEllipsis: true },
-    ...lastItems
+    ...lastItems,
   ]
 })
 
@@ -156,7 +161,7 @@ const getItemComponent = (item: BreadcrumbItem, index: number): string => {
   if (index === props.items.length - 1 || item.disabled || item.isEllipsis) {
     return 'span'
   }
-  
+
   if (item.to) return 'router-link'
   if (item.href) return 'a'
   return 'button'
@@ -187,10 +192,10 @@ const getItemRel = (item: BreadcrumbItem): string | undefined => {
 }
 
 const isItemClickable = (item: BreadcrumbItem, index: number): boolean => {
-  return !item.disabled && 
-         !item.isEllipsis && 
-         index !== props.items.length - 1 && 
-         (item.clickable !== false)
+  return !item.disabled &&
+    !item.isEllipsis &&
+    index !== props.items.length - 1 &&
+    (item.clickable !== false)
 }
 
 const handleItemClick = (item: BreadcrumbItem, index: number, event: MouseEvent) => {
@@ -258,15 +263,15 @@ a:focus-visible {
   .space-x-1 > :not([hidden]) ~ :not([hidden]) {
     margin-left: 0.125rem;
   }
-  
+
   .max-w-20 {
     max-width: 3rem;
   }
-  
+
   .max-w-32 {
     max-width: 5rem;
   }
-  
+
   .max-w-40 {
     max-width: 7rem;
   }
@@ -277,4 +282,4 @@ a:focus-visible {
   pointer-events: none;
   opacity: 0.7;
 }
-</style> 
+</style>

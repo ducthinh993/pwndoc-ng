@@ -1,87 +1,87 @@
 import { api } from '@/boot/axios'
 
 export default {
-  getAudits: function(filters) {
-    var queryParams = "?";
+  getAudits(filters) {
+    let queryParams = '?'
     if (filters)
       if (filters.findingTitle)
-        queryParams += `findingTitle=${filters.findingTitle}`;
+        queryParams += `findingTitle=${filters.findingTitle}`
     return  api.get(`audits${queryParams}`)
   },
 
-  getAudit: function(auditId) {
+  getAudit(auditId) {
     return  api.get(`audits/${auditId}`)
   },
 
-  createAudit: function(audit) {
+  createAudit(audit) {
     return  api.post('audits', audit)
   },
 
-  deleteAudit: function(auditId) {
+  deleteAudit(auditId) {
     return  api.delete(`audits/${auditId}`)
   },
 
-  getAuditGeneral: function(auditId) {
+  getAuditGeneral(auditId) {
     return  api.get(`audits/${auditId}/general`)
   },
 
-  updateAuditGeneral: function(auditId, audit) {
+  updateAuditGeneral(auditId, audit) {
     return  api.put(`audits/${auditId}/general`, audit)
   },
 
-  getAuditNetwork: function(auditId) {
+  getAuditNetwork(auditId) {
     return  api.get(`audits/${auditId}/network`)
   },
 
-  updateAuditNetwork: function(auditId, audit) {
+  updateAuditNetwork(auditId, audit) {
     return  api.put(`audits/${auditId}/network`, audit)
   },
 
-  createFinding: function(auditId, finding) {
+  createFinding(auditId, finding) {
     return  api.post(`audits/${auditId}/findings`, finding)
   },
-  
-  getFinding: function(auditId, findingId) {
+
+  getFinding(auditId, findingId) {
     return  api.get(`audits/${auditId}/findings/${findingId}`)
   },
 
-  updateFinding: function(auditId, findingId, finding) {
+  updateFinding(auditId, findingId, finding) {
     return  api.put(`audits/${auditId}/findings/${findingId}`, finding)
   },
 
-  deleteFinding: function(auditId, findingId) {
+  deleteFinding(auditId, findingId) {
     return  api.delete(`audits/${auditId}/findings/${findingId}`)
   },
 
-  getSection: function(auditId, sectionId) {
+  getSection(auditId, sectionId) {
     return  api.get(`audits/${auditId}/sections/${sectionId}`)
   },
 
-  updateSection: function(auditId, sectionId, section) {
+  updateSection(auditId, sectionId, section) {
     return  api.put(`audits/${auditId}/sections/${sectionId}`, section)
   },
 
-  getAuditTypes: function() {
-    return  api.get(`audits/types`)
+  getAuditTypes() {
+    return  api.get('audits/types')
   },
 
-  generateAuditReport: function(auditId) {
-    return  api.get(`audits/${auditId}/generate`, {responseType: 'blob'})
+  generateAuditReport(auditId) {
+    return  api.get(`audits/${auditId}/generate`, { responseType: 'blob' })
   },
 
-  updateAuditSortFindings: function(auditId, audit) {
+  updateAuditSortFindings(auditId, audit) {
     return  api.put(`audits/${auditId}/sortfindings`, audit)
   },
 
-  updateAuditFindingPosition: function(auditId, audit) {
+  updateAuditFindingPosition(auditId, audit) {
     return  api.put(`audits/${auditId}/movefinding`, audit)
   },
-  
-  toggleApproval: function(auditId) {
-    return  api.put(`audits/${auditId}/toggleApproval`);
+
+  toggleApproval(auditId) {
+    return  api.put(`audits/${auditId}/toggleApproval`)
   },
 
-  updateReadyForReview: function(auditId, data) {
-    return  api.put(`audits/${auditId}/updateReadyForReview`, data);
-  }
+  updateReadyForReview(auditId, data) {
+    return  api.put(`audits/${auditId}/updateReadyForReview`, data)
+  },
 }

@@ -4,10 +4,12 @@
       <p>
         <img
           src="~assets/sad.svg"
-          class="w-[30vw] max-w-[150px] mx-auto"
+          class="mx-auto w-[30vw] max-w-[150px]"
         >
       </p>
-      <p class="text-muted-foreground">{{ message }} <strong>(404)</strong></p>
+      <p class="text-muted-foreground">
+        {{ message }} <strong>(404)</strong>
+      </p>
       <Button
         variant="secondary"
         class="w-[200px]"
@@ -26,15 +28,15 @@ import { Button } from '@/components/ui/button'
 export default defineComponent({
   name: 'Error404',
   components: {
-    Button
+    Button,
   },
   data() {
     return {
-      message: ''
+      message: '',
     }
   },
   created() {
     this.message = this.$route.params.error
-  }
+  },
 })
 </script>

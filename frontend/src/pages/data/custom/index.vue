@@ -5,8 +5,12 @@
       <div class="container mx-auto px-4 py-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-foreground">{{ $t('customData') }}</h1>
-            <p class="text-muted-foreground mt-2">{{ $t('manageCustomSettings') }}</p>
+            <h1 class="text-3xl font-bold text-foreground">
+              {{ $t('customData') }}
+            </h1>
+            <p class="mt-2 text-muted-foreground">
+              {{ $t('manageCustomSettings') }}
+            </p>
           </div>
         </div>
       </div>
@@ -15,14 +19,26 @@
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
       <!-- Tabs -->
-      <Tabs :value="selectedTab" @update:value="selectedTab = $event" class="w-full">
+      <Tabs :value="selectedTab" class="w-full" @update:value="selectedTab = $event">
         <TabsList class="grid w-full grid-cols-6">
-          <TabsTrigger value="languages">{{ $t('languages') }}</TabsTrigger>
-          <TabsTrigger value="audit-types">{{ $t('auditTypes') }}</TabsTrigger>
-          <TabsTrigger value="vulnerability-types">{{ $t('vulnerabilityTypes') }}</TabsTrigger>
-          <TabsTrigger value="vulnerability-categories">{{ $t('vulnerabilityCategories') }}</TabsTrigger>
-          <TabsTrigger value="custom-fields">{{ $t('customFields') }}</TabsTrigger>
-          <TabsTrigger value="custom-sections">{{ $t('customSections') }}</TabsTrigger>
+          <TabsTrigger value="languages">
+            {{ $t('languages') }}
+          </TabsTrigger>
+          <TabsTrigger value="audit-types">
+            {{ $t('auditTypes') }}
+          </TabsTrigger>
+          <TabsTrigger value="vulnerability-types">
+            {{ $t('vulnerabilityTypes') }}
+          </TabsTrigger>
+          <TabsTrigger value="vulnerability-categories">
+            {{ $t('vulnerabilityCategories') }}
+          </TabsTrigger>
+          <TabsTrigger value="custom-fields">
+            {{ $t('customFields') }}
+          </TabsTrigger>
+          <TabsTrigger value="custom-sections">
+            {{ $t('customSections') }}
+          </TabsTrigger>
         </TabsList>
 
         <!-- Languages Tab -->
@@ -33,12 +49,14 @@
               <CardDescription>{{ $t('languageUsedInAuditsAndVuls') }}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Create Language Section -->
                 <div v-if="UserService.isAllowed('languages:create')">
                   <div class="space-y-4">
-                    <h3 class="text-lg font-semibold">{{ $t('addLanguage') }}</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="text-lg font-semibold">
+                      {{ $t('addLanguage') }}
+                    </h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <Label for="language-input">{{ $t('language') }}</Label>
                         <Input
@@ -58,8 +76,8 @@
                         />
                       </div>
                     </div>
-                    <Button @click="createLanguage" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createLanguage">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -76,7 +94,7 @@
                         size="sm"
                         @click="editLanguage = true; editLanguages = $_.cloneDeep(languages)"
                       >
-                        <Edit class="w-4 h-4 mr-2" />
+                        <Edit class="mr-2 size-4" />
                         {{ $t('btn.edit') }}
                       </Button>
                     </CardHeader>
@@ -111,9 +129,9 @@
                         item-key="locale"
                       >
                         <template #item="{ element, index }">
-                          <div class="flex items-center gap-4 p-4 border rounded-lg mb-4">
-                            <GripVertical class="w-5 h-5 text-muted-foreground cursor-move handle" />
-                            <div class="grid grid-cols-2 gap-4 flex-1">
+                          <div class="mb-4 flex items-center gap-4 rounded-lg border p-4">
+                            <GripVertical class="handle size-5 cursor-move text-muted-foreground" />
+                            <div class="grid flex-1 grid-cols-2 gap-4">
                               <div>
                                 <Label>{{ $t('language') }}</Label>
                                 <Input v-model="element.language" />
@@ -128,7 +146,7 @@
                               size="sm"
                               @click="removeLanguage(element.locale)"
                             >
-                              <X class="w-4 h-4" />
+                              <X class="size-4" />
                             </Button>
                           </div>
                         </template>
@@ -157,11 +175,13 @@
               <CardDescription>{{ $t('createAuditTypes') }}</CardDescription>
             </CardHeader>
             <CardContent v-if="languages.length > 0">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Create Audit Type Section -->
                 <div v-if="UserService.isAllowed('audit-types:create')">
                   <div class="space-y-4">
-                    <h3 class="text-lg font-semibold">{{ $t('addAuditType') }}</h3>
+                    <h3 class="text-lg font-semibold">
+                      {{ $t('addAuditType') }}
+                    </h3>
                     <div>
                       <Label for="audit-type-name">{{ $t('name') }}</Label>
                       <Input
@@ -171,7 +191,7 @@
                         @keyup.enter="createAuditType"
                       />
                     </div>
-                    
+
                     <!-- Templates for each language -->
                     <div v-for="(language, idx) in languages" :key="idx" class="space-y-2">
                       <Label>{{ language.language }} {{ $t('template') }} <span class="text-destructive">*</span></Label>
@@ -194,8 +214,8 @@
                       </Select>
                     </div>
 
-                    <Button @click="createAuditType" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createAuditType">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -212,17 +232,21 @@
                         size="sm"
                         @click="editAuditType = true; editAuditTypes = $_.cloneDeep(auditTypes)"
                       >
-                        <Edit class="w-4 h-4 mr-2" />
+                        <Edit class="mr-2 size-4" />
                         {{ $t('btn.edit') }}
                       </Button>
                     </CardHeader>
                     <CardContent>
                       <div class="space-y-4">
-                        <div v-for="auditType in auditTypes" :key="auditType.name" class="border rounded-lg p-4">
-                          <h4 class="font-semibold mb-2">{{ auditType.name }}</h4>
+                        <div v-for="auditType in auditTypes" :key="auditType.name" class="rounded-lg border p-4">
+                          <h4 class="mb-2 font-semibold">
+                            {{ auditType.name }}
+                          </h4>
                           <div class="space-y-2">
                             <div v-for="(template, idx) in auditType.templates" :key="idx" class="text-sm">
-                              <Badge variant="outline">{{ languages[idx]?.language }}: {{ template?.name }}</Badge>
+                              <Badge variant="outline">
+                                {{ languages[idx]?.language }}: {{ template?.name }}
+                              </Badge>
                             </div>
                           </div>
                         </div>
@@ -245,9 +269,9 @@
                         item-key="name"
                       >
                         <template #item="{ element: auditType, index }">
-                          <div class="border rounded-lg p-4 mb-4">
-                            <div class="flex items-center gap-4 mb-4">
-                              <GripVertical class="w-5 h-5 text-muted-foreground cursor-move handle" />
+                          <div class="mb-4 rounded-lg border p-4">
+                            <div class="mb-4 flex items-center gap-4">
+                              <GripVertical class="handle size-5 cursor-move text-muted-foreground" />
                               <div class="flex-1">
                                 <Label>{{ $t('name') }}</Label>
                                 <Input v-model="auditType.name" />
@@ -257,10 +281,10 @@
                                 size="sm"
                                 @click="removeAuditType(auditType.name)"
                               >
-                                <X class="w-4 h-4" />
+                                <X class="size-4" />
                               </Button>
                             </div>
-                            
+
                             <!-- Templates for each language -->
                             <div class="space-y-4">
                               <div v-for="(language, idx) in languages" :key="idx">
@@ -302,7 +326,7 @@
             </CardContent>
             <CardContent v-else>
               <Alert>
-                <AlertCircle class="h-4 w-4" />
+                <AlertCircle class="size-4" />
                 <AlertTitle>{{ $t('noLanguagesAvailable') }}</AlertTitle>
                 <AlertDescription>{{ $t('createAtLeastOneLanguage') }}</AlertDescription>
               </Alert>
@@ -318,11 +342,13 @@
               <CardDescription>{{ $t('createVulnerabilityTypes') }}</CardDescription>
             </CardHeader>
             <CardContent v-if="languages.length > 0">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Create Vulnerability Type Section -->
                 <div v-if="UserService.isAllowed('vulnerability-types:create')">
                   <div class="space-y-4">
-                    <h3 class="text-lg font-semibold">{{ $t('addVulnerabilityType') }}</h3>
+                    <h3 class="text-lg font-semibold">
+                      {{ $t('addVulnerabilityType') }}
+                    </h3>
                     <div>
                       <Label for="vuln-type-language">{{ $t('language') }}</Label>
                       <Select v-model="newVulnType.locale">
@@ -349,8 +375,8 @@
                         @keyup.enter="createVulnType"
                       />
                     </div>
-                    <Button @click="createVulnType" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createVulnType">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -367,16 +393,18 @@
                         size="sm"
                         @click="editVulnType = true; editVulnTypes = $_.cloneDeep(vulnTypes)"
                       >
-                        <Edit class="w-4 h-4 mr-2" />
+                        <Edit class="mr-2 size-4" />
                         {{ $t('btn.edit') }}
                       </Button>
                     </CardHeader>
                     <CardContent>
                       <div class="space-y-2">
-                        <div v-for="vulnType in vulnTypes" :key="vulnType._id" class="flex items-center justify-between p-3 border rounded-lg">
+                        <div v-for="vulnType in vulnTypes" :key="vulnType._id" class="flex items-center justify-between rounded-lg border p-3">
                           <div>
                             <span class="font-medium">{{ vulnType.name }}</span>
-                            <Badge variant="outline" class="ml-2">{{ getLanguageByLocale(vulnType.locale) }}</Badge>
+                            <Badge variant="outline" class="ml-2">
+                              {{ getLanguageByLocale(vulnType.locale) }}
+                            </Badge>
                           </div>
                         </div>
                       </div>
@@ -398,8 +426,8 @@
                         item-key="_id"
                       >
                         <template #item="{ element: vulnType }">
-                          <div class="flex items-center gap-4 p-4 border rounded-lg mb-4">
-                            <GripVertical class="w-5 h-5 text-muted-foreground cursor-move handle" />
+                          <div class="mb-4 flex items-center gap-4 rounded-lg border p-4">
+                            <GripVertical class="handle size-5 cursor-move text-muted-foreground" />
                             <div class="flex-1">
                               <Label>{{ $t('name') }}</Label>
                               <Input v-model="vulnType.name" />
@@ -409,7 +437,7 @@
                               size="sm"
                               @click="removeVulnType(vulnType)"
                             >
-                              <X class="w-4 h-4" />
+                              <X class="size-4" />
                             </Button>
                           </div>
                         </template>
@@ -429,7 +457,7 @@
             </CardContent>
             <CardContent v-else>
               <Alert>
-                <AlertCircle class="h-4 w-4" />
+                <AlertCircle class="size-4" />
                 <AlertTitle>{{ $t('noLanguagesAvailable') }}</AlertTitle>
                 <AlertDescription>{{ $t('createAtLeastOneLanguage') }}</AlertDescription>
               </Alert>
@@ -445,11 +473,13 @@
               <CardDescription>{{ $t('createVulnerabilityCategories') }}</CardDescription>
             </CardHeader>
             <CardContent v-if="languages.length > 0">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Create Vulnerability Category Section -->
                 <div v-if="UserService.isAllowed('vulnerability-categories:create')">
                   <div class="space-y-4">
-                    <h3 class="text-lg font-semibold">{{ $t('addVulnerabilityCategory') }}</h3>
+                    <h3 class="text-lg font-semibold">
+                      {{ $t('addVulnerabilityCategory') }}
+                    </h3>
                     <div>
                       <Label for="vuln-cat-name">{{ $t('name') }}</Label>
                       <Input
@@ -459,7 +489,7 @@
                         @keyup.enter="createVulnCat"
                       />
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <Label for="sort-value">{{ $t('sortValue') }}</Label>
                         <Select v-model="newVulnCat.sortValue">
@@ -502,8 +532,8 @@
                       />
                       <Label for="sort-auto">{{ $t('sortAuto') }}</Label>
                     </div>
-                    <Button @click="createVulnCat" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createVulnCat">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -520,19 +550,25 @@
                         size="sm"
                         @click="editCategory = true; editCategories = $_.cloneDeep(vulnCategories)"
                       >
-                        <Edit class="w-4 h-4 mr-2" />
+                        <Edit class="mr-2 size-4" />
                         {{ $t('btn.edit') }}
                       </Button>
                     </CardHeader>
                     <CardContent>
                       <div class="space-y-2">
-                        <div v-for="category in vulnCategories" :key="category.name" class="p-3 border rounded-lg">
+                        <div v-for="category in vulnCategories" :key="category.name" class="rounded-lg border p-3">
                           <div class="flex items-center justify-between">
                             <span class="font-medium">{{ category.name }}</span>
                             <div class="flex items-center gap-2">
-                              <Badge variant="outline">{{ getSortValueLabel(category.sortValue) }}</Badge>
-                              <Badge variant="outline">{{ getSortOrderLabel(category.sortOrder) }}</Badge>
-                              <Badge v-if="category.sortAuto" variant="secondary">{{ $t('auto') }}</Badge>
+                              <Badge variant="outline">
+                                {{ getSortValueLabel(category.sortValue) }}
+                              </Badge>
+                              <Badge variant="outline">
+                                {{ getSortOrderLabel(category.sortOrder) }}
+                              </Badge>
+                              <Badge v-if="category.sortAuto" variant="secondary">
+                                {{ $t('auto') }}
+                              </Badge>
                             </div>
                           </div>
                         </div>
@@ -555,9 +591,9 @@
                         item-key="name"
                       >
                         <template #item="{ element: category }">
-                          <div class="border rounded-lg p-4 mb-4">
-                            <div class="flex items-center gap-4 mb-4">
-                              <GripVertical class="w-5 h-5 text-muted-foreground cursor-move handle" />
+                          <div class="mb-4 rounded-lg border p-4">
+                            <div class="mb-4 flex items-center gap-4">
+                              <GripVertical class="handle size-5 cursor-move text-muted-foreground" />
                               <div class="flex-1">
                                 <Label>{{ $t('name') }}</Label>
                                 <Input v-model="category.name" />
@@ -567,10 +603,10 @@
                                 size="sm"
                                 @click="removeCategory(category.name)"
                               >
-                                <X class="w-4 h-4" />
+                                <X class="size-4" />
                               </Button>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
                                 <Label>{{ $t('sortValue') }}</Label>
                                 <Select v-model="category.sortValue">
@@ -606,7 +642,7 @@
                                 </Select>
                               </div>
                             </div>
-                            <div class="flex items-center space-x-2 mt-4">
+                            <div class="mt-4 flex items-center space-x-2">
                               <Checkbox
                                 :id="`sort-auto-${category.name}`"
                                 v-model:checked="category.sortAuto"
@@ -631,7 +667,7 @@
             </CardContent>
             <CardContent v-else>
               <Alert>
-                <AlertCircle class="h-4 w-4" />
+                <AlertCircle class="size-4" />
                 <AlertTitle>{{ $t('noLanguagesAvailable') }}</AlertTitle>
                 <AlertDescription>{{ $t('createAtLeastOneLanguage') }}</AlertDescription>
               </Alert>
@@ -649,9 +685,11 @@
             <CardContent>
               <div class="space-y-6">
                 <!-- Create Custom Field Form -->
-                <div class="border rounded-lg p-6">
-                  <h3 class="text-lg font-semibold mb-4">{{ $t('createCustomField') }}</h3>
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="rounded-lg border p-6">
+                  <h3 class="mb-4 text-lg font-semibold">
+                    {{ $t('createCustomField') }}
+                  </h3>
+                  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <div>
                       <Label for="cf-display">{{ $t('selectView') }}</Label>
                       <Select v-model="newCustomField.display">
@@ -701,8 +739,12 @@
                           <SelectValue :placeholder="$t('selectSize')" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="6">{{ $t('halfWidth') }}</SelectItem>
-                          <SelectItem value="12">{{ $t('fullWidth') }}</SelectItem>
+                          <SelectItem value="6">
+                            {{ $t('halfWidth') }}
+                          </SelectItem>
+                          <SelectItem value="12">
+                            {{ $t('fullWidth') }}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -714,11 +756,13 @@
                       <Label for="cf-required">{{ $t('required') }}</Label>
                     </div>
                   </div>
-                  
+
                   <!-- Options for select/radio/checkbox fields -->
                   <div v-if="['select', 'select-multiple', 'checkbox', 'radio'].includes(newCustomField.fieldType)" class="mt-4">
-                    <h4 class="font-medium mb-2">{{ $t('fieldOptions') }}</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h4 class="mb-2 font-medium">
+                      {{ $t('fieldOptions') }}
+                    </h4>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <Label for="cf-locale">{{ $t('optionsLanguage') }}</Label>
                         <Select v-model="cfLocale">
@@ -747,22 +791,22 @@
                           />
                           <Button
                             size="sm"
-                            @click="addCustomFieldOption(newCustomField.options)"
                             :disabled="!newCustomOption"
+                            @click="addCustomFieldOption(newCustomField.options)"
                           >
-                            <Plus class="w-4 h-4" />
+                            <Plus class="size-4" />
                           </Button>
                         </div>
                       </div>
                     </div>
-                    
+
                     <!-- Options List -->
                     <div v-if="newCustomFieldLangOptions.length > 0" class="mt-4">
                       <div class="space-y-2">
                         <div
                           v-for="(option, idx) in newCustomFieldLangOptions"
                           :key="idx"
-                          class="flex items-center justify-between p-2 border rounded"
+                          class="flex items-center justify-between rounded border p-2"
                         >
                           <span>{{ option.value }}</span>
                           <Button
@@ -770,16 +814,16 @@
                             size="sm"
                             @click="removeCustomFieldOption(newCustomField.options, option)"
                           >
-                            <X class="w-4 h-4" />
+                            <X class="size-4" />
                           </Button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div class="mt-4">
-                    <Button @click="createCustomField" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createCustomField">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -819,29 +863,33 @@
                         class="space-y-4"
                       >
                         <template #item="{ element: field }">
-                          <div class="border rounded-lg p-4 bg-muted/50">
-                            <div class="flex items-center justify-between mb-4">
+                          <div class="rounded-lg border bg-muted/50 p-4">
+                            <div class="mb-4 flex items-center justify-between">
                               <div class="flex items-center gap-2">
-                                <GripVertical class="w-5 h-5 text-muted-foreground cursor-move drag-handle" />
+                                <GripVertical class="drag-handle size-5 cursor-move text-muted-foreground" />
                                 <span class="font-medium">{{ field.label }}</span>
-                                <Badge variant="outline">{{ field.fieldType }}</Badge>
-                                <Badge v-if="field.required" variant="destructive">{{ $t('required') }}</Badge>
+                                <Badge variant="outline">
+                                  {{ field.fieldType }}
+                                </Badge>
+                                <Badge v-if="field.required" variant="destructive">
+                                  {{ $t('required') }}
+                                </Badge>
                               </div>
                               <Button
                                 variant="destructive"
                                 size="sm"
                                 @click="deleteCustomField(field)"
                               >
-                                <Trash2 class="w-4 h-4" />
+                                <Trash2 class="size-4" />
                               </Button>
                             </div>
-                            
+
                             <!-- Field Preview -->
                             <div class="space-y-2">
                               <!-- Text/Rich Editor Field -->
                               <div v-if="field.fieldType === 'text'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
-                                <div class="border rounded-md p-2 min-h-[100px] bg-background">
+                                <div class="min-h-[100px] rounded-md border bg-background p-2">
                                   <BasicEditor
                                     :key="field._id + '-' + cfLocale"
                                     :model-value="getFieldValue(field)"
@@ -849,7 +897,7 @@
                                   />
                                 </div>
                               </div>
-                              
+
                               <!-- Input Field -->
                               <div v-else-if="field.fieldType === 'input'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -858,7 +906,7 @@
                                   @input="setFieldValue(field, $event.target.value)"
                                 />
                               </div>
-                              
+
                               <!-- Date Field -->
                               <div v-else-if="field.fieldType === 'date'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -868,7 +916,7 @@
                                   @input="setFieldValue(field, $event.target.value)"
                                 />
                               </div>
-                              
+
                               <!-- Select Field -->
                               <div v-else-if="field.fieldType === 'select'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -890,7 +938,7 @@
                                   </SelectContent>
                                 </Select>
                               </div>
-                              
+
                               <!-- Multi Select Field -->
                               <div v-else-if="field.fieldType === 'select-multiple'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -908,7 +956,7 @@
                                   </div>
                                 </div>
                               </div>
-                              
+
                               <!-- Checkbox Group -->
                               <div v-else-if="field.fieldType === 'checkbox'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -926,7 +974,7 @@
                                   </div>
                                 </div>
                               </div>
-                              
+
                               <!-- Radio Group -->
                               <div v-else-if="field.fieldType === 'radio'">
                                 <Label>{{ field.label }} <span v-if="field.required" class="text-destructive">*</span></Label>
@@ -944,13 +992,15 @@
                                   </div>
                                 </RadioGroup>
                               </div>
-                              
+
                               <!-- Space Field -->
                               <div v-else-if="field.fieldType === 'space'" class="py-4">
-                                <div class="text-center text-muted-foreground">{{ $t('spacer') }}</div>
+                                <div class="text-center text-muted-foreground">
+                                  {{ $t('spacer') }}
+                                </div>
                               </div>
                             </div>
-                            
+
                             <!-- Field Description -->
                             <div v-if="field.description" class="mt-2 text-sm text-muted-foreground">
                               {{ field.description }}
@@ -961,8 +1011,8 @@
                     </CardContent>
                     <CardFooter>
                       <Button
-                        @click="updateCustomFields"
                         v-if="UserService.isAllowed('custom-fields:update')"
+                        @click="updateCustomFields"
                       >
                         {{ $t('btn.save') }}
                       </Button>
@@ -982,11 +1032,13 @@
               <CardDescription>{{ $t('createAndManageSections') }}</CardDescription>
             </CardHeader>
             <CardContent v-if="languages.length > 0">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Create Section -->
                 <div v-if="UserService.isAllowed('custom-sections:create')">
                   <div class="space-y-4">
-                    <h3 class="text-lg font-semibold">{{ $t('addSection') }}</h3>
+                    <h3 class="text-lg font-semibold">
+                      {{ $t('addSection') }}
+                    </h3>
                     <div>
                       <Label for="section-field">{{ $t('field') }}</Label>
                       <Input
@@ -1014,13 +1066,13 @@
                           :placeholder="$t('customIcon')"
                           @keyup.enter="createSection"
                         />
-                        <div class="w-8 h-8 border rounded flex items-center justify-center">
-                          <i :class="newSection.icon" class="text-sm"></i>
+                        <div class="flex size-8 items-center justify-center rounded border">
+                          <i :class="newSection.icon" class="text-sm" />
                         </div>
                       </div>
                     </div>
-                    <Button @click="createSection" class="w-full md:w-auto">
-                      <Plus class="w-4 h-4 mr-2" />
+                    <Button class="w-full md:w-auto" @click="createSection">
+                      <Plus class="mr-2 size-4" />
                       {{ $t('btn.add') }}
                     </Button>
                   </div>
@@ -1037,20 +1089,24 @@
                         size="sm"
                         @click="editSection = true; editSections = $_.cloneDeep(sections)"
                       >
-                        <Edit class="w-4 h-4 mr-2" />
+                        <Edit class="mr-2 size-4" />
                         {{ $t('btn.edit') }}
                       </Button>
                     </CardHeader>
                     <CardContent>
                       <div class="space-y-2">
-                        <div v-for="section in sections" :key="section.field" class="flex items-center justify-between p-3 border rounded-lg">
+                        <div v-for="section in sections" :key="section.field" class="flex items-center justify-between rounded-lg border p-3">
                           <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 border rounded flex items-center justify-center">
-                              <i :class="section.icon" class="text-sm"></i>
+                            <div class="flex size-8 items-center justify-center rounded border">
+                              <i :class="section.icon" class="text-sm" />
                             </div>
                             <div>
-                              <div class="font-medium">{{ section.name }}</div>
-                              <div class="text-sm text-muted-foreground">{{ section.field }}</div>
+                              <div class="font-medium">
+                                {{ section.name }}
+                              </div>
+                              <div class="text-sm text-muted-foreground">
+                                {{ section.field }}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1073,9 +1129,9 @@
                         item-key="field"
                       >
                         <template #item="{ element: section, index }">
-                          <div class="flex items-center gap-4 p-4 border rounded-lg mb-4">
-                            <GripVertical class="w-5 h-5 text-muted-foreground cursor-move handle" />
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                          <div class="mb-4 flex items-center gap-4 rounded-lg border p-4">
+                            <GripVertical class="handle size-5 cursor-move text-muted-foreground" />
+                            <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
                                 <Label>{{ $t('name') }}</Label>
                                 <Input v-model="section.name" />
@@ -1094,8 +1150,8 @@
                                     :placeholder="$t('customIcon')"
                                     class="w-32"
                                   />
-                                  <div class="w-8 h-8 border rounded flex items-center justify-center">
-                                    <i :class="section.icon" class="text-sm"></i>
+                                  <div class="flex size-8 items-center justify-center rounded border">
+                                    <i :class="section.icon" class="text-sm" />
                                   </div>
                                 </div>
                               </div>
@@ -1104,7 +1160,7 @@
                                 size="sm"
                                 @click="removeSection(index)"
                               >
-                                <X class="w-4 h-4" />
+                                <X class="size-4" />
                               </Button>
                             </div>
                           </div>
@@ -1125,7 +1181,7 @@
             </CardContent>
             <CardContent v-else>
               <Alert>
-                <AlertCircle class="h-4 w-4" />
+                <AlertCircle class="size-4" />
                 <AlertTitle>{{ $t('noLanguagesAvailable') }}</AlertTitle>
                 <AlertDescription>{{ $t('createAtLeastOneLanguage') }}</AlertDescription>
               </Alert>
@@ -1142,8 +1198,8 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
 import { _ } from 'lodash'
-import { 
-  Plus, Edit, X, GripVertical, AlertCircle, Trash2
+import {
+  Plus, Edit, X, GripVertical, AlertCircle, Trash2,
 } from 'lucide-vue-next'
 
 // Shadcn Components
@@ -1207,12 +1263,12 @@ const sortValueOptions = [
   { label: $t('cvssTemporalScore'), value: 'cvssTemporalScore' },
   { label: $t('cvssEnvironmentalScore'), value: 'cvssEnvironmentalScore' },
   { label: $t('priority'), value: 'priority' },
-  { label: $t('remediationDifficulty'), value: 'remediationComplexity' }
+  { label: $t('remediationDifficulty'), value: 'remediationComplexity' },
 ]
 
 const sortOrderOptions = [
   { label: $t('ascending'), value: 'asc' },
-  { label: $t('descending'), value: 'desc' }
+  { label: $t('descending'), value: 'desc' },
 ]
 
 // Custom Fields
@@ -1227,7 +1283,7 @@ const newCustomField = reactive({
   required: false,
   description: '',
   text: [],
-  options: []
+  options: [],
 })
 
 const cfLocale = ref('')
@@ -1237,7 +1293,7 @@ const cfDisplayOptions = [
   { label: $t('auditGeneral'), value: 'general' },
   { label: $t('auditFinding'), value: 'finding' },
   { label: $t('auditSection'), value: 'section' },
-  { label: $t('vulnerability'), value: 'vulnerability' }
+  { label: $t('vulnerability'), value: 'vulnerability' },
 ]
 
 const cfComponentOptions = [
@@ -1248,7 +1304,7 @@ const cfComponentOptions = [
   { label: $t('radio'), value: 'radio', icon: 'radio_button_checked' },
   { label: $t('select'), value: 'select', icon: 'far fa-caret-square-down' },
   { label: $t('selectMultiple'), value: 'select-multiple', icon: 'filter_none' },
-  { label: $t('space'), value: 'space', icon: 'space_bar' }
+  { label: $t('space'), value: 'space', icon: 'space_bar' },
 ]
 
 // Sections
@@ -1340,7 +1396,7 @@ const createLanguage = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1352,13 +1408,13 @@ const createLanguage = async () => {
     await getLanguages()
     toast({
       title: $t('success'),
-      description: $t('languageCreatedSuccessfully')
+      description: $t('languageCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1370,13 +1426,13 @@ const updateLanguages = async () => {
     editLanguage.value = false
     toast({
       title: $t('success'),
-      description: $t('languagesUpdatedSuccessfully')
+      description: $t('languagesUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1420,7 +1476,7 @@ const createAuditType = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1432,13 +1488,13 @@ const createAuditType = async () => {
     await getAuditTypes()
     toast({
       title: $t('success'),
-      description: $t('auditTypeCreatedSuccessfully')
+      description: $t('auditTypeCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1450,13 +1506,13 @@ const updateAuditTypes = async () => {
     editAuditType.value = false
     toast({
       title: $t('success'),
-      description: $t('auditTypesUpdatedSuccessfully')
+      description: $t('auditTypesUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1474,7 +1530,7 @@ const createVulnType = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1485,13 +1541,13 @@ const createVulnType = async () => {
     await getVulnerabilityTypes()
     toast({
       title: $t('success'),
-      description: $t('vulnerabilityTypeCreatedSuccessfully')
+      description: $t('vulnerabilityTypeCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1503,13 +1559,13 @@ const updateVulnTypes = async () => {
     editVulnType.value = false
     toast({
       title: $t('success'),
-      description: $t('vulnerabilityTypesUpdatedSuccessfully')
+      description: $t('vulnerabilityTypesUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1532,7 +1588,7 @@ const createVulnCat = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1543,13 +1599,13 @@ const createVulnCat = async () => {
     await getVulnerabilityCategories()
     toast({
       title: $t('success'),
-      description: $t('vulnerabilityCategoryCreatedSuccessfully')
+      description: $t('vulnerabilityCategoryCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1561,13 +1617,13 @@ const updateCategories = async () => {
     editCategory.value = false
     toast({
       title: $t('success'),
-      description: $t('vulnerabilityCategoriesUpdatedSuccessfully')
+      description: $t('vulnerabilityCategoriesUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1595,7 +1651,7 @@ const createCustomField = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1603,22 +1659,22 @@ const createCustomField = async () => {
   try {
     newCustomField.position = customFields.value.length
     await DataService.createCustomField(newCustomField)
-    
+
     // Reset form
     newCustomField.label = ''
     newCustomField.fieldType = ''
     newCustomField.options = []
-    
+
     await getCustomFields()
     toast({
       title: $t('success'),
-      description: $t('customFieldCreatedSuccessfully')
+      description: $t('customFieldCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1629,18 +1685,18 @@ const updateCustomFields = async () => {
     customFields.value.forEach(field => {
       field.position = position++
     })
-    
+
     await DataService.updateCustomFields(customFields.value)
     await getCustomFields()
     toast({
       title: $t('success'),
-      description: $t('customFieldsUpdatedSuccessfully')
+      description: $t('customFieldsUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1655,24 +1711,24 @@ const deleteCustomField = async (customField) => {
     await getCustomFields()
     toast({
       title: $t('success'),
-      description: $t('customFieldDeletedSuccessfully', { 
-        name: customField.label, 
-        count: data.data.datas.vulnCount 
-      })
+      description: $t('customFieldDeletedSuccessfully', {
+        name: customField.label,
+        count: data.data.datas.vulnCount,
+      }),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas?.msg || err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
 
 const canDisplayCustomField = (field) => {
   return (
-    (newCustomField.display === field.display || 
-     (newCustomField.display === 'finding' && field.display === 'vulnerability')) &&
+    (newCustomField.display === field.display ||
+      (newCustomField.display === 'finding' && field.display === 'vulnerability')) &&
     (newCustomField.displaySub === field.displaySub || field.displaySub === '')
   )
 }
@@ -1684,9 +1740,9 @@ const canDisplayCustomFields = () => {
 const getFieldValue = (field) => {
   const localeEntry = field.text.find(e => e.locale === cfLocale.value)
   if (!localeEntry) {
-    const newEntry = { 
-      locale: cfLocale.value, 
-      value: field.fieldType === 'checkbox' || field.fieldType === 'select-multiple' ? [] : '' 
+    const newEntry = {
+      locale: cfLocale.value,
+      value: field.fieldType === 'checkbox' || field.fieldType === 'select-multiple' ? [] : '',
     }
     field.text.push(newEntry)
     return newEntry.value
@@ -1706,19 +1762,19 @@ const setFieldValue = (field, newValue) => {
 const toggleMultiSelectOption = (field, optionValue) => {
   const currentValue = getFieldValue(field) || []
   const index = currentValue.indexOf(optionValue)
-  
+
   if (index === -1) {
     currentValue.push(optionValue)
   } else {
     currentValue.splice(index, 1)
   }
-  
+
   setFieldValue(field, currentValue)
 }
 
 const addCustomFieldOption = (options) => {
   if (!newCustomOption.value) return
-  
+
   options.push({ locale: cfLocale.value, value: newCustomOption.value })
   newCustomOption.value = ''
 }
@@ -1736,7 +1792,7 @@ const createSection = async () => {
     toast({
       title: $t('error'),
       description: $t('fillAllFields'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
     return
   }
@@ -1749,13 +1805,13 @@ const createSection = async () => {
     await getSections()
     toast({
       title: $t('success'),
-      description: $t('sectionCreatedSuccessfully')
+      description: $t('sectionCreatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }
@@ -1767,13 +1823,13 @@ const updateSections = async () => {
     editSection.value = false
     toast({
       title: $t('success'),
-      description: $t('sectionsUpdatedSuccessfully')
+      description: $t('sectionsUpdatedSuccessfully'),
     })
   } catch (err) {
     toast({
       title: $t('error'),
       description: err.response?.data?.datas || $t('errorOccurred'),
-      variant: 'destructive'
+      variant: 'destructive',
     })
   }
 }

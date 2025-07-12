@@ -1,53 +1,39 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {
-    https: {
-      key: path.resolve(__dirname, 'ssl/server.key'),
-      cert: path.resolve(__dirname, 'ssl/server.cert')
-    },
-    host: "0.0.0.0",
-    port: 8081,
-    proxy: {
-      '/api': {
-        target: 'https://pwndoc-ng-backend:5252',
-        changeOrigin: true,
-        secure: false
-      }
-    }
+    port: 3000,
+    host: true,
   },
   build: {
-    target: 'es2015',
     outDir: 'dist',
-    assetsDir: 'assets',
     sourcemap: true,
     rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['vue', 'vue-router'],
-          ui: ['@tiptap/core', '@tiptap/vue-3'],
-        },
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+      },
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      stylus: {
+        imports: [
+          fileURLToPath(new URL('./src/css/quasar.variables.styl', import.meta.url)),
+        ],
       },
     },
   },
   define: {
-    // Preserve environment variables from Quasar config
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: false,
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@import "@/styles/globals.css";`
-      }
-    }
-  }
-}) 
+})

@@ -17,7 +17,7 @@
         )"
         :data-state="modelValue ? 'open' : 'closed'"
       />
-      
+
       <!-- Dialog Content -->
       <div
         ref="dialogRef"
@@ -80,7 +80,6 @@
           <slot name="header" />
           <button
             v-if="showCloseButton"
-            @click="handleClose"
             :class="cn(
               'absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity',
               'hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
@@ -88,9 +87,10 @@
               closeButtonClass
             )"
             :disabled="!closable"
+            @click="handleClose"
           >
             <svg
-              class="h-4 w-4"
+              class="size-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -106,7 +106,7 @@
             <span class="sr-only">Close</span>
           </button>
         </div>
-        
+
         <!-- Content -->
         <div
           :class="cn(
@@ -120,7 +120,7 @@
         >
           <slot />
         </div>
-        
+
         <!-- Footer -->
         <div
           v-if="$slots.footer"
@@ -211,16 +211,16 @@ const manageFocus = async () => {
   if (props.modelValue) {
     // Store the previously focused element
     previouslyFocusedElement.value = document.activeElement as HTMLElement
-    
+
     // Wait for the dialog to be rendered
     await nextTick()
-    
+
     // Focus the dialog content
     if (dialogRef.value) {
       const focusableElement = dialogRef.value.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       ) as HTMLElement
-      
+
       if (focusableElement) {
         focusableElement.focus()
       } else {
@@ -242,9 +242,9 @@ const trapFocus = (event: KeyboardEvent) => {
 
   if (event.key === 'Tab') {
     const focusableElements = dialogRef.value.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     )
-    
+
     const firstFocusable = focusableElements[0] as HTMLElement
     const lastFocusable = focusableElements[focusableElements.length - 1] as HTMLElement
 
@@ -273,7 +273,7 @@ watch(
       manageFocus()
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // Add/remove event listeners
@@ -388,4 +388,4 @@ defineExpose({
 .slide-out-to-top-48 {
   animation: dialog-slide-out-to-top 0.2s ease-out;
 }
-</style> 
+</style>

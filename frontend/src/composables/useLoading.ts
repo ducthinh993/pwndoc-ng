@@ -49,4 +49,4 @@ export const useLoading = () => {
 }
 
 // Global loading state for use across components
-export const globalLoading = useLoading() 
+export const globalLoading = useLoading()

@@ -9,7 +9,7 @@
         <Button
           v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
           variant="default"
-          class="bg-green-600 hover:bg-green-700 text-white"
+          class="bg-green-600 text-white hover:bg-green-700"
           @click="updateAuditGeneral"
         >
           {{ $t('btn.save') }} (ctrl+s)
@@ -18,14 +18,14 @@
     </Breadcrumb>
 
     <div class="grid grid-cols-1 gap-6 p-6">
-      <div class="max-w-4xl mx-auto w-full">
+      <div class="mx-auto w-full max-w-4xl">
         <Card>
           <!-- Basic Information Section -->
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
           </CardHeader>
           <CardContent class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <Label>{{ $t('name') }} *</Label>
                 <Input
@@ -34,8 +34,8 @@
                   required
                 />
               </div>
-              <div></div>
-              
+              <div />
+
               <div>
                 <Label>{{ $t('language') }}</Label>
                 <Select v-model="audit.language" :disabled="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT">
@@ -76,7 +76,7 @@
 
           <!-- Company and Client Section -->
           <CardContent class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <Label>{{ $t('company') }}</Label>
                 <div class="relative">
@@ -89,7 +89,7 @@
                   />
                   <div
                     v-if="showCompanyDropdown && filteredCompanies.length > 0"
-                    class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-auto"
+                    class="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-lg"
                   >
                     <button
                       v-for="company in filteredCompanies"
@@ -125,7 +125,7 @@
                   />
                   <div
                     v-if="showClientDropdown && filteredClients.length > 0"
-                    class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-auto"
+                    class="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-lg"
                   >
                     <button
                       v-for="client in filteredClients"
@@ -150,9 +150,9 @@
               </div>
 
               <!-- Reviewers Section -->
-              <div v-if="$settings.reviews.enabled" class="md:col-span-2">
+              <div v-if="settings.reviews.enabled" class="md:col-span-2">
                 <Label>{{ $t('reviewers') }}</Label>
-                <div class="flex flex-wrap gap-2 mb-2">
+                <div class="mb-2 flex flex-wrap gap-2">
                   <Badge
                     v-for="reviewer in audit.reviewers"
                     :key="reviewer.username"
@@ -193,7 +193,7 @@
               <!-- Collaborators Section -->
               <div class="md:col-span-2">
                 <Label>{{ $t('collaborators') }}</Label>
-                <div class="flex flex-wrap gap-2 mb-2">
+                <div class="mb-2 flex flex-wrap gap-2">
                   <Badge
                     variant="secondary"
                     class="bg-blue-gray-500 text-white"
@@ -241,7 +241,7 @@
 
           <!-- Dates Section -->
           <CardContent class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
                 <Label>{{ $t('startDate') }}</Label>
                 <Popover>
@@ -252,7 +252,7 @@
                       :class="{ 'text-muted-foreground': !audit.date_start }"
                       :disabled="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT"
                     >
-                      <CalendarIcon class="mr-2 h-4 w-4" />
+                      <CalendarIcon class="mr-2 size-4" />
                       {{ audit.date_start || 'Pick a date' }}
                     </Button>
                   </PopoverTrigger>
@@ -276,7 +276,7 @@
                       :class="{ 'text-muted-foreground': !audit.date_end }"
                       :disabled="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT"
                     >
-                      <CalendarIcon class="mr-2 h-4 w-4" />
+                      <CalendarIcon class="mr-2 size-4" />
                       {{ audit.date_end || 'Pick a date' }}
                     </Button>
                   </PopoverTrigger>
@@ -300,7 +300,7 @@
                       :class="{ 'text-muted-foreground': !audit.date }"
                       :disabled="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT"
                     >
-                      <CalendarIcon class="mr-2 h-4 w-4" />
+                      <CalendarIcon class="mr-2 size-4" />
                       {{ audit.date || 'Pick a date' }}
                     </Button>
                   </PopoverTrigger>
@@ -319,8 +319,8 @@
           <!-- Scope Section -->
           <CardContent>
             <TextareaArray
-              :label="$t('auditScope')"
               v-model="audit.scope"
+              :label="$t('auditScope')"
               :no-empty-line="true"
               :readonly="frontEndAuditState !== AUDIT_VIEW_STATE.EDIT"
             />
@@ -350,20 +350,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, nextTick, computed, onMounted, onUnmounted, watch } from 'vue'
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from '@/components/ui/toast/use-toast'
-
-// UI Components
+import { useToast } from '@/composables/useToast'
+import { useSettings } from '@/composables/useSettings'
 import Breadcrumb from '@/components/breadcrumb.vue'
 import Button from '@/components/ui/button.vue'
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/card.vue'
+import Card from '@/components/ui/card.vue'
 import Input from '@/components/ui/input.vue'
 import Label from '@/components/ui/label.vue'
-import Select, { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.vue'
+import Select from '@/components/ui/select.vue'
 import Badge from '@/components/ui/badge.vue'
-import Popover, { PopoverContent, PopoverTrigger } from '@/components/ui/popover.vue'
+import Popover from '@/components/ui/popover.vue'
 import Calendar from '@/components/ui/calendar.vue'
 import TextareaArray from '@/components/textarea-array.vue'
 import CustomFields from '@/components/custom-fields.vue'
@@ -388,363 +387,325 @@ const CalendarIcon = {
       <line x1="8" y1="2" x2="8" y2="6"/>
       <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
-  `
+  `,
 }
 
-export default defineComponent({
-  name: 'AuditGeneralShadcn',
-  components: {
-    Breadcrumb,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    Input,
-    Label,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-    Badge,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Calendar,
-    TextareaArray,
-    CustomFields,
-    Collapsible,
-    CalendarIcon,
-  },
-  props: {
-    frontEndAuditState: {
-      type: Number,
-      required: true
-    },
-    parentState: {
-      type: String,
-      required: true
-    },
-    parentApprovals: {
-      type: Array,
-      required: true
-    }
-  },
-  setup(props) {
-    const route = useRoute()
-    const router = useRouter()
-    const { toast } = useToast()
+interface Language {
+  locale: string
+  language: string
+}
 
-    // Reactive data
-    const auditId = ref<string | null>(null)
-    const audit = ref({
-      creator: {},
-      name: '',
-      auditType: '',
-      client: {},
-      company: {},
-      collaborators: [],
-      reviewers: [],
-      date: '',
-      date_start: '',
-      date_end: '',
-      scope: [],
-      language: '',
-      template: '',
-      customFields: [],
-      approvals: []
-    })
-    const auditOrig = ref({})
+interface Template {
+  _id: string
+  name: string
+}
 
-    // Lists
-    const clients = ref([])
-    const companies = ref([])
-    const collaborators = ref([])
-    const reviewers = ref([])
-    const templates = ref([])
-    const languages = ref([])
-    const auditTypes = ref([])
-    const customFields = ref([])
+interface Company {
+  _id: string
+  name: string
+}
 
-    // Search states
-    const companySearchInput = ref('')
-    const clientSearchInput = ref('')
-    const showCompanyDropdown = ref(false)
-    const showClientDropdown = ref(false)
-    const filteredCompanies = ref([])
-    const filteredClients = ref([])
-    const selectClientsFromCompany = ref([])
+interface Client {
+  email: string
+  company?: Company
+}
 
-    // Constants
-    const AUDIT_VIEW_STATE = Utils.AUDIT_VIEW_STATE
+interface User {
+  _id?: string
+  username: string
+  firstname: string
+  lastname: string
+}
 
-    // Computed properties
-    const availableReviewers = computed(() => {
-      const currentReviewerIds = audit.value.reviewers.map(r => r.username)
-      return reviewers.value.filter(r => !currentReviewerIds.includes(r.username))
-    })
+interface Audit {
+  name: string
+  language: string
+  template: string
+  auditType?: string
+  date_start?: string
+  date_end?: string
+  date?: string
+  scope?: string[]
+  customFields?: any[]
+  company: Company | null
+  client: Client | null
+  creator: User | null
+  reviewers: User[]
+  collaborators: User[]
+}
 
-    const availableCollaborators = computed(() => {
-      const currentCollaboratorIds = audit.value.collaborators.map(c => c.username)
-      return collaborators.value.filter(c => !currentCollaboratorIds.includes(c.username))
-    })
+const props = defineProps<{
+  frontEndAuditState: number
+  parentState: string
+  parentApprovals: any[]
+}>()
 
-    // Methods
-    const handleKeydown = (e: KeyboardEvent) => {
-      if ((window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) && e.keyCode === 83) {
-        e.preventDefault()
-        if (props.frontEndAuditState === AUDIT_VIEW_STATE.EDIT) {
-          updateAuditGeneral()
-        }
-      }
-    }
+const route = useRoute()
+const router = useRouter()
+const { toast } = useToast()
+const settings = useSettings()
 
-    const updateAuditGeneral = async () => {
-      try {
-        await AuditService.updateAuditGeneral(auditId.value, audit.value)
-        auditOrig.value = JSON.parse(JSON.stringify(audit.value))
-        toast({
-          title: 'Success',
-          description: 'Audit updated successfully',
-        })
-      } catch (err: any) {
-        toast({
-          title: 'Error',
-          description: err.response?.data?.datas || 'Failed to update audit',
-          variant: 'destructive',
-        })
-      }
-    }
+const auditId = ref<string | null>(null)
+const audit = ref<Audit>({
+  name: '',
+  language: '',
+  template: '',
+  company: null,
+  client: null,
+  creator: null,
+  reviewers: [],
+  collaborators: [],
+})
+const auditOrig = ref({})
 
-    const getAuditGeneral = async () => {
-      try {
-        const customFieldsData = await DataService.getCustomFields()
-        customFields.value = customFieldsData.data.datas
-        
-        const auditData = await AuditService.getAuditGeneral(auditId.value)
-        audit.value = auditData.data.datas
-        auditOrig.value = JSON.parse(JSON.stringify(audit.value))
-        
-        await Promise.all([
-          getCollaborators(),
-          getReviewers(),
-          getClients()
-        ])
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const clients = ref<Client[]>([])
+const companies = ref<Company[]>([])
+const collaborators = ref<User[]>([])
+const reviewers = ref<User[]>([])
+const templates = ref<Template[]>([])
+const languages = ref<Language[]>([])
+const auditTypes = ref([])
+const customFields = ref([])
 
-    const getClients = async () => {
-      try {
-        const data = await ClientService.getClients()
-        clients.value = data.data.datas
-        await getCompanies()
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const companySearchInput = ref('')
+const clientSearchInput = ref('')
+const showCompanyDropdown = ref(false)
+const showClientDropdown = ref(false)
+const filteredCompanies = ref<Company[]>([])
+const filteredClients = ref<Client[]>([])
+const selectClientsFromCompany = ref<Client[]>([])
 
-    const getCompanies = async () => {
-      try {
-        const data = await CompanyService.getCompanies()
-        companies.value = data.data.datas
-        filteredCompanies.value = companies.value
-        filterClients('init')
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const AUDIT_VIEW_STATE = Utils.AUDIT_VIEW_STATE
 
-    const getCollaborators = async () => {
-      try {
-        const data = await CollabService.getCollabs()
-        const creatorId = audit.value.creator?._id || ''
-        collaborators.value = data.data.datas.filter((e: any) => e._id !== creatorId)
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const availableReviewers = computed(() => {
+  const currentReviewerIds = audit.value.reviewers.map(r => r.username)
+  return reviewers.value.filter(r => !currentReviewerIds.includes(r.username))
+})
 
-    const getReviewers = async () => {
-      try {
-        const data = await ReviewerService.getReviewers()
-        const creatorId = audit.value.creator?._id || ''
-        reviewers.value = data.data.datas.filter((e: any) => e._id !== creatorId)
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const availableCollaborators = computed(() => {
+  const currentCollaboratorIds = audit.value.collaborators.map(c => c.username)
+  return collaborators.value.filter(c => !currentCollaboratorIds.includes(c.username))
+})
 
-    const getTemplates = async () => {
-      try {
-        const data = await TemplateService.getTemplates()
-        templates.value = data.data.datas
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    const getLanguages = async () => {
-      try {
-        const data = await DataService.getLanguages()
-        languages.value = data.data.datas
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    const getAuditTypes = async () => {
-      try {
-        const data = await DataService.getAuditTypes()
-        auditTypes.value = data.data.datas
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    const filterClients = (step?: string) => {
-      if (audit.value.company?.name) {
-        selectClientsFromCompany.value = clients.value.filter((client: any) => 
-          client.company?.name === audit.value.company.name
-        )
-      } else {
-        selectClientsFromCompany.value = [...clients.value]
-      }
-      filteredClients.value = selectClientsFromCompany.value
-    }
-
-    const selectCompany = (company: any) => {
-      audit.value.company = company
-      companySearchInput.value = company.name
-      showCompanyDropdown.value = false
-      filterClients()
-    }
-
-    const selectClient = (client: any) => {
-      audit.value.client = client
-      clientSearchInput.value = client.email
-      showClientDropdown.value = false
-      
-      if (client.company) {
-        const company = companies.value.find((c: any) => c.name === client.company.name)
-        if (company) {
-          audit.value.company = company
-          companySearchInput.value = company.name
-        }
-      }
-    }
-
-    const clearCompany = () => {
-      audit.value.company = null
-      companySearchInput.value = ''
-      filterClients()
-    }
-
-    const clearClient = () => {
-      audit.value.client = null
-      clientSearchInput.value = ''
-    }
-
-    const filterSelectCompany = () => {
-      const needle = companySearchInput.value.toLowerCase()
-      filteredCompanies.value = companies.value.filter((company: any) =>
-        company.name.toLowerCase().includes(needle)
-      )
-    }
-
-    const filterSelectClient = () => {
-      const needle = clientSearchInput.value.toLowerCase()
-      filteredClients.value = selectClientsFromCompany.value.filter((client: any) =>
-        client.email.toLowerCase().includes(needle)
-      )
-    }
-
-    const addReviewer = (username: string) => {
-      const reviewer = reviewers.value.find((r: any) => r.username === username)
-      if (reviewer && !audit.value.reviewers.find((r: any) => r.username === username)) {
-        audit.value.reviewers.push(reviewer)
-      }
-    }
-
-    const removeReviewer = (reviewer: any) => {
-      const index = audit.value.reviewers.findIndex((r: any) => r.username === reviewer.username)
-      if (index > -1) {
-        audit.value.reviewers.splice(index, 1)
-      }
-    }
-
-    const addCollaborator = (username: string) => {
-      const collaborator = collaborators.value.find((c: any) => c.username === username)
-      if (collaborator && !audit.value.collaborators.find((c: any) => c.username === username)) {
-        audit.value.collaborators.push(collaborator)
-      }
-    }
-
-    const removeCollaborator = (collaborator: any) => {
-      const index = audit.value.collaborators.findIndex((c: any) => c.username === collaborator.username)
-      if (index > -1) {
-        audit.value.collaborators.splice(index, 1)
-      }
-    }
-
-    // Lifecycle
-    onMounted(() => {
-      auditId.value = route.params.auditId as string
-      getAuditGeneral()
-      getTemplates()
-      getLanguages()
-      getAuditTypes()
-      
-      document.addEventListener('keydown', handleKeydown)
-    })
-
-    onUnmounted(() => {
-      document.removeEventListener('keydown', handleKeydown)
-    })
-
-    // Watch for company changes
-    watch(() => audit.value.company, () => {
-      filterClients()
-    }, { deep: true })
-
-    return {
-      audit,
-      auditOrig,
-      clients,
-      companies,
-      collaborators,
-      reviewers,
-      templates,
-      languages,
-      auditTypes,
-      customFields,
-      companySearchInput,
-      clientSearchInput,
-      showCompanyDropdown,
-      showClientDropdown,
-      filteredCompanies,
-      filteredClients,
-      availableReviewers,
-      availableCollaborators,
-      AUDIT_VIEW_STATE,
-      updateAuditGeneral,
-      selectCompany,
-      selectClient,
-      clearCompany,
-      clearClient,
-      filterSelectCompany,
-      filterSelectClient,
-      addReviewer,
-      removeReviewer,
-      addCollaborator,
-      removeCollaborator,
+const handleKeydown = (e: KeyboardEvent) => {
+  if ((window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) && e.keyCode === 83) {
+    e.preventDefault()
+    if (props.frontEndAuditState === AUDIT_VIEW_STATE.EDIT) {
+      updateAuditGeneral()
     }
   }
+}
+
+const updateAuditGeneral = async () => {
+  try {
+    await AuditService.updateAuditGeneral(auditId.value, audit.value)
+    auditOrig.value = JSON.parse(JSON.stringify(audit.value))
+    toast({
+      title: 'Success',
+      message: 'Audit updated successfully',
+      type: 'success',
+    })
+  } catch (err: any) {
+    toast({
+      title: 'Error',
+      message: err.response?.data?.datas || 'Failed to update audit',
+      type: 'error',
+    })
+  }
+}
+
+const getAuditGeneral = async () => {
+  try {
+    const customFieldsData = await DataService.getCustomFields()
+    customFields.value = customFieldsData.data.datas
+
+    const auditData = await AuditService.getAuditGeneral(auditId.value)
+    audit.value = auditData.data.datas
+    auditOrig.value = JSON.parse(JSON.stringify(audit.value))
+
+    await Promise.all([
+      getCollaborators(),
+      getReviewers(),
+      getClients(),
+    ])
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getClients = async () => {
+  try {
+    const data = await ClientService.getClients()
+    clients.value = data.data.datas
+    await getCompanies()
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getCompanies = async () => {
+  try {
+    const data = await CompanyService.getCompanies()
+    companies.value = data.data.datas
+    filteredCompanies.value = companies.value
+    filterClients('init')
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getCollaborators = async () => {
+  try {
+    const data = await CollabService.getCollabs()
+    const creatorId = audit.value.creator?._id || ''
+    collaborators.value = data.data.datas.filter((e: any) => e._id !== creatorId)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getReviewers = async () => {
+  try {
+    const data = await ReviewerService.getReviewers()
+    const creatorId = audit.value.creator?._id || ''
+    reviewers.value = data.data.datas.filter((e: any) => e._id !== creatorId)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getTemplates = async () => {
+  try {
+    const data = await TemplateService.getTemplates()
+    templates.value = data.data.datas
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getLanguages = async () => {
+  try {
+    const data = await DataService.getLanguages()
+    languages.value = data.data.datas
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getAuditTypes = async () => {
+  try {
+    const data = await DataService.getAuditTypes()
+    auditTypes.value = data.data.datas
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const filterClients = (step?: string) => {
+  if (audit.value.company?.name) {
+    selectClientsFromCompany.value = clients.value.filter((client: Client) =>
+      client.company?.name === audit.value.company?.name,
+    )
+  } else {
+    selectClientsFromCompany.value = [...clients.value]
+  }
+  filteredClients.value = selectClientsFromCompany.value
+}
+
+const selectCompany = (company: Company) => {
+  audit.value.company = company
+  companySearchInput.value = company.name
+  showCompanyDropdown.value = false
+  filterClients()
+}
+
+const selectClient = (client: Client) => {
+  audit.value.client = client
+  clientSearchInput.value = client.email
+  showClientDropdown.value = false
+
+  if (client.company) {
+    const company = companies.value.find((c: Company) => c.name === client.company?.name)
+    if (company) {
+      audit.value.company = company
+      companySearchInput.value = company.name
+    }
+  }
+}
+
+const clearCompany = () => {
+  audit.value.company = null
+  companySearchInput.value = ''
+  filterClients()
+}
+
+const clearClient = () => {
+  audit.value.client = null
+  clientSearchInput.value = ''
+}
+
+const filterSelectCompany = () => {
+  const needle = companySearchInput.value.toLowerCase()
+  filteredCompanies.value = companies.value.filter((company: Company) =>
+    company.name.toLowerCase().includes(needle),
+  )
+}
+
+const filterSelectClient = () => {
+  const needle = clientSearchInput.value.toLowerCase()
+  filteredClients.value = selectClientsFromCompany.value.filter((client: Client) =>
+    client.email.toLowerCase().includes(needle),
+  )
+}
+
+const addReviewer = (username: string) => {
+  const reviewer = reviewers.value.find((r: User) => r.username === username)
+  if (reviewer && !audit.value.reviewers.find((r: User) => r.username === username)) {
+    audit.value.reviewers.push(reviewer)
+  }
+}
+
+const removeReviewer = (reviewer: User) => {
+  const index = audit.value.reviewers.findIndex((r: User) => r.username === reviewer.username)
+  if (index > -1) {
+    audit.value.reviewers.splice(index, 1)
+  }
+}
+
+const addCollaborator = (username: string) => {
+  const collaborator = collaborators.value.find((c: User) => c.username === username)
+  if (collaborator && !audit.value.collaborators.find((c: User) => c.username === username)) {
+    audit.value.collaborators.push(collaborator)
+  }
+}
+
+const removeCollaborator = (collaborator: User) => {
+  const index = audit.value.collaborators.findIndex((c: User) => c.username === collaborator.username)
+  if (index > -1) {
+    audit.value.collaborators.splice(index, 1)
+  }
+}
+
+onMounted(() => {
+  auditId.value = route.params.auditId as string
+  getAuditGeneral()
+  getTemplates()
+  getLanguages()
+  getAuditTypes()
+
+  document.addEventListener('keydown', handleKeydown)
 })
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
+
+watch(() => audit.value.company, () => {
+  filterClients()
+}, { deep: true })
+
 </script>
 
 <style scoped>
 /* Additional custom styles if needed */
-</style> 
+</style>

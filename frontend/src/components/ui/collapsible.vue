@@ -63,7 +63,7 @@ const ChevronDownIcon = {
     >
       <path d="m6 9 6 6 6-6"/>
     </svg>
-  `
+  `,
 }
 
 interface Props {
@@ -106,4 +106,4 @@ defineExpose({
   open: () => { isOpen.value = true },
   close: () => { isOpen.value = false },
 })
-</script> 
+</script>
