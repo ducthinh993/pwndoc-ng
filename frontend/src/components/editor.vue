@@ -174,7 +174,7 @@
                   :class="{ 'bg-accent': editor.isActive('underline') }"
                   @click="editor.chain().focus().toggleUnderline().run()"
                 >
-                  <Underline class="h-4 w-4" />
+                  <UnderlineIcon class="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -212,7 +212,7 @@
                   :class="{ 'bg-accent': editor.isActive('link') }"
                   @click="setLink"
                 >
-                  <Link class="h-4 w-4" />
+                  <LinkIcon class="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -352,7 +352,7 @@
                   class="h-8 w-8 p-0"
                   @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
                 >
-                  <Table class="h-4 w-4" />
+                  <TableIcon class="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -651,7 +651,7 @@
         class="h-8 w-8 p-0"
         @click="editor.isActive('link') ? editor.chain().focus().unsetLink().run() : setLink()"
       >
-        <component :is="editor.isActive('link') ? Unlink : Link" class="h-4 w-4" />
+                        <component :is="editor.isActive('link') ? Unlink : LinkIcon" class="h-4 w-4" />
       </Button>
     </bubble-menu>
     
@@ -732,18 +732,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import {
   Bold,
   Italic,
-  Underline,
+  Underline as UnderlineIcon,
   Strikethrough,
   Code,
   Terminal,
   List,
   ListOrdered,
-  Link,
+  Link as LinkIcon,
   Unlink,
   Highlighter,
   ImageIcon,
   FileText,
-  Table,
+  Table as TableIcon,
   Plus,
   RowsIcon,
   Merge,

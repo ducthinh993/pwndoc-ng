@@ -517,13 +517,13 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingSpinner } from '@/components/ui/loading'
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/vue/24/outline'
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  ChevronUp as ChevronUpIcon,
+  ChevronDown as ChevronDownIcon,
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon,
+} from 'lucide-vue-next'
 
 import ClientService from '@/services/client'
 import CompanyService from '@/services/company'

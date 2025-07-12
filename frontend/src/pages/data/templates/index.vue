@@ -445,17 +445,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/ui/loading'
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  PencilIcon,
-  TrashIcon,
-  DocumentIcon,
-  CloudArrowUpIcon,
-  ArrowDownTrayIcon,
-  XMarkIcon,
-} from '@heroicons/vue/24/outline'
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  ChevronUp as ChevronUpIcon,
+  ChevronDown as ChevronDownIcon,
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon,
+  FileText as DocumentIcon,
+  Upload as CloudArrowUpIcon,
+  Download as ArrowDownTrayIcon,
+  X as XMarkIcon,
+} from 'lucide-vue-next'
 
 import TemplateService from '@/services/template'
 import UserService from '@/services/user'

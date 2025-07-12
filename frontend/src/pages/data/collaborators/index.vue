@@ -543,12 +543,12 @@ import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/ui/loading'
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  PencilIcon,
-} from '@heroicons/vue/24/outline'
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  ChevronUp as ChevronUpIcon,
+  ChevronDown as ChevronDownIcon,
+  Pencil as PencilIcon,
+} from 'lucide-vue-next'
 
 import CollabService from '@/services/collaborator'
 import UserService from '@/services/user'

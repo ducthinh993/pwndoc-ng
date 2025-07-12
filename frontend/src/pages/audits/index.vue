@@ -7,7 +7,7 @@
 <script>
 import { defineComponent } from 'vue'
 
-import Breadcrumb from 'components/breadcrumb'
+import Breadcrumb from '@/components/breadcrumb.vue'
 
 export default defineComponent({
   components: {

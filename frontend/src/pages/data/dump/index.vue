@@ -338,10 +338,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { LoadingSpinner } from '@/components/ui/loading'
 import {
-  DocumentArrowUpIcon,
-  DocumentArrowDownIcon,
-  TrashIcon,
-} from '@heroicons/vue/24/outline'
+  Upload as DocumentArrowUpIcon,
+  Download as DocumentArrowDownIcon,
+  Trash2 as TrashIcon,
+} from 'lucide-vue-next'
 
 import VulnerabilityService from '@/services/vulnerability'
 import CompanyService from '@/services/company'
