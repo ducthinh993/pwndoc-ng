@@ -1,0 +1,654 @@
+<template>
+  <div>
+    <!-- Breadcrumb Navigation -->
+    <breadcrumb
+      :title="$t('auditCharts')"
+      :state="parentState"
+      :approvals="parentApprovals"
+      buttons
+    >
+      <template v-slot:buttons>
+        <q-btn-group>
+          <q-btn 
+            :outline="selectedView !== 'all'"
+            :color="selectedView === 'all' ? 'primary' : 'grey-6'"
+            :label="$t('allCharts')"
+            @click="changeView('all')"
+            no-caps
+          />
+          <q-btn 
+            :outline="selectedView !== 'severity'"
+            :color="selectedView === 'severity' ? 'primary' : 'grey-6'"
+            :label="$t('severityCharts')"
+            @click="changeView('severity')"
+            no-caps
+          />
+          <q-btn 
+            :outline="selectedView !== 'category'"
+            :color="selectedView === 'category' ? 'primary' : 'grey-6'"
+            :label="$t('categoryCharts')"
+            @click="changeView('category')"
+            no-caps
+          />
+        </q-btn-group>
+        
+        <q-btn 
+          flat
+          round
+          icon="refresh"
+          @click="refreshAllCharts"
+          :loading="isLoading"
+          class="q-ml-sm"
+        >
+          <q-tooltip>{{$t('refreshAllCharts')}}</q-tooltip>
+        </q-btn>
+      </template>
+    </breadcrumb>
+
+    <!-- Main Content -->
+    <div class="row q-col-gutter-md q-pa-md">
+      <div class="col-md-8 offset-md-2 col-12">
+        
+        <!-- All Charts View -->
+        <div v-if="showAllCharts">
+          
+          <!-- CVSS Severity Charts Section -->
+          <q-card class="q-mb-xl">
+            <q-card-section>
+              <div class="text-h6 text-grey-8 q-mb-md">
+                <q-icon name="security" class="q-mr-sm" />
+                {{$t('vulnerabilitySeverityDistribution')}}
+              </div>
+              
+              <div class="row q-col-gutter-md">
+                <!-- Pie Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('severityDistributionPie')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('pentestFindings')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('severity-pie')"
+                            :disable="loading.severity"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('severity')"
+                            :loading="loading.severity"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading State -->
+                      <div v-if="loading.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      
+                      <!-- Error State -->
+                      <div v-else-if="errors.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadSeverityData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      
+                      <!-- Chart Content -->
+                      <div v-else style="height: 400px;">
+                        <pie-chart
+                          :chart-data="severityPieData"
+                          :chart-options="getPieChartOptions()"
+                          chart-id="severity-pie-chart"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+                
+                <!-- Bar Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('severityDistributionBar')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('pentestFindings')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('severity-bar')"
+                            :disable="loading.severity"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('severity')"
+                            :loading="loading.severity"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading State -->
+                      <div v-if="loading.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      
+                      <!-- Error State -->
+                      <div v-else-if="errors.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadSeverityData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      
+                      <!-- Chart Content -->
+                      <div v-else style="height: 400px;">
+                        <bar-chart
+                          :chart-data="severityBarData"
+                          :chart-options="getBarChartOptions()"
+                          chart-id="severity-bar-chart"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+          
+          <!-- Category Distribution Section -->
+          <q-card>
+            <q-card-section>
+              <div class="text-h6 text-grey-8 q-mb-md">
+                <q-icon name="category" class="q-mr-sm" />
+                {{$t('categoryDistribution')}}
+              </div>
+              
+              <div class="row q-col-gutter-md">
+                <!-- Category Pie Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('vulnerabilityCategories')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('category')"
+                            :disable="loading.category"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('category')"
+                            :loading="loading.category"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading State -->
+                      <div v-if="loading.category" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      
+                      <!-- Error State -->
+                      <div v-else-if="errors.category" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadCategoryData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      
+                      <!-- Chart Content -->
+                      <div v-else style="height: 350px;">
+                        <pie-chart
+                          :chart-data="categoryChartData"
+                          :chart-options="getPieChartOptions()"
+                          chart-id="category-pie-chart"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+                
+                <!-- Type Bar Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('vulnerabilityTypes')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('type')"
+                            :disable="loading.type"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('type')"
+                            :loading="loading.type"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading State -->
+                      <div v-if="loading.type" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      
+                      <!-- Error State -->
+                      <div v-else-if="errors.type" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadTypeData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      
+                      <!-- Chart Content -->
+                      <div v-else style="height: 350px;">
+                        <bar-chart
+                          :chart-data="typeChartData"
+                          :chart-options="getBarChartOptions()"
+                          chart-id="type-bar-chart"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+          
+        </div>
+        
+        <!-- Severity Only View -->
+        <div v-else-if="showSeverityOnly">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6 text-grey-8 q-mb-md">
+                <q-icon name="security" class="q-mr-sm" />
+                {{$t('vulnerabilitySeverityDistribution')}} - {{$t('detailedView')}}
+              </div>
+              
+              <div class="row q-col-gutter-lg">
+                <!-- Detailed Pie Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('severityDistributionPie')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('pentestFindings')}} - {{$t('detailedView')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('severity-pie')"
+                            :disable="loading.severity"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('severity')"
+                            :loading="loading.severity"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading/Error/Chart Content -->
+                      <div v-if="loading.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      <div v-else-if="errors.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadSeverityData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      <div v-else style="height: 450px;">
+                        <pie-chart
+                          :chart-data="severityPieData"
+                          :chart-options="getPieChartOptions()"
+                          chart-id="severity-pie-detailed"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+                
+                <!-- Detailed Bar Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('severityDistributionBar')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('pentestFindings')}} - {{$t('detailedView')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('severity-bar')"
+                            :disable="loading.severity"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('severity')"
+                            :loading="loading.severity"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading/Error/Chart Content -->
+                      <div v-if="loading.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      <div v-else-if="errors.severity" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadSeverityData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      <div v-else style="height: 450px;">
+                        <bar-chart
+                          :chart-data="severityBarData"
+                          :chart-options="getBarChartOptions()"
+                          chart-id="severity-bar-detailed"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        
+        <!-- Category Only View -->
+        <div v-else-if="showCategoryOnly">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6 text-grey-8 q-mb-md">
+                <q-icon name="category" class="q-mr-sm" />
+                {{$t('categoryDistribution')}} - {{$t('detailedView')}}
+              </div>
+              
+              <div class="row q-col-gutter-lg">
+                <!-- Detailed Category Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('vulnerabilityCategories')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('detailedView')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('category')"
+                            :disable="loading.category"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('category')"
+                            :loading="loading.category"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading/Error/Chart Content -->
+                      <div v-if="loading.category" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      <div v-else-if="errors.category" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadCategoryData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      <div v-else style="height: 450px;">
+                        <pie-chart
+                          :chart-data="categoryChartData"
+                          :chart-options="getPieChartOptions()"
+                          chart-id="category-pie-detailed"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+                
+                <!-- Detailed Type Chart -->
+                <div class="col-lg-6 col-md-12">
+                  <q-card flat bordered>
+                    <q-card-section>
+                      <div class="row items-center justify-between q-mb-md">
+                        <div class="col-auto">
+                          <div class="text-subtitle1 text-weight-medium">{{$t('vulnerabilityTypes')}}</div>
+                          <div class="text-caption text-grey-6">{{$t('detailedView')}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="download" 
+                            size="sm" 
+                            @click="exportChart('type')"
+                            :disable="loading.type"
+                          >
+                            <q-tooltip>{{$t('exportChart')}}</q-tooltip>
+                          </q-btn>
+                          <q-btn 
+                            flat 
+                            round 
+                            icon="refresh" 
+                            size="sm" 
+                            @click="refreshChart('type')"
+                            :loading="loading.type"
+                          >
+                            <q-tooltip>{{$t('refresh')}}</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </div>
+                      
+                      <!-- Loading/Error/Chart Content -->
+                      <div v-if="loading.type" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-spinner-gears size="50px" color="primary" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('loadingChart')}}</p>
+                        </div>
+                      </div>
+                      <div v-else-if="errors.type" class="row justify-center q-py-xl">
+                        <div class="col-auto text-center">
+                          <q-icon name="error" size="50px" color="negative" />
+                          <p class="text-body2 q-mt-md text-grey-6">{{$t('chartLoadError')}}</p>
+                          <q-btn 
+                            outline 
+                            color="primary" 
+                            :label="$t('retry')" 
+                            @click="loadTypeData"
+                            class="q-mt-md"
+                          />
+                        </div>
+                      </div>
+                      <div v-else style="height: 450px;">
+                        <bar-chart
+                          :chart-data="typeChartData"
+                          :chart-options="getBarChartOptions()"
+                          chart-id="type-bar-detailed"
+                        />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        
+        <!-- Empty State -->
+        <q-card v-if="!isLoading && !hasErrors && !chartData.severity && !chartData.category">
+          <q-card-section class="text-center q-py-xl">
+            <q-icon name="bar_chart" size="80px" color="grey-4" />
+            <div class="text-h6 q-mt-md q-mb-sm text-grey-6">{{$t('noChartData')}}</div>
+            <p class="text-body2 text-grey-5">{{$t('noChartDataMessage')}}</p>
+            <q-btn 
+              unelevated 
+              color="primary" 
+              :label="$t('refreshData')" 
+              @click="refreshAllCharts"
+              class="q-mt-md"
+            />
+          </q-card-section>
+        </q-card>
+        
+      </div>
+    </div>
+  </div>
+</template> 

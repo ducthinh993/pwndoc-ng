@@ -61,7 +61,10 @@ module.exports = function (ctx) {
           changeOrigin: true,
           secure: false
         }
-      }
+      },
+      webSocketServer: 'ws',
+      hot: true,
+      liveReload: true
       //open: true // opens browser window automatically
     },
     // framework: 'all' --- includes everything; for dev only!

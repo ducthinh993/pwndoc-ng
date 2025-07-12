@@ -106,3 +106,169 @@
 .loading-error:before {
     opacity: 0.7;
 }
+
+// Chart styling improvements
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    
+    canvas {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+// Chart card styling
+.q-card.chart-card {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    
+    .q-card-section {
+        padding: 20px;
+    }
+}
+
+// Chart loading states
+.chart-loading-state {
+    .q-card-section {
+        position: relative;
+        min-height: 200px;
+    }
+}
+
+// Chart responsive design
+@media (max-width: 768px) {
+    .chart-wrapper {
+        min-height: 300px;
+    }
+    
+    .q-card.chart-card {
+        .q-card-section {
+            padding: 16px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-wrapper {
+        min-height: 250px;
+    }
+    
+    .q-card.chart-card {
+        .q-card-section {
+            padding: 12px;
+        }
+    }
+}
+
+// Dark mode support for charts
+body.body--dark {
+    .chart-wrapper {
+        canvas {
+            filter: brightness(0.9);
+        }
+    }
+    
+    .q-card.chart-card {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+}
+
+// Chart action buttons
+.chart-actions {
+    display: flex;
+    gap: 4px;
+    
+    .q-btn {
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// Chart section headers
+.chart-section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    .q-icon {
+        margin-right: 8px;
+        color: $primary;
+    }
+    
+    .text-h6 {
+        font-weight: 600;
+        color: $grey-8;
+    }
+}
+
+// Chart empty state
+.chart-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    
+    .q-icon {
+        opacity: 0.6;
+    }
+    
+    .text-h6 {
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .text-body2 {
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+}
+
+// Chart loading state
+.chart-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    
+    .loading-content {
+        text-align: center;
+        
+        .q-spinner {
+            margin-bottom: 16px;
+        }
+    }
+}
+
+// Chart error state
+.chart-error-state {
+    color: $negative;
+    text-align: center;
+    padding: 20px;
+    
+    .q-icon {
+        margin-bottom: 12px;
+    }
+    
+    .error-message {
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .q-btn {
+        margin-top: 8px;
+    }
+}
