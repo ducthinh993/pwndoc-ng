@@ -55,6 +55,9 @@
 
         <!-- Settings and User Menu -->
         <div class="flex items-center space-x-2">
+          <!-- Theme Toggle -->
+          <ThemeToggle />
+          
           <!-- Settings Button -->
           <Button
             variant="ghost"
@@ -79,10 +82,6 @@
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="w-48">
-              <DropdownMenuItem @click="toggleDarkMode">
-                <component :is="isDarkMode ? Sun : Moon" class="h-4 w-4 mr-2" />
-                {{ isDarkMode ? 'Light' : 'Dark' }} Mode
-              </DropdownMenuItem>
               <DropdownMenuItem @click="$router.push('/profile')">
                 <UserCircle class="h-4 w-4 mr-2" />
                 {{ $t('profile') }}
@@ -162,7 +161,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useTheme } from '@/composables/useTheme'
 
 // Components
 import { Button } from '@/components/ui/button'
@@ -173,6 +171,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'
+import ThemeToggle from '@/components/ui/theme-toggle.vue'
 
 // Icons
 import { 
@@ -184,8 +183,6 @@ import {
   UserCircle, 
   ChevronDown, 
   Menu,
-  Sun,
-  Moon,
   LogOut
 } from 'lucide-vue-next'
 
@@ -197,7 +194,6 @@ import { $t } from '@/boot/i18n'
 
 const route = useRoute()
 const router = useRouter()
-const { isDarkMode, toggleDarkMode } = useTheme()
 
 // Reactive data
 const showMobileMenu = ref(false)

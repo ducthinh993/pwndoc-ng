@@ -1,18 +1,15 @@
 import { io } from 'socket.io-client'
-import { boot } from 'quasar/wrappers'
-import { Loading } from 'quasar'
+import { Loading } from '@/lib/utils'
 import { $t } from '@/boot/i18n'
 
 const socket = io(`${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`)
 
-export default boot(({ app }) => {
+export default ({ app }) => {
   socket.on('disconnect', () => {
     Loading.show({
       message: `<i class='material-icons'>wifi_off</i><br /><p>${$t('msg.wrongContactingBackend')}</p>`,
-      spinner: null,
-      html:true,
-      backgroundColor: 'red-10',
-      customClass: 'loading-error',
+      html: true,
+      backgroundColor: 'rgba(220, 38, 38, 0.9)', // red-600 equivalent
       delay: 5000
     })
   })
@@ -23,7 +20,7 @@ export default boot(({ app }) => {
 
   // Ajoute $socket globalement dans l'app Vue 3
   app.config.globalProperties.$socket = socket
-})
+}
 
 // Si tu veux l'importer ailleurs dans ton code sans `this.$socket`
 export { socket }

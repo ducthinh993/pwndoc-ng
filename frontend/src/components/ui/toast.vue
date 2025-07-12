@@ -67,10 +67,10 @@ const toast = useToast()
 
 const variantClasses = (type: string) => {
   const variants = {
-    success: 'border-green-500/50 bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100',
-    error: 'border-destructive/50 bg-destructive/10 text-destructive',
-    warning: 'border-orange-500/50 bg-orange-50 text-orange-900 dark:bg-orange-950 dark:text-orange-100',
-    info: 'border-blue-500/50 bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-100',
+    success: 'border-success-emphasis bg-success-subtle text-success-strong',
+    error: 'border-error-emphasis bg-error-subtle text-error-strong',
+    warning: 'border-warning-emphasis bg-warning-subtle text-warning-strong',
+    info: 'border-info-emphasis bg-info-subtle text-info-strong',
   }
   return variants[type as keyof typeof variants] || variants.info
 }

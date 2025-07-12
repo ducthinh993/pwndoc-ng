@@ -52,9 +52,9 @@ const variantClasses = computed(() => {
   const variants = {
     default: 'border-border bg-background text-foreground',
     destructive: 'border-destructive/50 bg-destructive/10 text-destructive',
-    warning: 'border-orange-500/50 bg-orange-50 text-orange-900 dark:bg-orange-950 dark:text-orange-100',
-    success: 'border-green-500/50 bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100',
-    info: 'border-blue-500/50 bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-100',
+    warning: 'border-warning-emphasis bg-warning-subtle text-warning-strong',
+    success: 'border-success-emphasis bg-success-subtle text-success-strong',
+    info: 'border-info-emphasis bg-info-subtle text-info-strong',
   }
   return variants[props.variant]
 })

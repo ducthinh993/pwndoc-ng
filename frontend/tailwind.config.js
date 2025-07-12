@@ -48,6 +48,44 @@ module.exports = {
         success: "hsl(var(--color-success))",
         info: "hsl(var(--color-info))",
         warning: "hsl(var(--color-warning))",
+        
+        // Semantic state colors
+        'success-subtle': "hsl(var(--color-success-subtle))",
+        'success-muted': "hsl(var(--color-success-muted))",
+        'success-emphasis': "hsl(var(--color-success-emphasis))",
+        'success-solid': "hsl(var(--color-success-solid))",
+        'success-strong': "hsl(var(--color-success-strong))",
+        
+        'warning-subtle': "hsl(var(--color-warning-subtle))",
+        'warning-muted': "hsl(var(--color-warning-muted))",
+        'warning-emphasis': "hsl(var(--color-warning-emphasis))",
+        'warning-solid': "hsl(var(--color-warning-solid))",
+        'warning-strong': "hsl(var(--color-warning-strong))",
+        
+        'error-subtle': "hsl(var(--color-error-subtle))",
+        'error-muted': "hsl(var(--color-error-muted))",
+        'error-emphasis': "hsl(var(--color-error-emphasis))",
+        'error-solid': "hsl(var(--color-error-solid))",
+        'error-strong': "hsl(var(--color-error-strong))",
+        
+        'info-subtle': "hsl(var(--color-info-subtle))",
+        'info-muted': "hsl(var(--color-info-muted))",
+        'info-emphasis': "hsl(var(--color-info-emphasis))",
+        'info-solid': "hsl(var(--color-info-solid))",
+        'info-strong': "hsl(var(--color-info-strong))",
+        
+        // Diff states
+        'diff-added': "hsl(var(--color-diff-added))",
+        'diff-removed': "hsl(var(--color-diff-removed))",
+        'diff-changed': "hsl(var(--color-diff-changed))",
+        'diff-added-emphasis': "hsl(var(--color-diff-added-emphasis))",
+        'diff-removed-emphasis': "hsl(var(--color-diff-removed-emphasis))",
+        'diff-changed-emphasis': "hsl(var(--color-diff-changed-emphasis))",
+        
+        // Layout colors
+        'layout-background': "hsl(var(--color-layout-background))",
+        'layout-surface': "hsl(var(--color-layout-surface))",
+        'layout-border': "hsl(var(--color-layout-border))",
         // Additional color mappings for existing styles
         'blue-grey': {
           50: '#eceff1',

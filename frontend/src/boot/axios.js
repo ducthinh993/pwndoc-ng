@@ -1,4 +1,3 @@
-import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import User from '@/services/user'
 import Router from '../router'
@@ -76,9 +75,9 @@ api.interceptors.response.use(
   }
 )
 
-export default boot(({ app }) => {
+export default ({ app }) => {
   // Inject axios globally
   app.config.globalProperties.$axios = api
-})
+}
 
 export { api }

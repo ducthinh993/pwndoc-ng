@@ -42,11 +42,12 @@ services:
       - ./frontend/src:/app/src
       - ./frontend/ssl:/app/ssl
       - ./frontend/public:/app/public
-      - ./frontend/.postcssrc.js:/app/.postcssrc.js
-      - ./frontend/babel.config.js:/app/babel.config.js
-      - ./frontend/quasar.conf.js:/app/quasar.conf.js
       - ./frontend/package.json:/app/package.json
       - ./frontend/package-lock.json:/app/package-lock.json
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./frontend/postcss.config.js:/app/postcss.config.js
+      - ./frontend/tsconfig.json:/app/tsconfig.json
     restart: always
     links:
       - backend

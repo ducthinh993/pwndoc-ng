@@ -13,9 +13,9 @@
         'bg-primary text-primary-foreground hover:bg-primary/80': variant === 'default',
         'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
         'bg-destructive text-destructive-foreground hover:bg-destructive/80': variant === 'destructive',
-        'bg-green-600 text-white hover:bg-green-600/80': variant === 'success',
-        'bg-yellow-600 text-white hover:bg-yellow-600/80': variant === 'warning',
-        'bg-blue-600 text-white hover:bg-blue-600/80': variant === 'info',
+        'bg-success text-success-foreground hover:bg-success/80': variant === 'success',
+        'bg-warning text-warning-foreground hover:bg-warning/80': variant === 'warning',
+        'bg-info text-info-foreground hover:bg-info/80': variant === 'info',
         'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
         
         // Shape variants

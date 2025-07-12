@@ -37,8 +37,14 @@ const backgroundColor = computed(() => {
   if (!loading.state.backgroundColor) return undefined
   
   const colorMap: Record<string, string> = {
-    'blue-grey-8': 'rgb(55 65 81)',
-    'red-10': 'rgb(239 68 68)',
+    'blue-grey-8': 'hsl(var(--color-grey-8))',
+    'red-10': 'hsl(var(--color-error-solid))',
+    'primary': 'hsl(var(--color-primary))',
+    'secondary': 'hsl(var(--color-secondary))',
+    'success': 'hsl(var(--color-success))',
+    'warning': 'hsl(var(--color-warning))',
+    'error': 'hsl(var(--color-destructive))',
+    'info': 'hsl(var(--color-info))',
   }
   
   return colorMap[loading.state.backgroundColor] || loading.state.backgroundColor

@@ -34,7 +34,7 @@ const isDark = inject('isDark', false)
 <style scoped>
 /* Home background styling - matches current Quasar styling */
 .home-background {
-  background-color: #e6ecf0;
+  background-color: hsl(var(--color-layout-background));
 }
 
 /* Dark mode adjustments */

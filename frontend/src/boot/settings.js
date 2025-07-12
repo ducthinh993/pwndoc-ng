@@ -1,7 +1,6 @@
-import { boot } from 'quasar/wrappers'
 import Settings from '@/services/settings'
 
-export default boot(async ({ app }) => {
+export default async ({ app }) => {
   const settingsData = {}
 
   try {
@@ -23,4 +22,4 @@ export default boot(async ({ app }) => {
 
   // Ajoute `$settings` dans l'app (Vue 3)
   app.config.globalProperties.$settings = settingsData
-})
+}

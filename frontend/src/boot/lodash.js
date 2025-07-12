@@ -1,6 +1,5 @@
 import Lodash from 'lodash'
-import { boot } from 'quasar/wrappers'
 
-export default boot(({ app }) => {
+export default ({ app }) => {
   app.config.globalProperties.$_ = Lodash
-})
+}
